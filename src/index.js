@@ -5,6 +5,8 @@ const httpServer = require('./httpServer')
 
 const optionDefinitions = [
   { name: 'address', alias: 'd', type: String },
+  { name: 'http', alias: 's', type: Boolean },
+  { name: 'port', alias: 'p', type: Number },
   { name: 'help', alias: 'h', type: Boolean}
 ]
 const options = commandLineArgs(optionDefinitions)
@@ -19,11 +21,21 @@ const {
 
 if (help) {
   console.log(`help`)
+  process.exit()
+}
+else if (!address && !http && !help) {
+  console.log('Orbit pinner requires an orbitdb address or http to be enabled')
+  process.exit()
 }
 else if (address) {
   new OrbitServer({address})
 }
-else {
-  console.log('Orbit pinner requires a database address')
-  process.exit(1)
+else if (http) {
+  new httpServer(port)
 }
+
+
+
+
+
+// { name: 'replicate', alias: 'r', type: String },
