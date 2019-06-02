@@ -1,0 +1,33 @@
+{
+  "name": "orbitdb-pinner",
+  "version": "0.0.0",
+  "description": "A node based orbitdb pinning application. Pass it an orbit address, and it will add it to it's replication list, until you tell it to stop.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jon-Biz/orbitdb-pinner.git"
+  },
+  "keywords": [
+    "ipfs",
+    "orbitdb",
+    "distributed",
+    "computing"
+  ],
+  "author": "Jonathan El-Bizri",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jon-Biz/orbitdb-pinner/issues"
+  },
+  "homepage": "https://github.com/Jon-Biz/orbitdb-pinner#readme",
+  "dependencies": {
+    "command-line-args": "^5.1.1",
+    "config": "^3.1.0",
+    "express": "^4.17.1",
+    "ipfs": "^0.36.3",
+    "orbit-db": "^0.21.0"
+  }
+}
