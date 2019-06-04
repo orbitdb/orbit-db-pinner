@@ -1,6 +1,6 @@
 const commandLineArgs = require('command-line-args')
 
-const OrbitServer = require('./OrbitPinner.js')
+const OrbitPinner = require('./OrbitPinner.js')
 const httpServer = require('./httpServer')
 
 const optionDefinitions = [
@@ -28,7 +28,7 @@ else if (!address && !http && !help) {
   process.exit()
 }
 else if (address) {
-  new OrbitServer({address})
+  new OrbitPinner(address)
 }
 else if (http) {
   new httpServer(port)

@@ -1,4 +1,7 @@
 {
+  "http": {
+    "port": 3000
+  },
   "ipfsConfig": {
     "repo": "./orbitdb/pinner",
     "start": true,
