@@ -56,11 +56,11 @@ The http api is turned off by default. Enable it with `-http` in the cli, or `"h
 
 ### `\pin?address=ADDRESS`
 
-Pins the orbitdb at `ADDRESS`. Resumes on restart. Any `replicating` servers will also pin this database.
+Pins the orbitdb at `ADDRESS`. Resumes on restart. Any `follow`ing servers will also pin this database.
 
 ### `\unpin?address=ADDRESS`
 
-Forgets the orbitdb at `ADDRESS`. Any `following` servers will also unpin this database.
+Forgets the orbitdb at `ADDRESS`. Any `follow`ing servers will also unpin this database.
 
 ### `\follow?address=PINNER_DB_ADDRESS`
 
