@@ -1,6 +1,6 @@
 {
   "name": "orbitdb-pinner",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "An orbitdb pinning service",
   "main": "pinner.js",
   "scripts": {
