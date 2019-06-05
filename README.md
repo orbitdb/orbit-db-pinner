@@ -1,6 +1,8 @@
 # orbitdb-pinner
 An orbitdb pinning service. Pass it orbitdb database addresses, and it will replicate them until you tell it to stop.
 
+**This is the initial release. It is not production ready.**
+
 ## Installation
 ```
 	npm i
@@ -17,14 +19,15 @@ An orbitdb pinning service. Pass it orbitdb database addresses, and it will repl
 
 ## Config
 
-The `config` npm package is employed for configration handling.
+The `config` npm package is used for configuration handling.
 
 Configuration of ipfs and the http server are handled via json files in the config directory, allowing development and production configurations to be set via env
 
 ```
 {
   "http": {
-    "port": 3000
+    "port": 3000,
+		"enabled": true
   },
   "ipfsConfig": {
     "repo": "./orbitdb/pinner",
