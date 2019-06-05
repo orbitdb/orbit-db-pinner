@@ -27,7 +27,7 @@
     "command-line-args": "^5.1.1",
     "config": "^3.1.0",
     "express": "^4.17.1",
-    "ipfs": "^0.34.4",
+    "ipfs": "^0.36.3",
     "orbit-db": "^0.21.0"
   }
 }
