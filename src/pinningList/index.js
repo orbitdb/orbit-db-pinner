@@ -57,9 +57,9 @@ const startPinning =
         async () => {
                       const addresses = await getContents()
 
-                      if (addresses.length === 0 ) console.log(
-                        `Pinning list is empty`
-                      )
+                      if (addresses.length == 0 ) {
+                        console.log(`Pinning list is empty`)
+                      }
 
                       addresses
                         .map( createPinnerInstance )
@@ -68,6 +68,16 @@ const startPinning =
 
 const remove =
   async ( address ) => {
+    if (!OrbitDB.isValidAddress(address)) {
+      console.log(`Failed to unpin ${address}. This is not a valid address`)
+      return
+    }
+
+    if (!pinners[address]) {
+      console.log(`Failed to unpin ${address}. Address not found in pinning list.`)
+      return
+    }
+
     const db        = await orbitInstance()
     const dbAddresses = await getContents()
 
