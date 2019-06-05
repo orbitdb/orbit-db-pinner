@@ -1,7 +1,7 @@
 # orbitdb-pinner
 A pinning service for [orbitdb](https://github.com/orbitdb/orbit-db/).
 
-* Pass it an single orbitdb address to pin.
+* Pass it a single orbitdb address to pin.
 * Pin/unpin multiple orbitdb databases via http.
 * Have it `follow` the pinning list of another instance of the service.
 
