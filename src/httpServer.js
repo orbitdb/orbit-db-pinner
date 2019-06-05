@@ -9,11 +9,12 @@ class server {
   constructor(httpPort) {
     const port = httpPort || config.get('http.port')
 
-    app.get('/add', (req, res) => {
+    app.get('/pin', (req, res) => {
       const address = req.query.address
 
       if ( req.query.address ) {
         manifest.add( address)
+
         res.send(`adding... ${address}`)
       }
       else {
@@ -21,18 +22,17 @@ class server {
       }
     })
 
-    app.get('/remove', (req, res) => {
+    app.get('/unpin', (req, res) => {
       const address = req.query.address
 
       if ( req.query.address ) {
         manifest.remove( address)
+
         res.send(`removing... ${address}`)
       }
       else {
         res.send(`missing 'address' query parameter`)
       }
-
-
     })
 
     app.listen(port, () => console.log(`Orbit-pinner listening on port ${port}`))
