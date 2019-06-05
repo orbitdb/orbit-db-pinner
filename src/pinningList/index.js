@@ -98,6 +98,19 @@ const remove =
     console.log( `${address} removed.` )
   }
 
+const follow =
+  async ( address ) => {
+    if (!OrbitDB.isValidAddress(address)) {
+      console.log(`Failed to follow ${address}. This is not a valid address`)
+
+      return
+    }
+
+    await db.drop()
+    await orbitInstance(address)
+    startPinning()
+  }
+
 
 console.log('Pinning previously added orbitdbs: ')
 startPinning()
@@ -105,5 +118,5 @@ startPinning()
 module.exports = {
   add
 , remove
-, startPinning
+, follow
 }
