@@ -18,7 +18,7 @@ A pinning service for [orbitdb](https://github.com/orbitdb/orbit-db/).
 	node pinner				    \\ start the server with current config file
 	node pinner -address ORBITDB_ADDRESS 	    \\ start the server and start replicating ORBITDB_ADDRESS
 	node pinner -http -port 1111	  	    \\ receive http connections. Port defaults to 3000
-	node pinner -follow  PINNER_ORBITDB_ADDRESS \\ replicate a database of orbitdb instances
+	node pinner -follow  PINNER_DB_ADDRESS \\ replicate a database of orbitdb instances
 ```
 
 ## Config
@@ -62,7 +62,7 @@ Pins the orbitdb at `ADDRESS`. Resumes on restart. Any `replicating` servers wil
 
 Forgets the orbitdb at `ADDRESS`. Any `following` servers will also unpin this database.
 
-### `\follow?address=PINNER_ADDRESS`
+### `\follow?address=PINNER_DB_ADDRESS`
 
 * Drops all current streams
-* Pins all orbitdb addresses in the list at PINNER_ADDRESS.
+* Pins all orbitdb addresses in the list at PINNER_DB_ADDRESS.
