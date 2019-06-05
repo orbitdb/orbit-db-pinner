@@ -71,19 +71,18 @@ const remove =
     const db        = await orbitInstance()
     const dbAddresses = await getContents()
 
-    // Unfortunately, since we can't remove a item from the database without it's hash
-    // We have to rebuild the data every time we remove an item.
-    db.drop()
     //stop pinning
     pinners[address].drop()
     delete pinners[address]
 
-    const newDb        = await orbitInstance()
+    // Unfortunately, since we can't remove a item from the database without it's hash
+    // So we have to rebuild the data every time we remove an item.
+    await db.drop()
 
     dbAddresses
       .filter(addr => ( addr !== address ))
       .forEach(
-        address => newDb.add(address)
+        address => db.add(address)
       )
 
     console.log( `${address} removed.` )
