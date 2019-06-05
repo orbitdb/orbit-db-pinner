@@ -20,20 +20,21 @@ const orbitInstance =
         )
 
 const createDbInstance =
-        async () => {
+        async addr => {
+                      const address = addr || 'dbList'
                       const dbInstance = await orbitInstance
 
-                      const manifestcfg = {
+                      const pinningList = {
                         create    : true
                       , overwrite : true
                       , localOnly : false
+                      , type: 'feed'
                       }
 
                       const db =
-                        await dbInstance.create(
-                                         `dblist`
-                                        , 'feed'
-                                        , manifestcfg
+                        await dbInstance.open(
+                                          address
+                                        , pinningList
                                         )
 
                         await db.load()

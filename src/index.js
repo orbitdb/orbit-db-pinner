@@ -2,7 +2,8 @@ const commandLineArgs = require('command-line-args')
 
 const OrbitPinner = require('./OrbitPinner.js')
 const httpServer = require('./httpServer')
-const manifest = require('./Manifest')
+
+const pinningList = require('./pinningList')
 
 const optionDefinitions = [
   { name: 'address', alias: 'd', type: String },

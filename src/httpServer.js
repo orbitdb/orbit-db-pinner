@@ -1,9 +1,9 @@
 const config = require('config');
 
 const express = require('express')
-
-const manifest = require('./Manifest')
 const app = express()
+
+const pinningList = require('./pinningList')
 
 class server {
   constructor(httpPort) {
@@ -13,7 +13,7 @@ class server {
       const address = req.query.address
 
       if ( req.query.address ) {
-        manifest.add( address)
+        pinningList.add( address)
 
         res.send(`adding... ${address}`)
       }
@@ -26,7 +26,7 @@ class server {
       const address = req.query.address
 
       if ( req.query.address ) {
-        manifest.remove( address)
+        pinningList.remove( address)
 
         res.send(`removing... ${address}`)
       }

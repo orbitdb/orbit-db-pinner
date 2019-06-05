@@ -1,3 +1,5 @@
+const OrbitDB = require('orbit-db')
+
 const OrbitPinner = require('../OrbitPinner')
 const orbitInstance = require('./orbitInstance')
 
@@ -20,6 +22,12 @@ const getContents =
 const add =
   async ( address ) => {
                           const db        = await orbitInstance()
+
+                          if (!OrbitDB.isValidAddress(address)) {
+                            console.log(`Failed to add ${address}. This is not a valid address`)
+                            return
+                          }
+
                           const addresses =  await getContents()
 
                           if (!addresses.includes(address)) {
@@ -35,6 +43,11 @@ const add =
 
 const createPinnerInstance =
         address => {
+                      if (!OrbitDB.isValidAddress(address)) {
+                        console.log(`Failed to pin ${address}. This is not a valid address`)
+                        return
+                      }
+
                       console.log(`Pinning orbitdb @ ${address}`)
 
                       return new OrbitPinner( address )
@@ -46,7 +59,7 @@ const startPinning =
 
                       console.log(addresses)
                       if (addresses.length === 0 ) console.log(
-                        `Manifest empty`
+                        `Pinning list is empty`
                       )
 
                       pinners =
@@ -73,12 +86,6 @@ const remove =
       )
 
     console.log( `${address} removed.` )
-
-  }
-
-  const startLogging =
-    () => {
-    console.log(`Logging - TODO`)
   }
 
   // stopPinning() { this.pinners( pinner => pinner.close() ) }
