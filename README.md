@@ -9,41 +9,43 @@ An orbitdb pinning service. Pass it orbitdb database addresses, and it will repl
 ## CLI usage
 
 ```
-	npm run start  			   		 \\ start the server. service defaults to config
-	npm run start -db dfsfsf 	   		 \\ start the server and start replicating
-	npm run start -replicate sfafdafsf 		 \\ replicate a database of orbitdb instances
-	npm run start -replicate-server 101.234.456:8080 \\ request a replication database from another satellite instance
-	npm run start -http 				 \\ receive http connections
+	npm run start										  \\ start the server with current config file
+	npm run start -db ORBITDB_ADDRESS \\ start the server and start replicating ORBITDB_ADDRESS
+	npm run start -http -port 1111	  \\ receive http connections. Port defaults to 3000
+	npm run start -replicate    		  \\ replicate a database of orbitdb instances
 ```
 
 ## Config
 
-Use the `config` npm package.
+The `config` npm package is employed for configration handling.
 
-Create separate `default` and `production` configurations in separate files. Switch between them via env.
+Configuration of ipfs and the http server are handled via json files in the config directory, allowing development and production configurations to be set via env
 
 ```
 {
-	"address": "dfgdfd",      		// optional
-	"server" : "123.565.656", 		// optional
-	"http"	 : false, 						// default
-	"port"	 : 3000, 							// default
-	"ipfsConfig": { ... }					// required
+  "http": {
+    "port": 3000
+  },
+  "ipfsConfig": {
+    "repo": "./orbitdb/pinner",
+    "start": true,
+    "EXPERIMENTAL": {
+      "pubsub": true
+    },
+    "config": {
+      "Addresses": {
+        "Swarm": [
+          "/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star"
+        ]
+      }
+    }
+  }
 }
 ```
 
 ## Http api
 
 The http api is turned off by default. Enable it with `-http` in the cli, or `"http": true` in the config file.
-
-###`\replicate`
-
-* Drops all current streams
-* Replicates all streams in the passed in database manifest. Writes new pins to the manifest. Existing pins are forgotten.
-
-###`\replicateServer`
-
-* Requests a server's manifest and starts using it. Forgets any existing pins.
 
 ###`\pin`
 
@@ -53,6 +55,7 @@ Pins an orbitdb. Resumes on restart. Any `replicating` servers will also pin thi
 
 Forgets an orbitdb, unless it is in the config file. Any `replicating` servers will also unpin this database.
 
-###`\getManifest`
+###`\replicate`
 
-Returns the address of the service's database of currently pinned instances.
+* Drops all current streams
+* Replicates all streams in the passed in database manifest. Writes new pins to the manifest. Existing pins are forgotten.
