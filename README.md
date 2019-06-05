@@ -27,7 +27,7 @@ Configuration of ipfs and the http server are handled via json files in the conf
 {
   "http": {
     "port": 3000,
-		"enabled": true
+    "enabled": true
   },
   "ipfsConfig": {
     "repo": "./orbitdb/pinner",
