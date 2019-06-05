@@ -1,8 +1,8 @@
 const commandLineArgs = require('command-line-args')
 const config = require('config');
 
-const OrbitPinner = require('./src/OrbitPinner.js')
-const httpServer = require('./src/httpServer')
+const OrbitPinner = require('./lib/OrbitPinner')
+const httpServer = require('./lib/httpServer')
 
 const optionDefinitions = [
   { name: 'address', alias: 'd', type: String },
