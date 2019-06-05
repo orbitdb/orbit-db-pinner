@@ -1,7 +1,7 @@
 {
   "name": "orbitdb-pinner",
-  "version": "0.0.0",
-  "description": "A node based orbitdb pinning application. Pass it an orbit address, and it will add it to it's replication list, until you tell it to stop.",
+  "version": "0.1.0",
+  "description": "An orbitdb pinning service",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -18,7 +18,7 @@
     "computing"
   ],
   "author": "Jonathan El-Bizri",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Jon-Biz/orbitdb-pinner/issues"
   },
