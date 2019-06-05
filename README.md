@@ -2,7 +2,7 @@
 An orbitdb pinning service. 
 
 * Pass it an single orbitdb address to pin.
-* Pin/unpin multiple orbitdb instances via http.
+* Pin/unpin multiple orbitdb databases via http.
 * Have it `follow` the pinning list of another instance of the service.
 
 **This is the initial release. It is not production ready.**
@@ -15,10 +15,10 @@ An orbitdb pinning service.
 ## CLI usage
 
 ```
-	node pinner										  			\\ start the server with current config file
-	node pinner -address ORBITDB_ADDRESS 	\\ start the server and start replicating ORBITDB_ADDRESS
-	node pinner -http -port 1111	  			\\ receive http connections. Port defaults to 3000
-	node pinner -replicate    		  			\\ replicate a database of orbitdb instances
+	node pinner				    \\ start the server with current config file
+	node pinner -address ORBITDB_ADDRESS 	    \\ start the server and start replicating ORBITDB_ADDRESS
+	node pinner -http -port 1111	  	    \\ receive http connections. Port defaults to 3000
+	node pinner -follow  PINNER_ORBITDB_ADDRESS \\ replicate a database of orbitdb instances
 ```
 
 ## Config
