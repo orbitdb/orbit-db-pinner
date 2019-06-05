@@ -54,15 +54,15 @@ Configuration of ipfs and the http server are handled via json files in the conf
 
 The http api is turned off by default. Enable it with `-http` in the cli, or `"http": true` in the config file.
 
-###`\pin`
+### `\pin`
 
 Pins an orbitdb. Resumes on restart. Any `replicating` servers will also pin this database.
 
-###`\unpin`
+### `\unpin`
 
 Forgets an orbitdb, unless it is in the config file. Any `replicating` servers will also unpin this database.
 
-###`\replicate`
+### `\follow`
 
 * Drops all current streams
 * Replicates all streams in the passed in database manifest. Writes new pins to the manifest. Existing pins are forgotten.
