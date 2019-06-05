@@ -16,6 +16,10 @@ class Pinner {
     })
   }
 
+  drop() {
+    orbitdb.close()    
+  }
+
   static async openDatabase(orbitdb, address) {
     try {
       if (!OrbitDB.isValidAddress(address)) {
@@ -32,8 +36,8 @@ class Pinner {
     } catch (e) {
       console.error(e)
     }
-
   }
+
 }
 
 module.exports = Pinner

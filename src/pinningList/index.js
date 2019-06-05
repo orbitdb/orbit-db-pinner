@@ -3,7 +3,7 @@ const OrbitDB = require('orbit-db')
 const OrbitPinner = require('../OrbitPinner')
 const orbitInstance = require('./orbitInstance')
 
-let pinners = []
+const pinners = {}
 
 const getContents =
   async () => {
@@ -31,9 +31,9 @@ const add =
 
                           if (!addresses.includes(address)) {
                             await db.add(address)
+                            createPinnerInstance(address)
 
                             console.log( `${address} added.` )
-                            pinners.push(createPinnerInstance(address))
                           }
                           else {
                             console.warn( `Attempted to add ${address}, but already present in db.`)
@@ -48,8 +48,9 @@ const createPinnerInstance =
                       }
 
                       console.log(`Pinning orbitdb @ ${address}`)
+                      pinners[address] = new OrbitPinner( address )
 
-                      return new OrbitPinner( address )
+                      return pinners[address]
                     }
 
 const startPinning =
@@ -60,20 +61,22 @@ const startPinning =
                         `Pinning list is empty`
                       )
 
-                      pinners =
-                        addresses
-                          .map( createPinnerInstance )
+                      addresses
+                        .map( createPinnerInstance )
 
                     }
 
 const remove =
   async ( address ) => {
     const db        = await orbitInstance()
-    const dbAddress = await getContents()
+    const dbAddresses = await getContents()
 
     // Unfortunately, since we can't remove a item from the database without it's hash
     // We have to rebuild the data every time we remove an item.
     db.drop()
+    //stop pinning
+    pinners[address].drop()
+    delete pinners[address]
 
     const newDb        = await orbitInstance()
 
