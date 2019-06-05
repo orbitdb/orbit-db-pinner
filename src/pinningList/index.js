@@ -13,7 +13,6 @@ const getContents =
                           .collect()
                           .map(
                             e => {
-                              console.log(e.payload.value)
                               return e.payload.value
                             }
                           )
@@ -57,7 +56,6 @@ const startPinning =
         async () => {
                       const addresses = await getContents()
 
-                      console.log(addresses)
                       if (addresses.length === 0 ) console.log(
                         `Pinning list is empty`
                       )
@@ -88,8 +86,6 @@ const remove =
     console.log( `${address} removed.` )
   }
 
-  // stopPinning() { this.pinners( pinner => pinner.close() ) }
-  //
 
 console.log('Pinning previously added orbitdbs: ')
 startPinning()

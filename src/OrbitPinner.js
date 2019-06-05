@@ -18,6 +18,11 @@ class Pinner {
 
   static async openDatabase(orbitdb, address) {
     try {
+      if (!OrbitDB.isValidAddress(address)) {
+        console.log(`Failed to add ${address}. This is not a valid address`)
+        return
+      }
+
       console.log(`opening database from ${address}`)
       const db = await orbitdb.open(address, { sync: true })
 
