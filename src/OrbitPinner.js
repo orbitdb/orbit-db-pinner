@@ -11,7 +11,6 @@ class Pinner {
     })
 
     ipfs.on('ready', async () => {
-
       this.orbitdb = await OrbitDB.createInstance(ipfs)
       Pinner.openDatabase(this.orbitdb, address)
     })
