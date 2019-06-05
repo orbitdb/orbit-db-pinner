@@ -1,4 +1,5 @@
 const commandLineArgs = require('command-line-args')
+const config = require('config');
 
 const OrbitPinner = require('./OrbitPinner.js')
 const httpServer = require('./httpServer')
