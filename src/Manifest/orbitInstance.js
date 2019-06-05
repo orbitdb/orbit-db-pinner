@@ -19,32 +19,27 @@ const orbitInstance =
                       }
         )
 
-const orbitdb =
-        orbitInstance
-          .then(
-            orbitdb => {
-                          const manifestcfg = {
-                            create          : true
-                          , overwrite       : true
-                          , localOnly       : false
-                          , type            :'keyvalue'
-                          , accessController: {
-                              write: [orbitdb.identity.publicKey]
-                            }
-                          }
+const createDbInstance =
+        async () => {
+                      const dbInstance = await orbitInstance
 
-                          try {
+                      const manifestcfg = {
+                        create    : true
+                      , overwrite : true
+                      , localOnly : false
+                      }
 
-                            orbitdb
-                              .open(
-                                '/manifest'
-                                , manifestcfg
-                              )
-                          }
-                          catch(e) { console.log(e.stack) }
+                      const db =
+                        await dbInstance.create(
+                                         `dblist`
+                                        , 'feed'
+                                        , manifestcfg
+                                        )
 
-                          return orbitdb
-                        }
-            )
+                        await db.load()
 
-module.exports = orbitdb
+                        return db
+                    }
+
+
+module.exports = createDbInstance

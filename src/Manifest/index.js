@@ -1,50 +1,94 @@
 const OrbitPinner = require('../OrbitPinner')
 const orbitInstance = require('./orbitInstance')
 
+let pinners = []
 
-class Manifest {
-  constructor(){
-    console.log('creating manifest')
-    this.startPinning()
-  }
+const getContents =
+  async () => {
+                const db = await orbitInstance()
 
-  startPinning() {
+                return db.iterator({ limit: -1 })
+                          .collect()
+                          .map(
+                            e => {
+                              console.log(e.payload.value)
+                              return e.payload.value
+                            }
+                          )
+              }
 
-    const createPinnerInstance =
-            address => {
-                          console.log(`Pinning orbitdb @ ${address}`)
+const add =
+  async ( address ) => {
+                          const db        = await orbitInstance()
+                          const addresses =  await getContents()
 
-                          return new OrbitPinner( address )
+                          if (!addresses.includes(address)) {
+                            await db.add(address)
+
+                            console.log( `${address} added.` )
+                            pinners.push(createPinnerInstance(address))
+                          }
+                          else {
+                            console.warn( `Attempted to add ${address}, but already present in db.`)
+                          }
                         }
 
-    this._getContentsP()
-          .then(
-            addresses => {
-                            if (addresses.length === 0 ) console.log(
-                              `Manifest empty`
-                            )
+const createPinnerInstance =
+        address => {
+                      console.log(`Pinning orbitdb @ ${address}`)
 
-                            return addresses
-                          })
-          .then(
-            addresses => this.pinners =
-                                addresses
-                                  .map( createPinnerInstance )
-          )
+                      return new OrbitPinner( address )
+                    }
+
+const startPinning =
+        async () => {
+                      const addresses = await getContents()
+
+                      console.log(addresses)
+                      if (addresses.length === 0 ) console.log(
+                        `Manifest empty`
+                      )
+
+                      pinners =
+                        addresses
+                          .map( createPinnerInstance )
+
+                    }
+
+const remove =
+  async ( address ) => {
+    const db        = await orbitInstance()
+    const dbAddress = await getContents()
+
+    // Unfortunately, since we can't remove a item from the database without it's hash
+    // We have to rebuild the data every time we remove an item.
+    db.drop()
+
+    const newDb        = await orbitInstance()
+
+    dbAddresses
+      .filter(addr => ( addr !== address ))
+      .forEach(
+        address => newDb.add(address)
+      )
+
+    console.log( `${address} removed.` )
+
   }
 
-  _getContentsP() {
-    return orbitInstance
-              .then(
-                db => {
-                        return db.iterator()
-                              .collect()
-                              .map(
-                                e => e.payload.value
-                              )
-                      }
-              )
+  const startLogging =
+    () => {
+    console.log(`Logging - TODO`)
   }
+
+  // stopPinning() { this.pinners( pinner => pinner.close() ) }
+  //
+
+console.log('Pinning previously added orbitdbs: ')
+startPinning()
+
+module.exports = {
+  add
+, remove
+, startPinning
 }
-
-module.exports = new Manifest()
