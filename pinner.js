@@ -1,8 +1,8 @@
 const commandLineArgs = require('command-line-args')
 const config = require('config');
 
-const OrbitPinner = require('./OrbitPinner.js')
-const httpServer = require('./httpServer')
+const OrbitPinner = require('./src/OrbitPinner.js')
+const httpServer = require('./src/httpServer')
 
 const optionDefinitions = [
   { name: 'address', alias: 'd', type: String },
@@ -35,8 +35,3 @@ else if(follow) {
   const pinningList = require('./pinningList')
   pinningList.follow(follow)
 }
-
-
-
-
-// { name: 'replicate', alias: 'r', type: String },

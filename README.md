@@ -11,10 +11,10 @@ An orbitdb pinning service. Pass it orbitdb database addresses, and it will repl
 ## CLI usage
 
 ```
-	npm run start										  \\ start the server with current config file
-	npm run start -db ORBITDB_ADDRESS \\ start the server and start replicating ORBITDB_ADDRESS
-	npm run start -http -port 1111	  \\ receive http connections. Port defaults to 3000
-	npm run start -replicate    		  \\ replicate a database of orbitdb instances
+	node pinner										  			\\ start the server with current config file
+	node pinner -address ORBITDB_ADDRESS 	\\ start the server and start replicating ORBITDB_ADDRESS
+	node pinner -http -port 1111	  			\\ receive http connections. Port defaults to 3000
+	node pinner -replicate    		  			\\ replicate a database of orbitdb instances
 ```
 
 ## Config
