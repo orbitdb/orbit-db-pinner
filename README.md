@@ -1,5 +1,5 @@
 # orbitdb-pinner
-An orbitdb pinning service. Pass it orbitdb database addresses, and it will replicate them until you tell it to stop.
+An orbitdb pinning service. Pass it orbitdb database addresses, and it will replicate them until you tell it to stop. Or, pass it the address of another orbitdb pinning service instance, and it will replicate the other service's pins.
 
 **This is the initial release. It is not production ready.**
 
