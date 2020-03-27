@@ -20,11 +20,11 @@
   },
   "homepage": "https://github.com/Jon-Biz/orbitdb-pinner#readme",
   "dependencies": {
-    "ws": ">=3.3.1",
     "command-line-args": "^5.1.1",
     "config": "^3.1.0",
     "express": "^4.17.1",
-    "ipfs": "^0.36.3",
-    "orbit-db": "^0.21.0"
+    "ipfs": "^0.41.2",
+    "orbit-db": "^0.23.1",
+    "ws": ">=3.3.1"
   }
 }
