@@ -5,7 +5,7 @@
   "main": "pinner.js",
   "scripts": {
     "start": "node pinner.js",
-    "test": "mocha"
+    "test": "nyc mocha"
   },
   "repository": {
     "type": "git",
