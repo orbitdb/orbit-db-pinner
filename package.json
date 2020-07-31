@@ -1,6 +1,6 @@
 {
   "name": "orbitdb-pinner",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "An orbitdb pinning service",
   "main": "pinner.js",
   "scripts": {
@@ -31,7 +31,7 @@
     "config": "^3.3.1",
     "express": "^4.17.1",
     "ipfs": "^0.43.3",
-    "orbit-db": "github:orbitdb/orbit-db#v0.24.0"
+    "orbit-db": "^0.24.1"
   },
   "devDependencies": {
     "assert": "^2.0.0",
