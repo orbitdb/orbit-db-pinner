@@ -9,16 +9,16 @@ A pinning service for [orbitdb](https://github.com/orbitdb/orbit-db/).
 
 ## Installation
 ```
-	npm i
+npm i
 ```
 
 ## CLI usage
 
 ```
-	node pinner				    \\ start the server with current config file
-	node pinner -address ORBITDB_ADDRESS 	    \\ start the server and start replicating ORBITDB_ADDRESS
-	node pinner -http -port 1111	  	    \\ receive http connections. Port defaults to 3000
-	node pinner -follow  PINNER_DB_ADDRESS \\ replicate a database of orbitdb instances
+node pinner				    \\ start the server with current config file
+node pinner -address ORBITDB_ADDRESS 	    \\ start the server and start replicating ORBITDB_ADDRESS
+node pinner -http -port 1111	  	    \\ receive http connections. Port defaults to 3000
+node pinner -follow  PINNER_DB_ADDRESS \\ replicate a database of orbitdb instances
 ```
 
 ## Config
@@ -27,7 +27,7 @@ The `config` npm package is used for configuration handling.
 
 Configuration of ipfs and the http server are handled via json files in the config directory, allowing development and production configurations to be set via env
 
-```
+```json
 {
   "http": {
     "port": 3000,

@@ -1,11 +1,11 @@
 {
   "name": "orbitdb-pinner",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "An orbitdb pinning service",
   "main": "pinner.js",
   "scripts": {
     "start": "node pinner.js",
-    "test": "mocha"
+    "test": "nyc mocha"
   },
   "repository": {
     "type": "git",
@@ -28,15 +28,17 @@
   "homepage": "https://github.com/Jon-Biz/orbitdb-pinner#readme",
   "dependencies": {
     "command-line-args": "^5.1.1",
-    "config": "^3.1.0",
+    "config": "^3.3.1",
     "express": "^4.17.1",
-    "ipfs": "^0.39.0",
-    "orbit-db": "^0.23.1",
-    "ws": ">=3.3.1"
+    "ipfs": "^0.43.3",
+    "orbit-db": "^0.24.1"
   },
   "devDependencies": {
     "assert": "^2.0.0",
+    "ipfs-http-client": "^44.0.3",
+    "ipfsd-ctl": "^4.1.1",
     "mocha": "^7.1.2",
+    "node-fetch": "^2.6.0",
     "nyc": "^15.0.1",
     "standard": "^14.3.3"
   }
