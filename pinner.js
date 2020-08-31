@@ -20,6 +20,7 @@ const {
 } = options
 
 const http = options.httpPort || config.get('http.enabled')
+console.log(config)
 
 if (!address && !http && !follow) {
   console.log('Orbit pinner requires an orbitdb address or http to be enabled')
@@ -27,6 +28,7 @@ if (!address && !http && !follow) {
 } else if (address) {
   const pinner = new OrbitPinner(address) /* eslint-disable-line */
 } else if (http) {
+  console.log("starting http server")
   new HttpServer(port) /* eslint-disable-line */
 } else if (follow) {
   const pinningList = require('./pinningList')
