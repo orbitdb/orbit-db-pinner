@@ -47,7 +47,8 @@ describe('Basic Functionality', function () {
     process.stdout.on('data', async data => {
       const dataString = data.toString()
       if (dataString.includes('127.0.0.1/tcp/4002')) {
-        address = dataString.split(' ')[3].trim()
+        // TODO: Better output & way of getting the pinner address
+        address = dataString.split(' ')[3].trim().split('\n')[0]
         await ipfs.swarm.connect(address)
         await ipfs2.swarm.connect(address)
         assert.strictEqual((await ipfs.swarm.peers()).length, 1)
