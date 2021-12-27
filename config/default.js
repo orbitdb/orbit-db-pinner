@@ -1,5 +1,8 @@
 const IpfsApi = require('ipfs-http-client');
-const ipfs = IpfsApi.create({host: IPFS_NODE, port: '5001', protocol: 'http'});
+const ipfsHttp = IpfsApi.create({host: IPFS_NODE, port: '5001', protocol: 'http'});
+
+const IPFS = require('ipfs')
+const ipfs = IPFS.create({}) // Inject my config
 
 module.exports = () => {
   return {
@@ -7,15 +10,8 @@ module.exports = () => {
       'port': 3000,
       'enabled': true
     },
-    'ipfsHttpModule': ipfs,
-    'ipfsConfig': {
-      'repo': './orbitdb/pinner',
-      'start': true,
-      'EXPERIMENTAL': {
-        'pubsub': true
-      },
-      'config': {}
-    }
+    'ipfsHttpModule': ipfsHttp,
+    'ipfsModule': ipfs
   }
 }
 
