@@ -17,7 +17,7 @@ module.exports = () => {
       'port': 3000,
       'enabled': true
     },
-    'ipfsHttpModule': ipfsHttp,
+    // 'ipfsHttpModule': ipfsHttp,
     'ipfsModule': ipfs
   }
 }
