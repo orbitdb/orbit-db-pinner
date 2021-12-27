@@ -3,22 +3,21 @@
 
 const IPFS = require('ipfs')
 const ipfs = IPFS.create({
-  'repo': './orbitdb/pinner',
-  'start': true,
-  'EXPERIMENTAL': {
-    'pubsub': true
+  repo: './orbitdb/pinner',
+  start: true,
+  EXPERIMENTAL: {
+    pubsub: true
   },
-  'config': {}
+  config: {}
 }) // Inject my config
 
 module.exports = () => {
   return {
-    'http': {
-      'port': 3000,
-      'enabled': true
+    http: {
+      port: 3000,
+      enabled: true
     },
     // 'ipfsHttpModule': ipfsHttp,
-    'ipfsModule': ipfs
+    ipfsModule: ipfs
   }
 }
-
