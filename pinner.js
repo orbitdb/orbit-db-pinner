@@ -26,10 +26,11 @@ if (!address && !http && !follow) {
   console.log('Orbit pinner requires an orbitdb address or http to be enabled')
   process.exit()
 } else if (address) {
-  const pinner = new OrbitPinner(address) /* eslint-disable-line */
+  // TODO maybe here need to create
+  new OrbitPinner(address) /* eslint-disable-line */
 } else if (http) {
   new HttpServer(port) /* eslint-disable-line */
 } else if (follow) {
-  const pinningList = require('./pinningList')
+  const pinningList = require('./lib/pinningList')
   pinningList.follow(follow)
 }
