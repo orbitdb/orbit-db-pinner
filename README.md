@@ -23,10 +23,11 @@ node pinner -follow  PINNER_DB_ADDRESS \\ replicate a database of orbitdb instan
 
 ## Config
 
-The `config` npm package is used for configuration handling.
 
-Configuration of ipfs and the http server are handled via json files in the config directory, allowing development and production configurations to be set via env
+Configuration of ipfs and the http server are handled in the config directory.
+You can set the configuration of your node in the "config" folder. You can define if you want to use the node based on the ipfs api or an ipfs wrapper.
 
+Default conf:
 ```json
 {
   "http": {
