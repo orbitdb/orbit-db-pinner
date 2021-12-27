@@ -1,15 +1,15 @@
-// const IpfsApi = require('ipfs-http-client')
-// const ipfsHttp = IpfsApi.create()
+const IpfsApi = require('ipfs-http-client')
+const ipfs = IpfsApi.create()
 
-const IPFS = require('ipfs')
-const ipfs = IPFS.create({
-  repo: './orbitdb/pinner',
-  start: true,
-  EXPERIMENTAL: {
-    pubsub: true
-  },
-  config: {}
-}) // Inject my config
+// const IPFS = require('ipfs')
+// const ipfs = IPFS.create({
+//   repo: './orbitdb/pinner',
+//   start: true,
+//   EXPERIMENTAL: {
+//     pubsub: true
+//   },
+//   config: {}
+// }) // Inject my config
 
 module.exports = () => {
   return {
