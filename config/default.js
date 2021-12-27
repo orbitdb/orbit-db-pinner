@@ -1,5 +1,5 @@
 const IpfsApi = require('ipfs-http-client')
-const ipfsHttp = IpfsApi.create({ host: IPFS_NODE, port: '5001', protocol: 'http' })
+const ipfsHttp = IpfsApi.create()
 
 const IPFS = require('ipfs')
 const ipfs = IPFS.create({
