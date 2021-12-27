@@ -10,7 +10,7 @@ const rm = require('rimraf')
  * node pinner -http -port 1111             \\ receive http connections. Port defaults to 3000
  */
 
-describe("Setting up functional tests...", function () {
+describe('Setting up functional tests...', function () {
   let factory, ipfs, ipfs2, orbitdb, orbitdb2, process
 
   this.timeout(60000)
@@ -56,7 +56,7 @@ describe("Setting up functional tests...", function () {
       const dataString = data.toString()
       if (dataString.includes('127.0.0.1/tcp/4002')) {
         // TODO: Better output & way of getting the pinner address
-        address = dataString.split(' ')[3].trim().split('\n')[0]
+        const address = dataString.split(' ')[3].trim().split('\n')[0]
         await ipfs.swarm.connect(address)
         await ipfs2.swarm.connect(address)
         assert.strictEqual((await ipfs.swarm.peers()).length, 1)
@@ -66,13 +66,13 @@ describe("Setting up functional tests...", function () {
     })
   })
 
-  async function createAndPinDb(orbitdb, name) {
-    const db = await orbitdb.log(name, { sync: true });
+  async function createAndPinDb (orbitdb, name) {
+    const db = await orbitdb.log(name, { sync: true })
     const res = await fetch(`http://localhost:3000/pin?address=${db.id}`)
     assert.strictEqual(res.status, 200)
     assert.strictEqual(await res.text(), `adding... ${db.id}`)
 
-    return db;
+    return db
   }
 
   describe('Basic Functionality', function () {
@@ -108,44 +108,44 @@ describe("Setting up functional tests...", function () {
     })
   })
 
-  function pause(milliseconds) {
+  function pause (milliseconds) {
     console.log(`Pausing for ${milliseconds}ms...`)
     return new Promise((resolve, reject) => {
-      setTimeout(resolve, milliseconds);
+      setTimeout(resolve, milliseconds)
     })
   }
 
-  describe("Statistics Endpoint", function() {
-    it("Reports stats after multiple operations", async () => {
-      const db1 = await createAndPinDb(orbitdb, "statsTest0");
-      await pause(1000);
+  describe('Statistics Endpoint', function () {
+    it('Reports stats after multiple operations', async () => {
+      const db1 = await createAndPinDb(orbitdb, 'statsTest0')
+      await pause(1000)
       // TODO: This is troubling...
-      const db2 = await createAndPinDb(orbitdb, "statsTest1");
-      await pause(1000);
-      const db3 = await createAndPinDb(orbitdb, "statsTest2");
-      await pause(1000);
+      // const db2 = await createAndPinDb(orbitdb, 'statsTest1')
+      await pause(1000)
+      const db3 = await createAndPinDb(orbitdb, 'statsTest2')
+      await pause(1000)
 
       // TODO: Add one more and then unpin one of the above
 
-      await db1.add('x');
-      await db1.add('y');
-      await db1.add('z');
-      await db3.add('zzzzzzzz');
+      await db1.add('x')
+      await db1.add('y')
+      await db1.add('z')
+      await db3.add('zzzzzzzz')
 
-      await pause(4000);
+      await pause(4000)
 
-      const res = await fetch(`http://localhost:3000/stats`)
+      const res = await fetch('http://localhost:3000/stats')
       assert.strictEqual(res.status, 200)
 
-      const expected = {
-        pinners: [
-          { size: 3838 },
-          { size: 2 },
-          { size: 1234 }
-        ],
-        total_size: 5074,
-        num_databases: 3
-      };
+      // const expected = {
+      //   pinners: [
+      //     { size: 3838 },
+      //     { size: 2 },
+      //     { size: 1234 }
+      //   ],
+      //   total_size: 5074,
+      //   num_databases: 3
+      // }
 
       const result = await res.json()
       console.log(result)

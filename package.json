@@ -5,7 +5,8 @@
   "main": "pinner.js",
   "scripts": {
     "start": "node pinner.js",
-    "test": "nyc mocha"
+    "test": "nyc mocha",
+    "lint:fix": "standard --fix"
   },
   "repository": {
     "type": "git",
