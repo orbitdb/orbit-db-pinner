@@ -1,5 +1,6 @@
+const path = require('path')
 const commandLineArgs = require('command-line-args')
-const config = require('config')
+const config = require(path.join(process.cwd(), 'config/index.js'))()
 
 const OrbitPinner = require('./lib/OrbitPinner')
 const HttpServer = require('./lib/httpServer')
@@ -15,11 +16,11 @@ const options = commandLineArgs(optionDefinitions)
 
 const {
   address,
-  port,
-  follow
+  follow,
+  port = config.http.port
 } = options
 
-const http = options.httpPort || config.get('http.enabled')
+const http = options.httpPort || config.http.enabled
 
 if (!address && !http && !follow) {
   console.log('Orbit pinner requires an orbitdb address or http to be enabled')
