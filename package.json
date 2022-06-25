@@ -39,7 +39,7 @@
     "ipfs-http-client": "^46.0.0",
     "ipfsd-ctl": "^7.0.0",
     "mocha": "^8.1.1",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.6.7",
     "nyc": "^15.0.1",
     "rimraf": "^3.0.2",
     "standard": "^14.3.3"
