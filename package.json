@@ -2,15 +2,14 @@
   "name": "orbitdb-pinner",
   "version": "0.2.0",
   "description": "An orbitdb pinning service",
-  "main": "pinner.js",
   "scripts": {
-    "start": "node pinner.js",
-    "test": "nyc mocha",
-    "lint:fix": "standard --fix"
+    "start": "node src/index.js",
+    "lint": "eslint 'src/**/*.js' --no-error-on-unmatched-pattern",
+    "lint:fix": "eslint 'src/**/*.js' --no-error-on-unmatched-pattern --fix"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Jon-Biz/orbitdb-pinner.git"
+    "url": "git+https://github.com/Three0Dev/orbitdb-pinner.git"
   },
   "keywords": [
     "ipfs",
@@ -18,30 +17,32 @@
     "distributed",
     "computing"
   ],
-  "author": "Jonathan El-Bizri",
+  "author": "Three0",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Jon-Biz/orbitdb-pinner/issues"
+    "url": "https://github.com/Three0Dev/orbitdb-pinner/issues"
   },
-  "standard": {
-    "env": "mocha"
-  },
-  "homepage": "https://github.com/Jon-Biz/orbitdb-pinner#readme",
+  "homepage": "https://github.com/Three0Dev/orbitdb-pinner#readme",
   "dependencies": {
-    "command-line-args": "^5.1.1",
-    "config": "^3.3.1",
-    "express": "^4.17.1",
-    "ipfs": "^0.49.0",
-    "orbit-db": "^0.25.0"
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "ipfs-core": "^0.14.3",
+    "libp2p-kad-dht": "^0.28.6",
+    "libp2p-mdns": "^0.18.0",
+    "libp2p-tcp": "^0.17.2",
+    "libp2p-webrtc-direct": "^0.7.1",
+    "libp2p-webrtc-star": "^0.25.0",
+    "libp2p-websockets": "^0.16.2",
+    "orbit-db": "^0.28.6",
+    "orbit-db-io": "^1.0.1",
+    "wrtc": "^0.4.7"
   },
   "devDependencies": {
-    "assert": "^2.0.0",
-    "ipfs-http-client": "^46.0.0",
-    "ipfsd-ctl": "^7.0.0",
-    "mocha": "^8.1.1",
-    "node-fetch": "^2.6.1",
-    "nyc": "^15.0.1",
-    "rimraf": "^3.0.2",
-    "standard": "^14.3.3"
+    "eslint": "^8.21.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.7.1"
   }
 }

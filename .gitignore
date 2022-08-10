@@ -1,3 +1,5 @@
 node_modules/
 orbitdb/
 .nyc_output
+orbitdb-ipfs/
+.DS_Store
