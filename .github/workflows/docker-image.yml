@@ -38,7 +38,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: ${{ DOCKER_IMAGE }}:latest
+        tags: ${{ env.DOCKER_IMAGE }}:latest
     -
       name: Deploy to Digital Ocean
       uses: appleboy/ssh-action@master
