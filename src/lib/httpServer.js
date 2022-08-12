@@ -3,19 +3,21 @@ const express = require('express')
 
 const app = express()
 app.use(cors())
+app.set('view engine', 'ejs')
+app.use(express.static('public'))
 
 const pinningList = require('./pinningList')
 
-app.get('/stats', async (req, res) => {
-	try{
+app.get('/', async (req, res) => {
+	try {
 		const numDatabases = (await pinningList.getContents()).length
 		const pinners = pinningList.getPinners()
-	
+
 		const pinnerStats = Object.values(pinners).map((pinner) => ({
 			size: pinner.estimatedSize,
 		}))
-	
-		res.json({
+
+		res.render('index', {
 			pinners: pinnerStats,
 			num_databases: numDatabases,
 			total_size: pinnerStats.reduce((a, b) => a + b.size, 0),
@@ -30,14 +32,13 @@ app.post('/pin', (req, res) => {
 	const { address } = req.query
 
 	if (req.query.address) {
-		try{
+		try {
 			pinningList.add(address)
 			res.send(`adding... ${address}`)
-		}catch(e){
+		} catch (e) {
 			console.log(e)
 			res.status(500).send(e)
 		}
-
 	} else {
 		res.send("missing 'address' query parameter")
 	}
@@ -47,10 +48,10 @@ app.post('/unpin', (req, res) => {
 	const { address } = req.query
 
 	if (req.query.address) {
-		try{
+		try {
 			pinningList.remove(address)
 			res.send(`removing... ${address}`)
-		}catch(e){
+		} catch (e) {
 			console.log(e)
 			res.status(500).send(e)
 		}

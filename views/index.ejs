@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" integrity="sha512-8bHTC73gkZ7rZ7vpqUQThUDhqcNFyYi2xgDgPDHc+GXVGHXq+xPjynxIopALmOPqzo9JZj0k6OqqewdGO3EsrQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />    <script
+        src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js" integrity="sha512-dqw6X88iGgZlTsONxZK9ePmJEFrmHwpuMrsUChjAw1mRUhUITE5QU9pkcSox+ynfLhL15Sv2al5A0LVyDCmtUw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    </head>
+    <body style="background: #6247aa;padding: 5%;">
+        <div class="ui raised very padded text container segment">
+            <a href="https://three0dev.com">
+                <img class="ui small image" style="margin: 0 auto" src="/logo.svg" />
+            </a>
+            <h1 style="text-align: center" id="website-name"></h1>
+            <div lass="ui raised very padded text container segment">
+                <div class="ui statistics">
+                    <div class="statistic">
+                    <div class="value">
+                        <%= total_size %>
+                    </div>
+                    <div class="label">
+                        Total Size (est)
+                    </div>
+                    </div>
+                    <div class="statistic">
+                    <div class="value">
+                        <%= num_databases %>
+                    </div>
+                    <div class="label">
+                        Number of Databases
+                    </div>
+                    </div>
+                </div>
+                <!-- <table class="ui celled table">
+                    <thead>
+                        <tr><th>Pinner</th></tr>
+                    </thead>
+                    <tbody>
+                        <% pinners.forEach(function(pins) { %>
+                            <tr>
+                                <td data-label="Pinner"><%= pins %></td>
+                            </tr>
+                        <% }); %>
+                        <tr>
+                    </tbody>
+                </table> -->
+            </div>
+        </div>
+    </body>
+    <script>
+        $('#website-name').text(document.domain + " Pinning Server");
+    </script>
+</html>

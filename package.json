@@ -25,6 +25,7 @@
   "homepage": "https://github.com/Three0Dev/orbitdb-pinner#readme",
   "dependencies": {
     "cors": "^2.8.5",
+    "ejs": "^3.1.8",
     "express": "^4.18.1",
     "ipfs-core": "^0.14.3",
     "libp2p-kad-dht": "^0.28.6",
