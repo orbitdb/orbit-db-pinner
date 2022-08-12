@@ -15,6 +15,7 @@ app.get('/', async (req, res) => {
 
 		const pinnerStats = Object.values(pinners).map((pinner) => ({
 			size: pinner.estimatedSize,
+			address: pinner.address,
 		}))
 
 		res.render('index', {

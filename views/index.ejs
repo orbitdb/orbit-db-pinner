@@ -32,19 +32,23 @@
                     </div>
                     </div>
                 </div>
-                <!-- <table class="ui celled table">
+                <table class="ui celled table">
                     <thead>
-                        <tr><th>Pinner</th></tr>
+                        <tr>
+                            <th>Address</th>
+                            <th>Size</th>
+                        </tr>
                     </thead>
                     <tbody>
                         <% pinners.forEach(function(pins) { %>
                             <tr>
-                                <td data-label="Pinner"><%= pins %></td>
+                                <td data-label="Address"><%= pins.address %></td>
+                                <td data-label="Size"><%= pins.size %></td>
                             </tr>
                         <% }); %>
                         <tr>
                     </tbody>
-                </table> -->
+                </table>
             </div>
         </div>
     </body>
