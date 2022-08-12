@@ -1,7 +1,9 @@
 FROM node:16 as BUILD_IMAGE
 
 WORKDIR /usr/app
+
 COPY ./package*.json .
+# Only included due to dependency issue
 RUN npm install -g node-pre-gyp
 RUN npm ci --omit=dev
 
@@ -10,6 +12,8 @@ FROM node:16-slim
 WORKDIR /usr/app
 
 COPY ./src ./src
+COPY ./public ./public
+COPY ./views ./views
 COPY ./package.json .
 COPY --from=BUILD_IMAGE /usr/app/node_modules ./node_modules
 
