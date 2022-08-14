@@ -13,8 +13,8 @@ npm i
 
 ## Usage
 
-### **GET** `\stats`
-Gets the stats of the databases that are currently pinned
+### **GET** `\`
+UI Dashboard for the Three0Pinner service.
 
 ### **POST** `\pin?address=ADDRESS`
 
@@ -23,3 +23,9 @@ Pins the orbitdb at `ADDRESS`. Resumes on restart. Any `follow`ing servers will 
 ### **POST** `\unpin?address=ADDRESS`
 
 Forgets the orbitdb at `ADDRESS`. Any `follow`ing servers will also unpin this database.
+
+## Referral
+We use Digital Ocean to host our pinning service. We recommend using the same and getting $100 in free credit to do so via this referral link.
+
+[![DigitalOcean Referral Badge](https://web-platforms.sfo2.digitaloceanspaces.com/WWW/Badge%203.svg)](https://www.digitalocean.com/?refcode=3a852b46ecfd&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge)
+

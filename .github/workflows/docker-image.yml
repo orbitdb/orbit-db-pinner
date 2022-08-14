@@ -39,6 +39,10 @@ jobs:
       with:
         push: true
         tags: ${{ env.DOCKER_IMAGE }}:latest
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy Docker Image to Digital Ocean
+    steps:
     -
       name: Deploy to Digital Ocean
       uses: appleboy/ssh-action@master
