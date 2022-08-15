@@ -36,6 +36,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     name: Deploy Docker Image to Digital Ocean
+    needs: build_and_push
     steps:
     -
       name: Deploy to Digital Ocean
