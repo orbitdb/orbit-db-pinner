@@ -75,7 +75,11 @@ const remove = async (address) => {
 	const dbAddresses = await getContents()
 
 	// stop pinning
-	pinners[address].drop()
+	try {
+		await pinners[address].drop()
+	} catch (e) {
+		console.error(e)
+	}
 	delete pinners[address]
 
 	// Unfortunately, since we can't remove a item from the database without it's hash
@@ -84,7 +88,7 @@ const remove = async (address) => {
 
 	dbAddresses
 		.filter((addr) => addr !== address)
-		.forEach((address) => db.add(address))
+		.forEach((existingAddress) => db.add(existingAddress))
 
 	console.log(`${address} removed.`)
 }
