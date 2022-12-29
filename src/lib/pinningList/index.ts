@@ -1,10 +1,11 @@
-const OrbitDB = require('orbit-db')
-const OrbitPinner = require('../OrbitPinner')
-const orbitInstance = require('./orbitInstance')
+import OrbitDB from 'orbit-db'
+import EventStore from 'orbit-db-eventstore'
+import OrbitPinner from '../orbitPinner'
+import {createDbInstance} from './orbitInstance'
 
-const pinners = {}
+const pinners: {[key: string]: OrbitPinner} = {}
 
-const createPinnerInstance = async (address) => {
+async function createPinnerInstance(address: string) {
 	if (!OrbitDB.isValidAddress(address)) {
 		console.log(`Failed to pin ${address}. This is not a valid address`)
 		return
@@ -13,23 +14,25 @@ const createPinnerInstance = async (address) => {
 	console.log(`Pinning orbitdb @ ${address}`)
 	const pinner = await OrbitPinner.create(address)
 	pinners[address] = pinner
-
-	return pinners[address]
 }
 
 const getContents = async () => {
-	const db = await orbitInstance()
+	const db = (await createDbInstance()) as EventStore<any>
 
-	return db
+	const contents = db
 		.iterator({ limit: -1 })
 		.collect()
 		.map((e) => e.payload.value)
+
+	await db.close()
+
+	return contents
 }
 
 const getPinners = () => pinners
 
-const add = async (address) => {
-	const db = await orbitInstance()
+const add = async (address: string) => {
+	const db = await createDbInstance()
 
 	if (!OrbitDB.isValidAddress(address)) {
 		console.log(`Failed to add ${address}. This is not a valid address`)
@@ -39,13 +42,15 @@ const add = async (address) => {
 	const addresses = await getContents()
 
 	if (!addresses.includes(address)) {
-		await db.add(address)
+		const db = (await createDbInstance()) as EventStore<any>
 		createPinnerInstance(address)
 
 		console.log(`${address} added.`)
 	} else {
 		console.warn(`Attempted to add ${address}, but already present in db.`)
 	}
+
+	await db.close()
 }
 
 const startPinning = async () => {
@@ -55,10 +60,10 @@ const startPinning = async () => {
 		console.log('Pinning list is empty')
 	}
 
-	addresses.map(createPinnerInstance)
+	addresses.forEach(createPinnerInstance)
 }
 
-const remove = async (address) => {
+const remove = async (address: string) => {
 	if (!OrbitDB.isValidAddress(address)) {
 		console.log(`Failed to unpin ${address}. This is not a valid address`)
 		return
@@ -71,20 +76,17 @@ const remove = async (address) => {
 		return
 	}
 
-	const db = await orbitInstance()
+	const db = (await createDbInstance()) as EventStore<any>
 	const dbAddresses = await getContents()
 
 	// stop pinning
 	try {
-		await pinners[address].drop()
+		await pinners[address].db.drop()
+		await db.drop()
 	} catch (e) {
 		console.error(e)
 	}
 	delete pinners[address]
-
-	// Unfortunately, since we can't remove a item from the database without it's hash
-	// So we have to rebuild the data every time we remove an item.
-	await db.drop()
 
 	dbAddresses
 		.filter((addr) => addr !== address)
@@ -96,7 +98,7 @@ const remove = async (address) => {
 console.log('Pinning previously added orbitdbs: ')
 startPinning()
 
-module.exports = {
+export {
 	add,
 	getContents,
 	getPinners,

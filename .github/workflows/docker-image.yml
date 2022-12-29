@@ -49,6 +49,7 @@ jobs:
         password: ${{ secrets.SERVER_PASSWORD }}
         envs: DOCKER_IMAGE, CONTAINER_NAME
         script: |
+          cd pinningserver
           docker-compose pull sreegrandhe/orbitdbpinner
           docker-compose up --force-recreate --build -d
           docker image prune -f

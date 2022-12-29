@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+      "strict": true,
+      "moduleResolution": "node",
+      "skipLibCheck": true,
+      "esModuleInterop": true,
+      "outDir": "dist/",
+    },
+    "include": ["src/**/*", "./typings"],
+    "exclude": ["node_modules", "bin", "**/__mocks__*", "**/*.spec.**", "test", "assets"]
+  }
+  

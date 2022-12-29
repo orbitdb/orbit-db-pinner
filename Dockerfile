@@ -7,11 +7,12 @@ COPY ./package*.json .
 RUN npm install -g node-pre-gyp
 RUN npm ci --omit=dev
 
+
 FROM node:16-slim
 
 WORKDIR /usr/app
 
-COPY ./src ./src
+COPY ./dist ./dist
 COPY ./public ./public
 COPY ./views ./views
 COPY ./package.json .
