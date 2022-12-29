@@ -1,8 +1,9 @@
 import Store from 'orbit-db-store'
-import {getOrbitInstance} from './pinningList/orbitInstance'
+import { getOrbitInstance } from './pinningList/orbitInstance'
 
 class Pinner {
 	db: any
+
 	address: any
 
 	constructor(db: Store) {

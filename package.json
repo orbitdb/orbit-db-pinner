@@ -6,8 +6,8 @@
     "build": "tsc",
     "prestart": "npm run build",
     "start": "node --trace-warnings dist/index.js",
-    "lint": "eslint 'src/**/*.js' --no-error-on-unmatched-pattern",
-    "lint:fix": "eslint 'src/**/*.js' --no-error-on-unmatched-pattern --fix"
+    "lint": "eslint 'src/**/*.ts' --no-error-on-unmatched-pattern",
+    "lint:fix": "eslint 'src/**/*.ts' --no-error-on-unmatched-pattern --fix"
   },
   "repository": {
     "type": "git",
@@ -37,15 +37,19 @@
     "libp2p-tcp": "^0.17.2",
     "libp2p-webrtc-star": "^0.25.0",
     "orbit-db": "^0.28.7",
+    "orbit-db-eventstore": "^1.12.0",
+    "orbit-db-store": "^4.3.4",
     "werift": "^0.17.6"
   },
   "devDependencies": {
-    "eslint": "^8.21.0",
+    "@typescript-eslint/eslint-plugin": "^5.47.0",
+    "@typescript-eslint/parser": "^5.47.0",
+    "eslint": "^8.27.0",
     "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "prettier": "^2.7.1",
     "typescript": "^4.9.4"
   }
 }

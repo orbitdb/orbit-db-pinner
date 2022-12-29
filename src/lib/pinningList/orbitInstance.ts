@@ -2,7 +2,7 @@ import OrbitDB from 'orbit-db'
 import Store from 'orbit-db-store'
 import ipfsInstancePromise from '../ipfsInstance'
 
-let orbitInstance:OrbitDB
+let orbitInstance: OrbitDB
 
 const getOrbitInstance = async () => {
 	const ipfsInstance = await ipfsInstancePromise
@@ -52,7 +52,4 @@ process.on('SIGTERM', async () => {
 	await terminate()
 })
 
-export {
-	getOrbitInstance,
-	createDbInstance,
-}
+export { getOrbitInstance, createDbInstance }

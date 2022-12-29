@@ -1,9 +1,9 @@
 import OrbitDB from 'orbit-db'
 import EventStore from 'orbit-db-eventstore'
 import OrbitPinner from '../orbitPinner'
-import {createDbInstance} from './orbitInstance'
+import { createDbInstance } from './orbitInstance'
 
-const pinners: {[key: string]: OrbitPinner} = {}
+const pinners: { [key: string]: OrbitPinner } = {}
 
 async function createPinnerInstance(address: string) {
 	if (!OrbitDB.isValidAddress(address)) {
@@ -32,8 +32,6 @@ const getContents = async () => {
 const getPinners = () => pinners
 
 const add = async (address: string) => {
-	const db = await createDbInstance()
-
 	if (!OrbitDB.isValidAddress(address)) {
 		console.log(`Failed to add ${address}. This is not a valid address`)
 		return
@@ -46,11 +44,11 @@ const add = async (address: string) => {
 		createPinnerInstance(address)
 
 		console.log(`${address} added.`)
+
+		await db.close()
 	} else {
 		console.warn(`Attempted to add ${address}, but already present in db.`)
 	}
-
-	await db.close()
 }
 
 const startPinning = async () => {
@@ -98,9 +96,4 @@ const remove = async (address: string) => {
 console.log('Pinning previously added orbitdbs: ')
 startPinning()
 
-export {
-	add,
-	getContents,
-	getPinners,
-	remove,
-}
+export { add, getContents, getPinners, remove }
