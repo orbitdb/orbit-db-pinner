@@ -1,20 +1,19 @@
-const cors = require('cors')
-const express = require('express')
+import cors from 'cors'
+import express from 'express'
+import * as pinningList from './pinningList'
 
 const app = express()
 app.use(cors())
 app.set('view engine', 'ejs')
 app.use(express.static('public'))
 
-const pinningList = require('./pinningList')
-
-app.get('/', async (req, res) => {
+app.get('/', async (_req, res) => {
 	try {
 		const numDatabases = (await pinningList.getContents()).length
 		const pinners = pinningList.getPinners()
 
 		const pinnerStats = Object.values(pinners).map((pinner) => ({
-			size: pinner.estimatedSize,
+			size: pinner.getEstimatedSize(),
 			address: pinner.address,
 		}))
 
@@ -23,7 +22,7 @@ app.get('/', async (req, res) => {
 			num_databases: numDatabases,
 			total_size: pinnerStats.reduce((a, b) => a + b.size, 0),
 		})
-	} catch (e) {
+	} catch (e: any) {
 		console.error(e)
 		res.status(500).json({ error: e.message })
 	}
@@ -32,9 +31,9 @@ app.get('/', async (req, res) => {
 app.post('/pin', (req, res) => {
 	const { address } = req.query
 
-	if (req.query.address) {
+	if (address) {
 		try {
-			pinningList.add(address)
+			pinningList.add(address as string)
 			res.send(`adding... ${address}`)
 		} catch (e) {
 			console.log(e)
@@ -48,9 +47,9 @@ app.post('/pin', (req, res) => {
 app.post('/unpin', (req, res) => {
 	const { address } = req.query
 
-	if (req.query.address) {
+	if (address) {
 		try {
-			pinningList.remove(address)
+			pinningList.remove(address as string)
 			res.send(`removing... ${address}`)
 		} catch (e) {
 			console.log(e)
@@ -61,4 +60,4 @@ app.post('/unpin', (req, res) => {
 	}
 })
 
-module.exports = app
+export default app

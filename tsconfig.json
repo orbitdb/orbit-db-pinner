@@ -1,0 +1,13 @@
+{
+    "compilerOptions": { 
+      "strict": true,
+      "moduleResolution": "Node",
+      "skipLibCheck": true,
+      "esModuleInterop": true,
+      "outDir": "dist/",
+      "sourceMap": true,
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "**/*.test.ts", "**/*.spec.ts"]
+  }
+  

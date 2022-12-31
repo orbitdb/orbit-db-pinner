@@ -1,4 +1,4 @@
-const app = require('./lib/httpServer')
+import app from './lib/httpServer'
 
 const PORT = process.env.PORT || 8000
 
