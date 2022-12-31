@@ -31,7 +31,7 @@ app.get('/', async (_req, res) => {
 app.post('/pin', (req, res) => {
 	const { address } = req.query
 
-	if (req.query.address) {
+	if (address) {
 		try {
 			pinningList.add(address as string)
 			res.send(`adding... ${address}`)

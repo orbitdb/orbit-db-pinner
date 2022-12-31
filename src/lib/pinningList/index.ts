@@ -16,8 +16,8 @@ async function createPinnerInstance(address: string) {
 	pinners[address] = pinner
 }
 
-const getContents = async () => {
-	const db = (await createDbInstance()) as EventStore<any>
+const getContents = async (addr = 'dbList') => {
+	const db = (await createDbInstance(addr)) as EventStore<any>
 
 	const contents = db
 		.iterator({ limit: -1 })
@@ -41,7 +41,8 @@ const add = async (address: string) => {
 
 	if (!addresses.includes(address)) {
 		const db = (await createDbInstance()) as EventStore<any>
-		createPinnerInstance(address)
+		await db.add(address)
+		await createPinnerInstance(address)
 
 		console.log(`${address} added.`)
 
@@ -80,7 +81,6 @@ const remove = async (address: string) => {
 	// stop pinning
 	try {
 		await pinners[address].db.drop()
-		await db.drop()
 	} catch (e) {
 		console.error(e)
 	}
@@ -88,7 +88,9 @@ const remove = async (address: string) => {
 
 	dbAddresses
 		.filter((addr) => addr !== address)
-		.forEach((existingAddress) => db.add(existingAddress))
+		.forEach(db.add)
+
+	await db.drop()
 
 	console.log(`${address} removed.`)
 }

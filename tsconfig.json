@@ -1,12 +1,13 @@
 {
-    "compilerOptions": {
+    "compilerOptions": { 
       "strict": true,
-      "moduleResolution": "node",
+      "moduleResolution": "Node",
       "skipLibCheck": true,
       "esModuleInterop": true,
       "outDir": "dist/",
+      "sourceMap": true,
     },
-    "include": ["src/**/*", "./typings"],
-    "exclude": ["node_modules", "bin", "**/__mocks__*", "**/*.spec.**", "test", "assets"]
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "**/*.test.ts", "**/*.spec.ts"]
   }
   

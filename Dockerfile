@@ -5,19 +5,22 @@ WORKDIR /usr/app
 COPY ./package*.json .
 # Only included due to dependency issue
 RUN npm install -g node-pre-gyp
-RUN npm ci --omit=dev
+RUN npm ci
 
+COPY ./src ./src
+COPY ./tsconfig.json .
+
+RUN npm run build
 
 FROM node:16-slim
 
 WORKDIR /usr/app
 
-COPY ./dist ./dist
 COPY ./public ./public
 COPY ./views ./views
-COPY ./package.json .
 COPY --from=BUILD_IMAGE /usr/app/node_modules ./node_modules
+COPY --from=BUILD_IMAGE /usr/app/dist ./dist
 
 EXPOSE 8000
 
-ENTRYPOINT npm start
+ENTRYPOINT node dist/index.js

@@ -1,11 +1,12 @@
 import OrbitDB from 'orbit-db'
 import Store from 'orbit-db-store'
 import ipfsInstancePromise from '../ipfsInstance'
+import checkChanges from './checkChanges'
 
 let orbitInstance: OrbitDB
 
 const getOrbitInstance = async () => {
-	const ipfsInstance = await ipfsInstancePromise
+	const ipfsInstance = await ipfsInstancePromise()
 	if (orbitInstance) {
 		return orbitInstance
 	}
@@ -20,13 +21,25 @@ const createDbInstance = async (address = 'dbList') => {
 
 	if (address === 'dbList') {
 		const pinningList = {
-			create: address === 'dbList',
+			create: true,
 			type: 'feed',
+			overwrite: true,
+			localOnly: false,
 		}
 
 		db = await dbInstance.open(address, pinningList)
 	} else {
 		db = await dbInstance.open(address)
+
+		db.events.on('ready', (dbAddress, _feedReady) => {
+			console.log('database ready ', dbAddress)
+		})
+		db.events.on('replicate.progress', async (dbAddress, hash, obj) => {
+			console.log('replicate.progress', dbAddress, hash)
+			// const checkChanges = require('./checkChanges')
+			console.log('checking obj', obj)
+			checkChanges(dbAddress, obj.payload)
+		})
 	}
 
 	await db.load()

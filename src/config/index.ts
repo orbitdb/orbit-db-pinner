@@ -1,7 +1,7 @@
-import wrtc from 'werift'
+import wrtc from 'wrtc'
 import WebRTCStar from 'libp2p-webrtc-star'
-// const WebSockets = require('libp2p-websockets')
-// const WebRTCDirect = require('libp2p-webrtc-direct')
+import WebSockets from 'libp2p-websockets'
+// import WebRTCDirect from 'libp2p-webrtc-direct'
 import KadDHT from 'libp2p-kad-dht'
 import MulticastDNS from 'libp2p-mdns'
 import TCP from 'libp2p-tcp'
@@ -17,7 +17,7 @@ const ipfsConfig = {
 	},
 	libp2p: {
 		modules: {
-			transport: [TCP, WebRTCStar],
+			transport: [TCP, WebRTCStar, WebSockets],
 			peerDiscovery: [MulticastDNS],
 			dht: KadDHT,
 		},

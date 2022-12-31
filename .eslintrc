@@ -12,7 +12,8 @@
 	},
 	"plugins": ["@typescript-eslint", "prettier"],
 	"rules": {
+		"import/no-extraneous-dependencies": ["error", {"dependencies": false}],
 		"prettier/prettier": 2,
 		"no-console": 0
-	},
+	}
 }
