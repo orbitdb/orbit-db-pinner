@@ -20,7 +20,7 @@ UI Dashboard for the Three0Pinner service.
 
 Pins the orbitdb at `ADDRESS`. Resumes on restart. Any `follow`ing servers will also pin this database.
 
-### **POST** `\unpin?address=ADDRESS`
+### **DELETE** `\pin?address=ADDRESS`
 
 Forgets the orbitdb at `ADDRESS`. Any `follow`ing servers will also unpin this database.
 

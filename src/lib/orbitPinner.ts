@@ -2,13 +2,16 @@ import Store from 'orbit-db-store'
 import { getOrbitInstance } from './pinningList/orbitInstance'
 
 class Pinner {
-	db: any
+	db: Store
 
-	address: any
+	address: string
+
+	timeModified: number
 
 	constructor(db: Store) {
 		this.db = db
 		this.address = db.id
+		this.timeModified = Date.now()
 	}
 
 	static async create(address: string) {
@@ -16,10 +19,13 @@ class Pinner {
 		return Promise.resolve(new Pinner(db))
 	}
 
-	// drop() {
-	// 	// console.log(this.orbitdb)
-	// 	// this.orbitdb.disconnect()
-	// }
+	async drop() {
+		await this.db.drop()
+	}
+
+	getLastUpdated() {
+		return this.timeModified
+	}
 
 	getEstimatedSize() {
 		// eslint-disable-next-line no-underscore-dangle

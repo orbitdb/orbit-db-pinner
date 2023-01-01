@@ -4,3 +4,4 @@ orbitdb/
 orbitdb-ipfs/
 .DS_Store
 dist/
+.vscode

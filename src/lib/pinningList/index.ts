@@ -1,9 +1,14 @@
 import OrbitDB from 'orbit-db'
 import EventStore from 'orbit-db-eventstore'
+import { schedule } from 'node-cron'
 import OrbitPinner from '../orbitPinner'
 import { createDbInstance } from './orbitInstance'
 
-const pinners: { [key: string]: OrbitPinner } = {}
+interface PinnerMap {
+	[key: string]: OrbitPinner
+}
+
+const pinners: PinnerMap = {}
 
 async function createPinnerInstance(address: string) {
 	if (!OrbitDB.isValidAddress(address)) {
@@ -80,22 +85,53 @@ const remove = async (address: string) => {
 
 	// stop pinning
 	try {
-		await pinners[address].db.drop()
+		await pinners[address].drop()
+		await pinners[address].db.close()
 	} catch (e) {
 		console.error(e)
 	}
 	delete pinners[address]
 
-	dbAddresses
-		.filter((addr) => addr !== address)
-		.forEach(db.add)
+	dbAddresses.filter((addr) => addr !== address).forEach(db.add)
 
 	await db.drop()
 
 	console.log(`${address} removed.`)
 }
 
-console.log('Pinning previously added orbitdbs: ')
-startPinning()
+async function updatePing(address: string) {
+	if (!pinners[address]) {
+		await createPinnerInstance(address)
+	} else {
+		pinners[address].timeModified = Date.now()
+	}
+}
 
-export { add, getContents, getPinners, remove }
+schedule('* * * * *', () => {
+	const addresses = getPinners()
+
+	console.log('Cleaning pinning list...')
+
+	Object.keys(addresses).forEach((address) => {
+		const pinner = pinners[address]
+
+		console.log(`Checking ${address}...`)
+
+		const lastUpdated = pinner.getLastUpdated()
+
+		const now = Date.now()
+		const diff = now - lastUpdated
+
+		if (diff < 1 * 60 * 1000) return
+
+		pinner.db
+			.close()
+			.then(() => {
+				console.log(`Closed ${address}`)
+				delete pinners[address]
+			})
+			.catch(console.error)
+	})
+})
+
+export { add, getContents, getPinners, remove, startPinning, updatePing }
