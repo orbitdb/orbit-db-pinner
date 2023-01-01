@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc",
     "prestart": "npm run build",
-    "start": "node --trace-warnings .",
+    "start": "node .",
     "lint": "eslint 'src/**/*.ts' --no-error-on-unmatched-pattern",
     "lint:fix": "eslint 'src/**/*.ts' --no-error-on-unmatched-pattern --fix"
   },

@@ -5,3 +5,5 @@ orbitdb-ipfs/
 .DS_Store
 dist/
 .vscode
+data.txt
+testscript.sh

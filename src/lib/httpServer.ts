@@ -21,6 +21,7 @@ app.get('/', async (_req, res) => {
 		res.render('index', {
 			pinners: pinnerStats,
 			num_databases: numDatabases,
+			num_active_databases: Object.keys(pinners).length,
 			total_size: pinnerStats.reduce((a, b) => a + b.size, 0),
 		})
 	} catch (e: any) {
