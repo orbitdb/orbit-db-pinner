@@ -6,6 +6,7 @@ const app = express()
 app.use(cors())
 app.set('view engine', 'ejs')
 app.use(express.static('public'))
+app.use(express.json())
 
 app.get('/', async (_req, res) => {
 	try {
@@ -28,12 +29,12 @@ app.get('/', async (_req, res) => {
 	}
 })
 
-app.post('/pin', (req, res) => {
+app.post('/pin', async (req, res) => {
 	const { address } = req.query
 
 	if (address) {
 		try {
-			pinningList.add(address as string)
+			await pinningList.add(address as string)
 			res.send(`adding... ${address}`)
 		} catch (e) {
 			console.log(e)
@@ -44,12 +45,12 @@ app.post('/pin', (req, res) => {
 	}
 })
 
-app.post('/unpin', (req, res) => {
+app.delete('/pin', async (req, res) => {
 	const { address } = req.query
 
 	if (address) {
 		try {
-			pinningList.remove(address as string)
+			await pinningList.remove(address as string)
 			res.send(`removing... ${address}`)
 		} catch (e) {
 			console.log(e)
@@ -58,6 +59,13 @@ app.post('/unpin', (req, res) => {
 	} else {
 		res.send("missing 'address' query parameter")
 	}
+})
+
+app.post('/ping', async (req, res) => {
+	await Promise.all(
+		req.body.addresses.map((address: string) => pinningList.updatePing(address))
+	)
+	res.send('pinging...')
 })
 
 export default app
