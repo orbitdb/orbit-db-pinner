@@ -33,6 +33,8 @@ jobs:
       with:
         push: true
         tags: ${{ env.DOCKER_IMAGE }}:latest
+        file: ./Dockerfile.prod
+
   deploy:
     runs-on: ubuntu-latest
     name: Deploy Docker Image to Digital Ocean
@@ -41,8 +43,6 @@ jobs:
     -
       name: Deploy to Digital Ocean
       uses: appleboy/ssh-action@master
-      env:
-        CONTAINER_NAME: "pinning_server"
       with:
         host: pinning.three0dev.com
         username: ${{ secrets.SERVER_USERNAME }}
@@ -50,6 +50,7 @@ jobs:
         envs: DOCKER_IMAGE, CONTAINER_NAME
         script: |
           cd pinningserver
-          docker-compose pull sreegrandhe/orbitdbpinner
+          docker-compose pull pinning
           docker-compose up --force-recreate --build -d
           docker image prune -f
+          docker container prune -f
