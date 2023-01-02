@@ -42,7 +42,6 @@
     "orbit-db-eventstore": "^1.12.0",
     "orbit-db-io": "^1.0.2",
     "orbit-db-store": "^4.3.4",
-    "werift": "^0.17.6",
     "wrtc": "npm:@koush/wrtc@^0.5.3"
   },
   "devDependencies": {
