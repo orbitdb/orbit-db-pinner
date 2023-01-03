@@ -13,15 +13,15 @@ app.get('/', async (_req, res) => {
 		const numDatabases = (await pinningList.getContents()).length
 		const pinners = pinningList.getPinners()
 
-		const pinnerStats = Object.values(pinners).map((pinner) => ({
+		const pinnerStats = Array.from(pinners).map(([address, pinner]) => ({
 			size: pinner.getEstimatedSize(),
-			address: pinner.address,
+			address,
 		}))
 
 		res.render('index', {
 			pinners: pinnerStats,
 			num_databases: numDatabases,
-			num_active_databases: Object.keys(pinners).length,
+			num_active_databases: pinners.size,
 			total_size: pinnerStats.reduce((a, b) => a + b.size, 0),
 		})
 	} catch (e: any) {

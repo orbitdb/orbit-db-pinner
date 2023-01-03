@@ -4,11 +4,7 @@ import { schedule } from 'node-cron'
 import OrbitPinner from '../orbitPinner'
 import { createDbInstance } from './orbitInstance'
 
-interface PinnerMap {
-	[key: string]: OrbitPinner
-}
-
-const pinners: PinnerMap = {}
+const pinners = new Map<string, OrbitPinner>()
 
 async function createPinnerInstance(address: string) {
 	if (!OrbitDB.isValidAddress(address)) {
@@ -18,7 +14,7 @@ async function createPinnerInstance(address: string) {
 
 	console.log(`Pinning orbitdb @ ${address}`)
 	const pinner = await OrbitPinner.create(address)
-	pinners[address] = pinner
+	pinners.set(address, pinner)
 }
 
 const getContents = async (addr = 'dbList') => {
@@ -73,7 +69,9 @@ const remove = async (address: string) => {
 		return
 	}
 
-	if (!pinners[address]) {
+	const pinner = pinners.get(address)
+
+	if (!pinner) {
 		console.log(
 			`Failed to unpin ${address}. Address not found in pinning list.`
 		)
@@ -85,12 +83,12 @@ const remove = async (address: string) => {
 
 	// stop pinning
 	try {
-		await pinners[address].drop()
-		await pinners[address].db.close()
+		await pinner.drop()
+		await pinner.db.close()
 	} catch (e) {
 		console.error(e)
 	}
-	delete pinners[address]
+	pinners.delete(address)
 
 	dbAddresses.filter((addr) => addr !== address).forEach(db.add)
 
@@ -99,11 +97,13 @@ const remove = async (address: string) => {
 	console.log(`${address} removed.`)
 }
 
-async function updatePing(address: string) {
-	if (!pinners[address]) {
+const updatePing = async (address: string) => {
+	const pinner = pinners.get(address)
+
+	if (!pinner) {
 		await createPinnerInstance(address)
 	} else {
-		pinners[address].timeModified = Date.now()
+		pinner.timeModified = Date.now()
 	}
 }
 
@@ -114,23 +114,21 @@ schedule(`*/${EXPIRATION_TIME} * * * *`, () => {
 
 	console.log('Cleaning pinning list...')
 
-	Object.keys(addresses).forEach((address) => {
-		const pinner = pinners[address]
-
-		console.log(`Checking ${address}...`)
+	addresses.forEach((pinner) => {
+		console.log(`Checking ${pinner.address}...`)
 
 		const lastUpdated = pinner.getLastUpdated()
 
 		const now = Date.now()
 		const diff = now - lastUpdated
 
-		if (diff < 1 * 60 * 1000) return
+		if (diff < EXPIRATION_TIME * 60 * 1000) return
 
 		pinner.db
 			.close()
 			.then(() => {
-				console.log(`Closed ${address}`)
-				delete pinners[address]
+				console.log(`Closed ${pinner.address}`)
+				addresses.delete(pinner.address)
 			})
 			.catch(console.error)
 	})
