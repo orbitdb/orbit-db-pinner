@@ -1,6 +1,6 @@
 import wrtc from 'wrtc'
 import WebRTCStar from 'libp2p-webrtc-star'
-import WebSockets from 'libp2p-websockets'
+// import WebSockets from 'libp2p-websockets'
 // import WebRTCDirect from 'libp2p-webrtc-direct'
 import KadDHT from 'libp2p-kad-dht'
 import MulticastDNS from 'libp2p-mdns'
@@ -17,9 +17,9 @@ const ipfsConfig = {
 	},
 	libp2p: {
 		modules: {
-			transport: [TCP, WebRTCStar, WebSockets],
-			peerDiscovery: [MulticastDNS],
-			dht: KadDHT,
+			transport: [WebRTCStar, TCP],
+			// peerDiscovery: [MulticastDNS],
+			// dht: KadDHT,
 		},
 		config: {
 			peerDiscovery: {

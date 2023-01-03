@@ -20,7 +20,8 @@ COPY ./public ./public
 COPY ./views ./views
 COPY --from=BUILD_IMAGE /usr/app/node_modules ./node_modules
 COPY --from=BUILD_IMAGE /usr/app/dist ./dist
+COPY --from=BUILD_IMAGE /usr/app/dist ./package.json
 
 EXPOSE 8000
 
-ENTRYPOINT node dist/index.js
+ENTRYPOINT npm run dev

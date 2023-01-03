@@ -1,16 +1,21 @@
 import OrbitDB from 'orbit-db'
 import Store from 'orbit-db-store'
+import { Lock } from 'semaphore-async-await'
 import ipfsInstancePromise from '../ipfsInstance'
 // import checkChanges from './checkChanges'
 
 let orbitInstance: OrbitDB
+const orbitLock = new Lock()
 
 const getOrbitInstance = async () => {
+	await orbitLock.acquire()
+
 	const ipfsInstance = await ipfsInstancePromise()
-	if (orbitInstance) {
-		return orbitInstance
+	if (!orbitInstance) {
+		orbitInstance = await OrbitDB.createInstance(ipfsInstance)
 	}
-	orbitInstance = await OrbitDB.createInstance(ipfsInstance)
+
+	orbitLock.release()
 	return orbitInstance
 }
 
@@ -47,7 +52,7 @@ const createDbInstance = async (address = 'dbList') => {
 	return db
 }
 
-async function terminate() {
+const terminate = async () => {
 	try {
 		const dbinstance = await getOrbitInstance()
 		await dbinstance.disconnect()
