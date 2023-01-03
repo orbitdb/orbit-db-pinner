@@ -107,7 +107,9 @@ async function updatePing(address: string) {
 	}
 }
 
-schedule('* * * * *', () => {
+const EXPIRATION_TIME = process.env.NODE_ENV === 'production' ? 10 : 1
+
+schedule(`*/${EXPIRATION_TIME} * * * *`, () => {
 	const addresses = getPinners()
 
 	console.log('Cleaning pinning list...')

@@ -4,8 +4,9 @@
   "description": "An orbitdb pinning service",
   "scripts": {
     "build": "tsc",
-    "prestart": "npm run build",
-    "start": "node .",
+    "start": "NODE_ENV=production node .",
+    "predev": "npm run build",
+    "dev": "NODE_ENV=development node .",
     "lint": "eslint 'src/**/*.ts' --no-error-on-unmatched-pattern",
     "lint:fix": "eslint 'src/**/*.ts' --no-error-on-unmatched-pattern --fix"
   },
