@@ -36,7 +36,6 @@
     "libp2p-mdns": "^0.18.0",
     "libp2p-tcp": "^0.17.2",
     "libp2p-webrtc-star": "^0.25.0",
-    "libp2p-websockets": "^0.16.2",
     "multiformats": "^9.9.0",
     "node-cron": "^3.0.2",
     "orbit-db": "^0.28.6",

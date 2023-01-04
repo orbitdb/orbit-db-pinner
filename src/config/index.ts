@@ -1,16 +1,15 @@
 import wrtc from 'wrtc'
 import WebRTCStar from 'libp2p-webrtc-star'
-// import WebSockets from 'libp2p-websockets'
-// import WebRTCDirect from 'libp2p-webrtc-direct'
 import KadDHT from 'libp2p-kad-dht'
 import MulticastDNS from 'libp2p-mdns'
 import TCP from 'libp2p-tcp'
+// import { Options } from 'ipfs-core'
 
 const ipfsConfig = {
 	start: true,
 	repo: './orbitdb-ipfs',
 	EXPERIMENTAL: {
-		pubsub: true,
+		ipnsPubsub: true,
 	},
 	preload: {
 		enabled: false,
@@ -18,8 +17,8 @@ const ipfsConfig = {
 	libp2p: {
 		modules: {
 			transport: [WebRTCStar, TCP],
-			// peerDiscovery: [MulticastDNS],
-			// dht: KadDHT,
+			peerDiscovery: [MulticastDNS],
+			dht: KadDHT,
 		},
 		config: {
 			peerDiscovery: {

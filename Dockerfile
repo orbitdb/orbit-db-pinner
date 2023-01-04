@@ -20,8 +20,9 @@ COPY ./public ./public
 COPY ./views ./views
 COPY --from=BUILD_IMAGE /usr/app/node_modules ./node_modules
 COPY --from=BUILD_IMAGE /usr/app/dist ./dist
-COPY --from=BUILD_IMAGE /usr/app/dist ./package.json
+COPY --from=BUILD_IMAGE /usr/app/package.json ./package.json
 
 EXPOSE 8000
+ENV NODE_ENV development
 
-ENTRYPOINT npm run dev
+ENTRYPOINT node .
