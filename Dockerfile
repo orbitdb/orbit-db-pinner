@@ -24,4 +24,4 @@ COPY --from=BUILD_IMAGE /usr/app/dist ./dist
 EXPOSE 8000
 ENV NODE_ENV development
 
-ENTRYPOINT node .
+ENTRYPOINT node dist/index.js
