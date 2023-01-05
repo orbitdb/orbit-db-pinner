@@ -102,11 +102,11 @@ const startPinning = async () => {
 
 	if (addresses.length === 0) {
 		console.log('Pinning list is empty')
+		await disconnect()
 	} else {
 		job.resume()
+		addresses.forEach(createPinnerInstance)
 	}
-
-	addresses.forEach(createPinnerInstance)
 }
 
 const remove = async (address: string) => {
