@@ -1,7 +1,10 @@
 {
-  "name": "orbitdb-pinner",
+  "name": "three0-orbitdb-pinner",
   "version": "0.2.0",
+  "author": "Three0",
+  "license": "GPL-3.0",
   "description": "An orbitdb pinning service",
+  "private": true,
   "scripts": {
     "build": "tsc",
     "start": "NODE_ENV=production node .",
@@ -21,8 +24,6 @@
     "distributed",
     "computing"
   ],
-  "author": "Three0",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Three0Dev/orbitdb-pinner/issues"
   },

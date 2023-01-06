@@ -69,6 +69,7 @@ const getContents = async (addr = 'dbList') => {
 		.map((e) => e.payload.value)
 
 	await db.close()
+	job.resume()
 
 	return contents
 }
