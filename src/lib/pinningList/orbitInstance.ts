@@ -2,6 +2,8 @@ import OrbitDB from 'orbit-db'
 import Store from 'orbit-db-store'
 import { Lock } from 'semaphore-async-await'
 import { getIPFS } from '../ipfsInstance'
+
+import getIdentityInstance from '../identityInstance'
 // import checkChanges from './checkChanges'
 
 let orbitInstance: OrbitDB | null
@@ -11,8 +13,9 @@ const getOrbitInstance = async () => {
 	await orbitLock.acquire()
 
 	const ipfsInstance = await getIPFS()
+	const identity = await getIdentityInstance()
 	if (!orbitInstance) {
-		orbitInstance = await OrbitDB.createInstance(ipfsInstance)
+		orbitInstance = await OrbitDB.createInstance(ipfsInstance,{identity})
 	}
 
 	orbitLock.release()
@@ -38,6 +41,7 @@ const createDbInstance = async (address = 'dbList') => {
 	let db: Store
 
 	if (address === 'dbList') {
+
 		const pinningList = {
 			create: true,
 			type: 'feed',
@@ -46,22 +50,31 @@ const createDbInstance = async (address = 'dbList') => {
 		}
 
 		db = await dbInstance.open(address, pinningList)
+
 	} else {
 		db = await dbInstance.open(address)
-
-		// db.events.on('ready', (dbAddress, _feedReady) => {
-		// 	console.log('database ready ', dbAddress)
-		// })
-		// db.events.on('replicate.progress', async (dbAddress, hash, obj) => {
-		// 	console.log('replicate.progress', dbAddress, hash)
-		// 	// const checkChanges = require('./checkChanges')
-		// 	console.log('checking obj', obj)
-		// 	checkChanges(dbAddress, obj.payload)
-		// })
+		console.log("db open now")
+		db.events.on('ready', (dbAddress, _feedReady) => {
+			console.log('database ready ', dbAddress)
+		})
+		db.events.on('replicate.progress', async (dbAddress, hash, obj) => {
+			console.log('replicate.progress', dbAddress, hash)
+			// const checkChanges = require('./checkChanges')
+			console.log('checking obj', obj)
+			// checkChanges(dbAddress, obj.payload)
+		})
 	}
 
 	await db.load()
-
+	db.events.on('ready', (dbAddress, _feedReady) => {
+		console.log('database ready ', dbAddress)
+	})
+	db.events.on('replicate.progress', async (dbAddress, hash, obj) => {
+		console.log('replicate.progress', dbAddress, hash)
+		// const checkChanges = require('./checkChanges')
+		console.log('checking obj', obj)
+		// checkChanges(dbAddress, obj.payload)
+	})
 	return db
 }
 

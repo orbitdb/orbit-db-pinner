@@ -1,6 +1,6 @@
 {
-  "name": "three0-orbitdb-pinner",
-  "version": "0.2.0",
+  "name": "orbitdb-pinner",
+  "version": "0.2.2",
   "author": "Three0",
   "license": "GPL-3.0",
   "description": "An orbitdb pinning service",
@@ -16,7 +16,7 @@
   "main": "dist/index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Three0Dev/orbitdb-pinner.git"
+    "url": "git+https://github.com/DecentraSol/orbit-db-pinner.git"
   },
   "keywords": [
     "ipfs",
@@ -25,12 +25,13 @@
     "computing"
   ],
   "bugs": {
-    "url": "https://github.com/Three0Dev/orbitdb-pinner/issues"
+    "url": "https://github.com/DecentraSol/orbitdb-pinner/issues"
   },
-  "homepage": "https://github.com/Three0Dev/orbitdb-pinner#readme",
+  "homepage": "https://github.com/DecentraSol/orbitdb-pinner#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "croner": "^5.3.5",
+    "dotenv": "^16.0.3",
     "ejs": "^3.1.8",
     "express": "^4.18.1",
     "ipfs-core": "^0.14.3",
@@ -39,6 +40,7 @@
     "multiformats": "^9.9.0",
     "orbit-db": "^0.28.6",
     "orbit-db-eventstore": "^1.12.0",
+    "orbit-db-identity-provider": "^0.4.0",
     "orbit-db-io": "^1.0.2",
     "orbit-db-store": "^4.3.4",
     "semaphore-async-await": "^1.5.1",
