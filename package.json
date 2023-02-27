@@ -1,5 +1,5 @@
 {
-  "name": "three0-orbitdb-pinner",
+  "name": "orbitdb-pinner",
   "version": "0.2.1",
   "author": "Three0",
   "license": "GPL-3.0",
@@ -16,7 +16,7 @@
   "main": "dist/index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Three0Dev/orbitdb-pinner.git"
+    "url": "git+https://github.com/DecentraSol/orbit-db-pinner.git"
   },
   "keywords": [
     "ipfs",
@@ -25,9 +25,9 @@
     "computing"
   ],
   "bugs": {
-    "url": "https://github.com/Three0Dev/orbitdb-pinner/issues"
+    "url": "https://github.com/DecentraSol/orbitdb-pinner/issues"
   },
-  "homepage": "https://github.com/Three0Dev/orbitdb-pinner#readme",
+  "homepage": "https://github.com/DecentraSol/orbitdb-pinner#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "croner": "^5.3.5",
