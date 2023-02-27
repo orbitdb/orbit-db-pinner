@@ -36,7 +36,11 @@ const ipfsConfig = {
 	},
 	config: {
 		Addresses: {
-			Swarm: ['/dns4/signal-rtc.three0dev.com/tcp/443/wss/p2p-webrtc-star/'],
+			Swarm: [
+				// '/dns4/signal-rtc.three0dev.com/tcp/443/wss/p2p-webrtc-star/'
+			'/dns6/ipfs.le-space.de/tcp/9091/wss/p2p-webrtc-star',
+			'/dns4/ipfs.le-space.de/tcp/9091/wss/p2p-webrtc-star'
+		],
 		},
 	},
 }
