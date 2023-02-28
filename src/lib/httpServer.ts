@@ -30,6 +30,28 @@ app.get('/', async (_req, res) => {
 	}
 })
 
+app.get('/stats', async (_req, res) => {
+	try {
+		const numDatabases = (await pinningList.getContents()).length
+		const pinners = pinningList.getPinners()
+
+		const pinnerStats = Array.from(pinners).map(([address, pinner]) => ({
+			size: pinner.getEstimatedSize(),
+			address,
+		}))
+
+		res.json({
+			pinners: pinnerStats,
+			num_databases: numDatabases,
+			num_active_databases: pinners.size,
+			total_size: pinnerStats.reduce((a, b) => a + b.size, 0),
+		})
+	} catch (e: any) {
+		console.error(e)
+		res.status(500).json({ error: e.message })
+	}
+})
+
 app.post('/pin', async (req, res) => {
 	const { address } = req.query
 

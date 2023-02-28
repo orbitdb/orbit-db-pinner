@@ -1,4 +1,4 @@
-CONTAINER_NAME = sreegrandhe/orbitdb
+CONTAINER_NAME = orbitdb
 VERSION = latest
 
 build_container:

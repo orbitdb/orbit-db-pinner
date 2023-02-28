@@ -1,4 +1,5 @@
-# Three0Pinner
+# orbit-db-pinner
+## Powered by Three0Dev/Three0Pinner & DecentraSol/orbit-db-pinner
 A pinning service for [orbitdb](https://github.com/orbitdb/orbit-db/) formed from [orbitdb-pinner](https://github.com/orbitdb/orbit-db-pinner).
 
 * Pass it a single orbitdb address to pin.
@@ -14,7 +15,7 @@ npm i
 ## Usage
 
 ### **GET** `\`
-UI Dashboard for the Three0Pinner service.
+UI Dashboard for the orbit-db-pinner service.
 
 ### **POST** `\pin?address=ADDRESS`
 

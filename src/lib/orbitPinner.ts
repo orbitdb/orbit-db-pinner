@@ -1,7 +1,5 @@
 import Store from 'orbit-db-store'
 import { getOrbitInstance } from './pinningList/orbitInstance'
-import dotenv from 'dotenv'
-dotenv.config()
 
 class Pinner {
 	db: Store
@@ -18,16 +16,7 @@ class Pinner {
 
 	static async create(address: string) {
 		const db = await Pinner.openDatabase(address)
-		console.log("db open in pinner")
-		db.events.on('ready', (dbAddress, _feedReady) => {
-			console.log('database ready ', dbAddress)
-		})
-		db.events.on('replicate.progress', async (dbAddress, hash, obj) => {
-			console.log('replicate.progress', dbAddress, hash)
-			// const checkChanges = require('./checkChanges')
-			console.log('checking obj', obj.payload.value.counters)
-			// checkChanges(dbAddress, obj.payload)
-		})
+		console.log('db open in pinner')
 		return Promise.resolve(new Pinner(db))
 	}
 

@@ -15,10 +15,10 @@ const disconnect = async () => {
 	if (wasIPFSAlive) console.log('Disconnected from IPFS')
 }
 
-/*const EXPIRATION_TIME = process.env.NODE_ENV === 'production' ? 10 : 1
-const job = Cron(*/
-	// `*/${EXPIRATION_TIME} * * * *`,
-/*	{
+const EXPIRATION_TIME = process.env.NODE_ENV === 'production' ? 10 : 1
+const job = Cron(
+	`*/${EXPIRATION_TIME} * * * *`,
+	{
 		paused: true,
 	},
 	() => {
@@ -47,7 +47,7 @@ const job = Cron(*/
 			disconnect().then(() => job.pause())
 		}
 	}
-) */
+)
 
 async function createPinnerInstance(address: string) {
 	if (!OrbitDB.isValidAddress(address)) {
@@ -69,7 +69,7 @@ const getContents = async (addr = 'dbList') => {
 		.map((e) => e.payload.value)
 
 	await db.close()
-	// job.resume()
+	job.resume()
 
 	return contents
 }
@@ -105,7 +105,7 @@ const startPinning = async () => {
 		console.log('Pinning list is empty')
 		await disconnect()
 	} else {
-		// job.resume()
+		job.resume()
 		addresses.forEach(createPinnerInstance)
 	}
 }
@@ -136,7 +136,7 @@ const remove = async (address: string) => {
 	await Promise.all(dbAddresses.filter((addr) => addr !== address).map(db.add))
 
 	if (pinners.size === 0) {
-		// disconnect().then(() => job.pause())
+		disconnect().then(() => job.pause())
 	}
 
 	console.log(`${address} removed.`)
@@ -158,7 +158,7 @@ const updatePing = async (address: string) => {
 		pinner.timeModified = Date.now()
 	}
 
-	// job.resume()
+	job.resume()
 }
 
 export { add, getContents, getPinners, remove, startPinning, updatePing }

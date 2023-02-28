@@ -1,14 +1,18 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Docker Image CI
 
 # Controls when the workflow will run
 on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+  push:
+    branches: [ master ]
+
 env:
-  DOCKER_IMAGE: sreegrandhe/orbitdbpinner
+  DOCKER_IMAGE: orbit-db-pinner
+  DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
   
 jobs:
   build_and_push:
@@ -25,7 +29,7 @@ jobs:
       name: Login to DockerHub
       uses: docker/login-action@v2
       with:
-        username: sreegrandhe
+        username: ${{ env.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     -
       name: Build and push
@@ -34,23 +38,3 @@ jobs:
         push: true
         tags: ${{ env.DOCKER_IMAGE }}:latest
         file: ./Dockerfile.prod
-
-  deploy:
-    runs-on: ubuntu-latest
-    name: Deploy Docker Image to Digital Ocean
-    needs: build_and_push
-    steps:
-    -
-      name: Deploy to Digital Ocean
-      uses: appleboy/ssh-action@master
-      with:
-        host: pinning.three0dev.com
-        username: ${{ secrets.SERVER_USERNAME }}
-        password: ${{ secrets.SERVER_PASSWORD }}
-        envs: DOCKER_IMAGE, CONTAINER_NAME
-        script: |
-          cd pinningserver
-          docker-compose pull pinning
-          docker-compose up --force-recreate --build -d
-          docker image prune -f
-          docker container prune -f

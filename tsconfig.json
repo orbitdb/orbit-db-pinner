@@ -6,8 +6,10 @@
       "esModuleInterop": true,
       "outDir": "dist/",
       "sourceMap": true,
+      "target": "ES2015",
+      "module": "ES2020",
     },
     "include": ["src/**/*"],
-    "exclude": ["node_modules", "**/*.test.ts", "**/*.spec.ts"]
-  }
+    "exclude": ["node_modules"]  
+}
   
