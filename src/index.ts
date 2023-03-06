@@ -1,13 +1,11 @@
-import * as dotenv from 'dotenv'
-import app from './lib/httpServer'
-import { disconnectIPFS } from './lib/ipfsInstance'
-import { startPinning } from './lib/pinningList'
-import { disconnectOrbitInstance } from './lib/pinningList/orbitInstance'
+import app from './lib/httpServer.js'
+import { disconnectIPFS } from './lib/ipfsInstance.js'
+import { startPinning } from './lib/pinningList/index.js'
+import { disconnectOrbitInstance } from './lib/pinningList/orbitInstance.js'
 
 const PORT = process.env.PORT || 8000
 
 const server = app.listen(PORT, async () => {
-	dotenv.config()
 	console.log(`Orbit-pinner listening on port ${PORT}`)
 	await startPinning()
 	console.log('Pinning started')

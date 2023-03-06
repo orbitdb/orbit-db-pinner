@@ -1,9 +1,9 @@
 import OrbitDB from 'orbit-db'
 import EventStore from 'orbit-db-eventstore'
 import Cron from 'croner'
-import OrbitPinner from '../orbitPinner'
-import { createDbInstance, disconnectOrbitInstance } from './orbitInstance'
-import { disconnectIPFS } from '../ipfsInstance'
+import OrbitPinner from '../orbitPinner.js'
+import { createDbInstance, disconnectOrbitInstance } from './orbitInstance.js'
+import { disconnectIPFS } from '../ipfsInstance.js'
 
 const pinners = new Map<string, OrbitPinner>()
 

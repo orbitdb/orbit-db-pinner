@@ -1,5 +1,5 @@
 import Store from 'orbit-db-store'
-import { getOrbitInstance } from './pinningList/orbitInstance'
+import { getOrbitInstance } from './pinningList/orbitInstance.js'
 
 class Pinner {
 	db: Store

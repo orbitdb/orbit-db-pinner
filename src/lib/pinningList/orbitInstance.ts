@@ -1,9 +1,9 @@
 import OrbitDB from 'orbit-db'
 import Store from 'orbit-db-store'
 import { Lock } from 'semaphore-async-await'
-import { getIPFS } from '../ipfsInstance'
+import { getIPFS } from '../ipfsInstance.js'
 
-import getIdentityInstance from '../identityInstance'
+import getIdentityInstance from '../identityInstance.js'
 
 let orbitInstance: OrbitDB | null
 const orbitLock = new Lock()
@@ -12,9 +12,9 @@ const getOrbitInstance = async () => {
 	await orbitLock.acquire()
 
 	const ipfsInstance = await getIPFS()
-	const identity = await getIdentityInstance()
 	if (!orbitInstance) {
 		if (process.env.PRIVKEY) {
+			const identity = await getIdentityInstance()
 			orbitInstance = await OrbitDB.createInstance(ipfsInstance, { identity })
 		} else {
 			orbitInstance = await OrbitDB.createInstance(ipfsInstance)
