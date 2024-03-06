@@ -4,8 +4,8 @@ import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 export default (registry, pinnedDBs) => {
   const protocol = '/orbitdb/pinner/pin/v1.0.0'
 
-  const handleDBPin = ({ stream }) => {
-    pipe(stream, pin)
+  const handleDBPin = async ({ stream }) => {
+    await pipe(stream, pin, stream)
   }
   
   const addPin = async address => {
@@ -34,11 +34,12 @@ export default (registry, pinnedDBs) => {
   
   const pin = async source => {
     for await (const val of source) {
+        console.log('pin')
       const { id, address } = JSON.parse(uint8ArrayToString(val.subarray()))
       try {
-        addPin(address)
-        addPinIndex(address, id)
-        addId(id, address)
+        await addPin(address)
+        await addPinIndex(address, id)
+        await addId(id, address)
 
         pinnedDBs[address] = await registry.orbitdb.open(address)
         console.log(address, 'pinned')

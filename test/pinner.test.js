@@ -30,10 +30,16 @@ describe('Database', function () {
 
     const stream = await client.ipfs.libp2p.dialProtocol(pinner.registry.orbitdb.ipfs.libp2p.peerId, pinProto)
 
-    pipe(dbs, stream)
-    
+    await pipe(dbs, stream)
+
     await new Promise((resolve) => {
-      setTimeout(() => resolve(), 2000)
+      const interval = setInterval(
+        () => {
+          if (Object.keys(pinner.dbs).length > 0) {
+            clearInterval(interval)
+            resolve()
+          }
+        }, 100)
     })
 
     strictEqual(Object.values(pinner.dbs).pop().address, db.address)
