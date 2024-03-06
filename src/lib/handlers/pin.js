@@ -1,5 +1,6 @@
 import { pipe } from 'it-pipe'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 
 export default (registry, pinnedDBs) => {
   const protocol = '/orbitdb/pinner/pin/v1.0.0'
@@ -32,22 +33,24 @@ export default (registry, pinnedDBs) => {
     await registry.ids.set(id, indexedPins)
   }
   
-  const pin = async source => {
-    for await (const val of source) {
-        console.log('pin')
-      const { id, address } = JSON.parse(uint8ArrayToString(val.subarray()))
-      try {
-        await addPin(address)
-        await addPinIndex(address, id)
-        await addId(id, address)
+  const pin = source => {
+    return (async function * () {
+      for await (const chunk of source) {
+        const { id, address } = JSON.parse(uint8ArrayToString(chunk.subarray()))
+        try {
+          await addPin(address)
+          await addPinIndex(address, id)
+          await addId(id, address)
 
-        pinnedDBs[address] = await registry.orbitdb.open(address)
-        console.log(address, 'pinned')
-      } catch (err) {
-        console.error(err)
-        console.log(`Received db address ${address} but couldn't open it`)
+          pinnedDBs[address] = await registry.orbitdb.open(address)
+          console.log(address, 'pinned')
+          yield uint8ArrayFromString(JSON.stringify({ pinned: [address] }))
+        } catch (err) {
+          console.error(err)
+          console.log(`Received db address ${address} but couldn't open it`)
+        }
       }
-    }
+    })()
   }
   
   const register = async() => {
