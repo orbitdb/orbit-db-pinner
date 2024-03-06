@@ -1,0 +1,10 @@
+{
+  "reporter": "spec",
+  "colors": true,
+  "recursive": true,
+  "exit": true,
+  "bail": false,
+  "slow": 1000,
+  "exclude": ["test/browser/**/*.js", "test/utils/relay.js"],
+  "timeout": 30000
+}
