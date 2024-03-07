@@ -11,7 +11,7 @@ export default async () => {
   await pinHandler.register()
   const unpinHandler = UnpinHandler(registry, dbs)
   await unpinHandler.register()
-  
+
   for await (const db of registry.pins.iterator()) {
     dbs[db.value] = await registry.orbitdb.open(db.value)
     console.log('db opened', db.value)

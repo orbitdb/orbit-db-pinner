@@ -1,18 +1,21 @@
+import { pipe } from 'it-pipe'
+import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
+
 export default (registry, pinnedDBs) => {
   const protocol = '/orbitdb/pinner/unpin/v1.0.0'
-    
+
   const handleDBUnpin = ({ stream }) => {
     pipe(stream, unpin)
   }
-  
+
   const removePin = async address => {
-    await registry.pins.del(address)        
+    await registry.pins.del(address)
   }
 
   const removePinIndex = async (address, id) => {
-    let indexedIds = await registry.pinIndex.get(id)
+    const indexedIds = await registry.pinIndex.get(id)
     if (indexedIds.length > 1) {
-      const index = array.indexOf(address)
+      const index = indexedIds.indexOf(address)
       if (index > -1) {
         indexedIds.splice(index, 1)
       }
@@ -24,9 +27,9 @@ export default (registry, pinnedDBs) => {
   }
 
   const removeId = async (id, address) => {
-    let indexedPins = await registry.ids.get(id)
+    const indexedPins = await registry.ids.get(id)
     if (indexedPins.length > 1) {
-      const index = array.indexOf(address)
+      const index = indexedPins.indexOf(address)
       if (index > -1) {
         indexedPins.splice(index, 1)
       }
@@ -35,9 +38,9 @@ export default (registry, pinnedDBs) => {
     } else {
       await registry.ids.del(id)
     }
-  }  
+  }
 
-  const unpin = async source => {    
+  const unpin = async source => {
     for await (const val of source) {
       const { id, address } = JSON.parse(uint8ArrayToString(val.subarray()))
       try {
@@ -56,12 +59,12 @@ export default (registry, pinnedDBs) => {
     }
   }
 
-  const register = async() => {
-    await registry.orbitdb.ipfs.libp2p.handle(protocol, handleDBUnpin)  
+  const register = async () => {
+    await registry.orbitdb.ipfs.libp2p.handle(protocol, handleDBUnpin)
   }
 
-  const deregister = async() => {
-    await registry.orbitdb.ipfs.libp2p.unhandle(protocol)  
+  const deregister = async () => {
+    await registry.orbitdb.ipfs.libp2p.unhandle(protocol)
   }
 
   return {

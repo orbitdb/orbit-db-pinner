@@ -37,7 +37,7 @@ const options = {
     identify: identify(),
     pubsub: gossipsub({
       emitSelf: true
-    })    
+    })
   }
 }
 
@@ -57,16 +57,16 @@ export default async () => {
   const id = 'pinner'
 
   const orbitdb = await createOrbitDB({ ipfs, directory, identities, id })
-    
+
   const ids = await orbitdb.open('ids', { type: 'keyvalue' })
   const pinIndex = await orbitdb.open('pinIndex', { type: 'keyvalue' })
   const pins = await orbitdb.open('pins', { type: 'set' })
-  
+
   const stop = async () => {
     await orbitdb.stop()
     await ipfs.stop()
   }
-  
+
   return {
     ids,
     pinIndex,

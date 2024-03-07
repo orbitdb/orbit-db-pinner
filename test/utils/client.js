@@ -1,4 +1,4 @@
-import { createHelia, libp2pDefaults } from 'helia'
+import { createHelia } from 'helia'
 import { createLibp2p } from 'libp2p'
 import { identify } from '@libp2p/identify'
 import { noise } from '@chainsafe/libp2p-noise'
@@ -12,7 +12,7 @@ import { createOrbitDB } from '@orbitdb/core'
 const options = {
   peerDiscovery: [
     mdns()
-  ],    
+  ],
   addresses: {
     listen: [
       '/ip4/0.0.0.0/tcp/0',
@@ -37,10 +37,12 @@ const options = {
   }
 }
 
-export default async () => {
-  const libp2p = await createLibp2p(options)
+export default async ({ directory } = {}) => {
+  const libp2p = await createLibp2p({ ...options })
   const ipfs = await createHelia({ libp2p })
   console.log(ipfs.libp2p.getMultiaddrs())
-  
-  return createOrbitDB({ ipfs, directory: './client' })
+
+  directory = directory || './client'
+
+  return createOrbitDB({ ipfs, directory })
 }

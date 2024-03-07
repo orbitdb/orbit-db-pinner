@@ -8,7 +8,7 @@ export default (registry, pinnedDBs) => {
   const handleDBPin = async ({ stream }) => {
     await pipe(stream, pin, stream)
   }
-  
+
   const addPin = async address => {
     await registry.pins.add(address)
   }
@@ -22,8 +22,8 @@ export default (registry, pinnedDBs) => {
     }
     await registry.pinIndex.set(address, indexedIds)
   }
-  
-  const addId = async (id, address) => {    
+
+  const addId = async (id, address) => {
     let indexedPins = await registry.ids.get(id)
     if (indexedPins) {
       indexedPins.push(address)
@@ -32,35 +32,38 @@ export default (registry, pinnedDBs) => {
     }
     await registry.ids.set(id, indexedPins)
   }
-  
+
   const pin = source => {
     return (async function * () {
       for await (const chunk of source) {
-        const { id, address } = JSON.parse(uint8ArrayToString(chunk.subarray()))
-        try {
-          await addPin(address)
-          await addPinIndex(address, id)
-          await addId(id, address)
+        const { id, addresses } = JSON.parse(uint8ArrayToString(chunk.subarray()))
 
-          pinnedDBs[address] = await registry.orbitdb.open(address)
-          console.log(address, 'pinned')
-          yield uint8ArrayFromString(JSON.stringify({ pinned: [address] }))
-        } catch (err) {
-          console.error(err)
-          console.log(`Received db address ${address} but couldn't open it`)
+        for (const address of addresses) {
+          try {
+            await addPin(address)
+            await addPinIndex(address, id)
+            await addId(id, address)
+            pinnedDBs[address] = await registry.orbitdb.open(address)
+            console.log(address, 'pinned')
+          } catch (err) {
+            console.error(err)
+            console.log(`Received db address ${address} but couldn't open it`)
+          }
         }
+
+        yield uint8ArrayFromString(JSON.stringify({ pinned: addresses }))
       }
     })()
   }
-  
-  const register = async() => {
-    await registry.orbitdb.ipfs.libp2p.handle(protocol, handleDBPin)  
+
+  const register = async () => {
+    await registry.orbitdb.ipfs.libp2p.handle(protocol, handleDBPin)
   }
 
-  const deregister = async() => {
-    await registry.orbitdb.ipfs.libp2p.unhandle(protocol)  
+  const deregister = async () => {
+    await registry.orbitdb.ipfs.libp2p.unhandle(protocol)
   }
-  
+
   return {
     register,
     deregister
