@@ -4,7 +4,11 @@ import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import Pinner from '../src/lib/pinner.js'
 import Client from './utils/client.js'
+import Message from './utils/message-types.js'
 import { rimraf } from 'rimraf'
+import drain from 'it-drain'
+
+const pinnerProtocol = '/orbitdb/pinner/v1.0.0'
 
 describe('Pinner', function () {
   this.timeout(10000)
@@ -30,7 +34,7 @@ describe('Pinner', function () {
 
       const dbs = source => {
         const values = [
-          uint8ArrayFromString(JSON.stringify({ id: client.identity.id, addresses: [db.address] }))
+          uint8ArrayFromString(JSON.stringify({ message: Message.PIN, id: client.identity.id, addresses: [db.address] }))
         ]
 
         return (async function * () {
@@ -40,17 +44,11 @@ describe('Pinner', function () {
         })()
       }
 
-      const isPinned = async source => {
-        for await (const chunk of source) {
-          console.log(JSON.parse(uint8ArrayToString(chunk.subarray())))
-        }
-      }
+      const stream = await client.ipfs.libp2p.dialProtocol(pinner.registry.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
 
-      const pinProto = '/orbitdb/pinner/pin/v1.0.0'
-
-      const stream = await client.ipfs.libp2p.dialProtocol(pinner.registry.orbitdb.ipfs.libp2p.peerId, pinProto)
-
-      await pipe(dbs, stream, isPinned)
+      await pipe(dbs, stream, async source => {
+        await drain(source)
+      })
 
       strictEqual(Object.values(pinner.dbs).pop().address, db.address)
 
@@ -67,7 +65,7 @@ describe('Pinner', function () {
 
       const dbs = source => {
         const values = [
-          uint8ArrayFromString(JSON.stringify({ id: client.identity.id, addresses: [db1.address, db2.address] }))
+          uint8ArrayFromString(JSON.stringify({ message: Message.PIN, id: client.identity.id, addresses: [db1.address, db2.address] }))
         ]
 
         return (async function * () {
@@ -77,17 +75,11 @@ describe('Pinner', function () {
         })()
       }
 
-      const isPinned = async source => {
-        for await (const chunk of source) {
-          console.log(JSON.parse(uint8ArrayToString(chunk.subarray())))
-        }
-      }
+      const stream = await client.ipfs.libp2p.dialProtocol(pinner.registry.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
 
-      const pinProto = '/orbitdb/pinner/pin/v1.0.0'
-
-      const stream = await client.ipfs.libp2p.dialProtocol(pinner.registry.orbitdb.ipfs.libp2p.peerId, pinProto)
-
-      await pipe(dbs, stream, isPinned)
+      await pipe(dbs, stream, async source => {
+        await drain(source)
+      })
 
       strictEqual(Object.values(pinner.dbs)[0].address, db1.address)
       strictEqual(Object.values(pinner.dbs)[1].address, db2.address)
@@ -108,7 +100,7 @@ describe('Pinner', function () {
 
       const dbs1 = source => {
         const values = [
-          uint8ArrayFromString(JSON.stringify({ id: client1.identity.id, addresses: [db1.address] }))
+          uint8ArrayFromString(JSON.stringify({ message: Message.PIN, id: client1.identity.id, addresses: [db1.address] }))
         ]
 
         return (async function * () {
@@ -120,7 +112,7 @@ describe('Pinner', function () {
 
       const dbs2 = source => {
         const values = [
-          uint8ArrayFromString(JSON.stringify({ id: client2.identity.id, addresses: [db2.address] }))
+          uint8ArrayFromString(JSON.stringify({ message: Message.PIN, id: client2.identity.id, addresses: [db2.address] }))
         ]
 
         return (async function * () {
@@ -130,27 +122,17 @@ describe('Pinner', function () {
         })()
       }
 
-      const isPinned1 = async source => {
-        for await (const chunk of source) {
-          console.log(JSON.parse(uint8ArrayToString(chunk.subarray())))
-        }
-      }
+      const stream1 = await client1.ipfs.libp2p.dialProtocol(pinner.registry.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
 
-      const isPinned2 = async source => {
-        for await (const chunk of source) {
-          console.log(JSON.parse(uint8ArrayToString(chunk.subarray())))
-        }
-      }
+      await pipe(dbs1, stream1, async source => {
+        await drain(source)
+      })
 
-      const pinProto = '/orbitdb/pinner/pin/v1.0.0'
+      const stream2 = await client2.ipfs.libp2p.dialProtocol(pinner.registry.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
 
-      const stream1 = await client1.ipfs.libp2p.dialProtocol(pinner.registry.orbitdb.ipfs.libp2p.peerId, pinProto)
-
-      await pipe(dbs1, stream1, isPinned1)
-
-      const stream2 = await client2.ipfs.libp2p.dialProtocol(pinner.registry.orbitdb.ipfs.libp2p.peerId, pinProto)
-
-      await pipe(dbs2, stream2, isPinned2)
+      await pipe(dbs2, stream2, async source => {
+        await drain(source)
+      })
 
       strictEqual(Object.values(pinner.dbs)[0].address, db1.address)
       strictEqual(Object.values(pinner.dbs)[1].address, db2.address)

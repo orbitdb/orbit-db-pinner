@@ -1,27 +1,29 @@
+import { pipe } from 'it-pipe'
 import Registry from './registry.js'
-import PinHandler from './handlers/pin.js'
-import UnpinHandler from './handlers/unpin.js'
+import { processMessage } from './messages/index.js'
 
 export default async () => {
+  const protocol = '/orbitdb/pinner/v1.0.0'
+  
   const registry = await Registry()
 
   const dbs = []
 
-  const pinHandler = PinHandler(registry, dbs)
-  await pinHandler.register()
-  const unpinHandler = UnpinHandler(registry, dbs)
-  await unpinHandler.register()
+  const handleMessage = async ({ stream }) => {
+    await pipe(stream, processMessage(registry, dbs), stream)
+  }
 
   for await (const db of registry.pins.iterator()) {
     dbs[db.value] = await registry.orbitdb.open(db.value)
     console.log('db opened', db.value)
   }
-
   console.log('dbs loaded')
+  
+  await registry.orbitdb.ipfs.libp2p.handle(protocol, handleMessage)
+  
 
   const stop = async () => {
-    await pinHandler.deregister()
-    await unpinHandler.deregister()
+    await registry.orbitdb.ipfs.libp2p.unhandle(protocol)
     await registry.stop()
   }
 

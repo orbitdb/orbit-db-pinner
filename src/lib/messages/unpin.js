@@ -1,13 +1,7 @@
 import { pipe } from 'it-pipe'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 
-export default (registry, pinnedDBs) => {
-  const protocol = '/orbitdb/pinner/unpin/v1.0.0'
-
-  const handleDBUnpin = ({ stream }) => {
-    pipe(stream, unpin)
-  }
-
+export default async (registry, pinnedDBs) => {
   const removePin = async address => {
     await registry.pins.del(address)
   }

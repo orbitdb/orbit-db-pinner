@@ -15,6 +15,7 @@
     "helia": "^4.0.1"
   },
   "devDependencies": {
+    "it-drain": "^3.0.5",
     "mocha": "^10.3.0",
     "rimraf": "^5.0.5",
     "standard": "^17.1.0"
