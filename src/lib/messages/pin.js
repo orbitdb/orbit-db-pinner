@@ -1,5 +1,3 @@
-import { pipe } from 'it-pipe'
-
 export default async (registry, pinnedDBs, params) => {
   const addPin = async address => {
     await registry.pins.add(address)

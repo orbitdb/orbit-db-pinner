@@ -10,7 +10,7 @@ import drain from 'it-drain'
 
 const pinnerProtocol = '/orbitdb/pinner/v1.0.0'
 
-describe('Pinner', function () {
+describe('Pin', function () {
   this.timeout(10000)
 
   let pinner
