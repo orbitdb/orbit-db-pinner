@@ -22,9 +22,9 @@ export default async (registry, pinnedDBs, params) => {
     }
     await registry.ids.set(id, indexedPins)
   }
-  
+
   const { id, addresses } = params
-  
+
   for (const address of addresses) {
     try {
       await addPin(address)

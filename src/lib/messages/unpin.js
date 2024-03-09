@@ -30,7 +30,7 @@ export default async (registry, pinnedDBs, params) => {
       await registry.ids.del(id)
     }
   }
-  
+
   const { id, addresses } = params
 
   for (const address of addresses) {
@@ -41,7 +41,7 @@ export default async (registry, pinnedDBs, params) => {
       if (!await registry.pinIndex.get(id) && !await registry.ids.get(id)) {
         await removeId(id, address)
         await pinnedDBs[address].close()
-        delete pinnedDBs[address];
+        delete pinnedDBs[address]
         console.log(address, 'unpinned')
       }
     } catch (err) {
@@ -49,5 +49,5 @@ export default async (registry, pinnedDBs, params) => {
       console.log(`Received db address ${address} but couldn't open it`)
     }
   }
-  return { unpin: 'success' }  
+  return { unpin: 'success' }
 }

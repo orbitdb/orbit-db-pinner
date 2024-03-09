@@ -20,7 +20,7 @@ export const processMessage = (registry, pinnedDBs) => source => {
         response = await func(registry, pinnedDBs, params)
         yield uint8ArrayFromString(JSON.stringify(response))
       } else {
-        throw new Exception(`unknown function ${func}`)
+        throw new Error(`unknown function ${func}`)
       }
     }
   })()

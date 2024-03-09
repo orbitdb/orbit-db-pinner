@@ -1,7 +1,6 @@
 import { strictEqual } from 'assert'
 import { pipe } from 'it-pipe'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import Pinner from '../src/lib/pinner.js'
 import Client from './utils/client.js'
 import Message from './utils/message-types.js'

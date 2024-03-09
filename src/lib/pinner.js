@@ -4,7 +4,7 @@ import { processMessage } from './messages/index.js'
 
 export default async () => {
   const protocol = '/orbitdb/pinner/v1.0.0'
-  
+
   const registry = await Registry()
 
   const dbs = []
@@ -18,9 +18,8 @@ export default async () => {
     console.log('db opened', db.value)
   }
   console.log('dbs loaded')
-  
+
   await registry.orbitdb.ipfs.libp2p.handle(protocol, handleMessage)
-  
 
   const stop = async () => {
     await registry.orbitdb.ipfs.libp2p.unhandle(protocol)

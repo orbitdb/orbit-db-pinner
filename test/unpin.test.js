@@ -1,7 +1,6 @@
 import { strictEqual } from 'assert'
 import { pipe } from 'it-pipe'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import Pinner from '../src/lib/pinner.js'
 import Client from './utils/client.js'
 import Message from './utils/message-types.js'
@@ -28,16 +27,17 @@ describe('Unpin', function () {
 
   describe('Single Client', function () {
     let client
-    let db
-      
-    beforeEach(async function () {
-      client = await Client()
 
-      db = await client.open('my-test-db')
+    const createPins = async length => {
+      const dbs = []
 
-      const dbs = source => {
+      for (let i = 1; i <= length; i++) {
+        dbs.push(await client.open(`db${i}`))
+      }
+
+      const pinDBs = source => {
         const values = [
-          uint8ArrayFromString(JSON.stringify({ message: Message.PIN, id: client.identity.id, addresses: [db.address] }))
+          uint8ArrayFromString(JSON.stringify({ message: Message.PIN, id: client.identity.id, addresses: dbs.map(p => p.address) }))
         ]
 
         return (async function * () {
@@ -49,21 +49,29 @@ describe('Unpin', function () {
 
       const stream = await client.ipfs.libp2p.dialProtocol(pinner.registry.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
 
-      await pipe(dbs, stream, async source => {
+      await pipe(pinDBs, stream, async source => {
         await drain(source)
       })
+
+      return dbs
+    }
+
+    beforeEach(async function () {
+      client = await Client()
     })
-    
+
     afterEach(async function () {
       await client.stop()
       await client.ipfs.stop()
-      await rimraf('./client')    
+      await rimraf('./client')
     })
-      
+
     it('unpins a database', async function () {
-      const dbs = source => {
+      const pins = await createPins(1)
+
+      const unpinDBs = source => {
         const values = [
-          uint8ArrayFromString(JSON.stringify({ message: Message.UNPIN, id: client.identity.id, addresses: [db.address] }))
+          uint8ArrayFromString(JSON.stringify({ message: Message.UNPIN, id: client.identity.id, addresses: pins.map(p => p.address) }))
         ]
 
         return (async function * () {
@@ -75,11 +83,60 @@ describe('Unpin', function () {
 
       const stream = await client.ipfs.libp2p.dialProtocol(pinner.registry.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
 
-      await pipe(dbs, stream, async source => {
+      await pipe(unpinDBs, stream, async source => {
         await drain(source)
       })
 
       strictEqual(Object.values(pinner.dbs).length, 0)
+    })
+
+    it('unpins multiple databases', async function () {
+      const pins = await createPins(2)
+
+      const unpinDBs = source => {
+        const values = [
+          uint8ArrayFromString(JSON.stringify({ message: Message.UNPIN, id: client.identity.id, addresses: pins.map(p => p.address) }))
+        ]
+
+        return (async function * () {
+          for await (const value of values) {
+            yield value
+          }
+        })()
+      }
+
+      const stream = await client.ipfs.libp2p.dialProtocol(pinner.registry.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
+
+      await pipe(unpinDBs, stream, async source => {
+        await drain(source)
+      })
+
+      strictEqual(Object.values(pinner.dbs).length, 0)
+    })
+
+    it('unpins a database when multiple databases have been pinned', async function () {
+      const pins = await createPins(2)
+
+      const unpinDBs = source => {
+        const values = [
+          uint8ArrayFromString(JSON.stringify({ message: Message.UNPIN, id: client.identity.id, addresses: [pins[0].address] }))
+        ]
+
+        return (async function * () {
+          for await (const value of values) {
+            yield value
+          }
+        })()
+      }
+
+      const stream = await client.ipfs.libp2p.dialProtocol(pinner.registry.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
+
+      await pipe(unpinDBs, stream, async source => {
+        await drain(source)
+      })
+
+      strictEqual(Object.values(pinner.dbs).length, 1)
+      strictEqual(Object.values(pinner.dbs).pop().address, pins[1].address)
     })
   })
 })
