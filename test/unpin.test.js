@@ -1,11 +1,12 @@
 import { strictEqual } from 'assert'
 import { pipe } from 'it-pipe'
+import drain from 'it-drain'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import Pinner from '../src/lib/pinner.js'
 import { createClient } from './utils/create-client.js'
+import { createPins } from './utils/create-pins.js'
 import Message from './utils/message-types.js'
 import { rimraf } from 'rimraf'
-import drain from 'it-drain'
 
 const pinnerProtocol = '/orbitdb/pinner/v1.0.0'
 
@@ -28,34 +29,6 @@ describe('Unpin', function () {
   describe('Single Client', function () {
     let client
 
-    const createPins = async length => {
-      const dbs = []
-
-      for (let i = 1; i <= length; i++) {
-        dbs.push(await client.open(`db${i}`))
-      }
-
-      const pinDBs = source => {
-        const values = [
-          uint8ArrayFromString(JSON.stringify({ message: Message.PIN, id: client.identity.id, addresses: dbs.map(p => p.address) }))
-        ]
-
-        return (async function * () {
-          for await (const value of values) {
-            yield value
-          }
-        })()
-      }
-
-      const stream = await client.ipfs.libp2p.dialProtocol(pinner.registry.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
-
-      await pipe(pinDBs, stream, async source => {
-        await drain(source)
-      })
-
-      return dbs
-    }
-
     beforeEach(async function () {
       client = await createClient()
     })
@@ -67,7 +40,7 @@ describe('Unpin', function () {
     })
 
     it('unpins a database', async function () {
-      const pins = await createPins(1)
+      const pins = await createPins(1, client, pinner)
 
       const unpinDBs = source => {
         const values = [
@@ -91,7 +64,7 @@ describe('Unpin', function () {
     })
 
     it('unpins multiple databases', async function () {
-      const pins = await createPins(2)
+      const pins = await createPins(2, client, pinner)
 
       const unpinDBs = source => {
         const values = [
@@ -115,7 +88,7 @@ describe('Unpin', function () {
     })
 
     it('unpins a database when multiple databases have been pinned', async function () {
-      const pins = await createPins(2)
+      const pins = await createPins(2, client, pinner)
 
       const unpinDBs = source => {
         const values = [
