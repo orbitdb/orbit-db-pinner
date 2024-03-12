@@ -41,7 +41,7 @@ const options = {
   }
 }
 
-const directory = join('./', 'server')
+const directory = join('./', 'pinner')
 const path = join(directory, '/', 'keystore')
 
 export default async () => {
