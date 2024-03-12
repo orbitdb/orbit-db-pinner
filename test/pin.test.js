@@ -1,14 +1,8 @@
 import { strictEqual } from 'assert'
-import { pipe } from 'it-pipe'
-import drain from 'it-drain'
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import Pinner from '../src/lib/pinner.js'
 import { createClient } from './utils/create-client.js'
 import { createPins } from './utils/create-pins.js'
-import Message from './utils/message-types.js'
 import { rimraf } from 'rimraf'
-
-const pinnerProtocol = '/orbitdb/pinner/v1.0.0'
 
 describe('Pin', function () {
   this.timeout(10000)

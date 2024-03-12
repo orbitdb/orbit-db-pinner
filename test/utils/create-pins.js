@@ -13,11 +13,19 @@ export const createPins = async (howMany, client, pinner) => {
   }
 
   const pinDBs = source => {
-    const values = [
-      uint8ArrayFromString(JSON.stringify({ message: Message.PIN, id: client.identity.id, addresses: dbs.map(p => p.address) }))
-    ]
-
     return (async function * () {
+      const identity = client.identity
+      const message = Message.PIN
+      const pubkey = client.identity.publicKey
+      const id = client.identity.id
+      const addresses = dbs.map(p => p.address)
+      const params = { id, addresses }
+      const signature = await identity.sign(identity, params)
+
+      const values = [
+        uint8ArrayFromString(JSON.stringify({ message, signature, pubkey, ...params }))
+      ]
+
       for await (const value of values) {
         yield value
       }

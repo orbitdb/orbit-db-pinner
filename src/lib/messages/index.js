@@ -11,10 +11,13 @@ export const Messages = Object.freeze({
 export const processMessage = (registry, pinnedDBs) => source => {
   return (async function * () {
     for await (const chunk of source) {
-      const { message, ...params } = JSON.parse(uint8ArrayToString(chunk.subarray()))
+      const { message, signature, pubkey, ...params } = JSON.parse(uint8ArrayToString(chunk.subarray()))
 
       const func = Messages[message]
       let response
+      if (!await registry.orbitdb.identity.verify(signature, pubkey, params)) {
+        throw new Error('invalid signature')
+      }
 
       if (func) {
         response = await func(registry, pinnedDBs, params)

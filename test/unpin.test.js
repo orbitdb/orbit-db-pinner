@@ -14,6 +14,26 @@ describe('Unpin', function () {
   this.timeout(10000)
 
   let pinner
+  
+  const unpinDBs = (client, pins) => source => {
+    return (async function * () {
+      const identity = client.identity
+      const message = Message.UNPIN
+      const pubkey = client.identity.publicKey
+      const id = client.identity.id
+      const addresses = pins.map(p => p.address)
+      const params = { id, addresses }
+      const signature = await identity.sign(identity, params)
+
+      const values = [
+        uint8ArrayFromString(JSON.stringify({ message, signature, pubkey, ...params }))
+      ]
+
+      for await (const value of values) {
+        yield value
+      }
+    })()
+  }  
 
   beforeEach(async function () {
     pinner = await Pinner()
@@ -42,21 +62,9 @@ describe('Unpin', function () {
     it('unpins a database', async function () {
       const pins = await createPins(1, client, pinner)
 
-      const unpinDBs = source => {
-        const values = [
-          uint8ArrayFromString(JSON.stringify({ message: Message.UNPIN, id: client.identity.id, addresses: pins.map(p => p.address) }))
-        ]
-
-        return (async function * () {
-          for await (const value of values) {
-            yield value
-          }
-        })()
-      }
-
       const stream = await client.ipfs.libp2p.dialProtocol(pinner.registry.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
 
-      await pipe(unpinDBs, stream, async source => {
+      await pipe(unpinDBs(client, pins), stream, async source => {
         await drain(source)
       })
 
@@ -66,21 +74,9 @@ describe('Unpin', function () {
     it('unpins multiple databases', async function () {
       const pins = await createPins(2, client, pinner)
 
-      const unpinDBs = source => {
-        const values = [
-          uint8ArrayFromString(JSON.stringify({ message: Message.UNPIN, id: client.identity.id, addresses: pins.map(p => p.address) }))
-        ]
-
-        return (async function * () {
-          for await (const value of values) {
-            yield value
-          }
-        })()
-      }
-
       const stream = await client.ipfs.libp2p.dialProtocol(pinner.registry.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
 
-      await pipe(unpinDBs, stream, async source => {
+      await pipe(unpinDBs(client, pins), stream, async source => {
         await drain(source)
       })
 
@@ -90,21 +86,9 @@ describe('Unpin', function () {
     it('unpins a database when multiple databases have been pinned', async function () {
       const pins = await createPins(2, client, pinner)
 
-      const unpinDBs = source => {
-        const values = [
-          uint8ArrayFromString(JSON.stringify({ message: Message.UNPIN, id: client.identity.id, addresses: [pins[0].address] }))
-        ]
-
-        return (async function * () {
-          for await (const value of values) {
-            yield value
-          }
-        })()
-      }
-
       const stream = await client.ipfs.libp2p.dialProtocol(pinner.registry.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
 
-      await pipe(unpinDBs, stream, async source => {
+      await pipe(unpinDBs(client, pins.slice(0, 1)), stream, async source => {
         await drain(source)
       })
 
