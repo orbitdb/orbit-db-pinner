@@ -2,7 +2,7 @@ import { strictEqual } from 'assert'
 import { pipe } from 'it-pipe'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import Pinner from '../src/lib/pinner.js'
-import Client from './utils/client.js'
+import { createClient } from './utils/create-client.js'
 import Message from './utils/message-types.js'
 import { rimraf } from 'rimraf'
 import drain from 'it-drain'
@@ -22,7 +22,7 @@ describe('Unpin', function () {
     await pinner.registry.orbitdb.ipfs.blockstore.child.child.close()
     await pinner.registry.orbitdb.ipfs.datastore.close()
     await pinner.stop()
-    await rimraf('./server')
+    await rimraf('./pinner')
   })
 
   describe('Single Client', function () {
@@ -57,7 +57,7 @@ describe('Unpin', function () {
     }
 
     beforeEach(async function () {
-      client = await Client()
+      client = await createClient()
     })
 
     afterEach(async function () {

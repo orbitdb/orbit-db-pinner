@@ -2,7 +2,7 @@ import { strictEqual } from 'assert'
 import { pipe } from 'it-pipe'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import Pinner from '../src/lib/pinner.js'
-import Client from './utils/client.js'
+import { createClient } from './utils/create-client.js'
 import Message from './utils/message-types.js'
 import { rimraf } from 'rimraf'
 import drain from 'it-drain'
@@ -22,12 +22,12 @@ describe('Pin', function () {
     await pinner.registry.orbitdb.ipfs.blockstore.child.child.close()
     await pinner.registry.orbitdb.ipfs.datastore.close()
     await pinner.stop()
-    await rimraf('./server')
+    await rimraf('./pinner')
   })
 
   describe('Single Client', function () {
     it('pins a database', async function () {
-      const client = await Client()
+      const client = await createClient()
 
       const db = await client.open('my-test-db')
 
@@ -57,7 +57,7 @@ describe('Pin', function () {
     })
 
     it('pins multiple databases', async function () {
-      const client = await Client()
+      const client = await createClient()
 
       const db1 = await client.open('db-1')
       const db2 = await client.open('db-2')
@@ -91,8 +91,8 @@ describe('Pin', function () {
 
   describe('Multiple Clients', function () {
     it('pins a database', async function () {
-      const client1 = await Client({ directory: './client1' })
-      const client2 = await Client({ directory: './client2' })
+      const client1 = await createClient({ directory: './client1' })
+      const client2 = await createClient({ directory: './client2' })
 
       const db1 = await client1.open('client-1-db')
       const db2 = await client2.open('client-2-db')
