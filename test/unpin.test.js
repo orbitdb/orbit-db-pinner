@@ -51,13 +51,14 @@ describe('Unpin', function () {
 
     beforeEach(async function () {
       client = await createClient()
+      await pinner.auth.add(client.identity.publicKey)
     })
 
     afterEach(async function () {
       await client.stop()
       await client.ipfs.stop()
       await rimraf('./client')
-    })
+    })    
 
     it('unpins a database', async function () {
       const pins = await createPins(1, client, pinner)

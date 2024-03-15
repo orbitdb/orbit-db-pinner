@@ -1,16 +1,20 @@
 import { pipe } from 'it-pipe'
 import Registry from './registry.js'
+import Authorization, { Access } from './authorization.js'
 import { processMessage } from './messages/index.js'
 
-export default async () => {
+export default async ({ defaultAccess } = {}) => {
   const protocol = '/orbitdb/pinner/v1.0.0'
 
+  defaultAccess = defaultAccess || Access.DENY
+
   const registry = await Registry()
+  const auth = await Authorization({ orbitdb: registry.orbitdb, defaultAccess })
 
   const dbs = []
 
   const handleMessage = async ({ stream }) => {
-    await pipe(stream, processMessage(registry, dbs), stream)
+    await pipe(stream, processMessage(auth, registry, dbs), stream)
   }
 
   for await (const db of registry.pins.iterator()) {
@@ -28,6 +32,7 @@ export default async () => {
 
   return {
     registry,
+    auth,
     dbs,
     stop
   }

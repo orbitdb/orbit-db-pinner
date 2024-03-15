@@ -21,43 +21,45 @@ describe('Pin', function () {
   })
 
   describe('Single Client', function () {
-    it('pins a database', async function () {
-      const client = await createClient()
+    let client
 
-      const dbs = await createPins(1, client, pinner)
-
-      strictEqual(Object.values(pinner.dbs).pop().address, dbs.pop().address)
-
+    beforeEach(async function () {
+      client = await createClient()
+      await pinner.auth.add(client.identity.publicKey)        
+    })
+    
+    afterEach(async function () {
       await client.stop()
       await client.ipfs.stop()
       await rimraf('./client')
     })
 
-    it('pins multiple databases', async function () {
-      const client = await createClient()
+    it('pins a database', async function () {
+      const dbs = await createPins(1, client, pinner)
 
+      strictEqual(Object.values(pinner.dbs).pop().address, dbs.pop().address)
+    })
+
+    it('pins multiple databases', async function () {
       const dbs = await createPins(2, client, pinner)
 
       strictEqual(Object.values(pinner.dbs)[0].address, dbs[0].address)
       strictEqual(Object.values(pinner.dbs)[1].address, dbs[1].address)
-
-      await client.stop()
-      await client.ipfs.stop()
-      await rimraf('./client')
     })
   })
 
   describe('Multiple Clients', function () {
-    it('pins a database', async function () {
-      const client1 = await createClient({ directory: './client1' })
-      const client2 = await createClient({ directory: './client2' })
+    let client1, client2
 
-      const dbs1 = await createPins(1, client1, pinner)
-      const dbs2 = await createPins(1, client2, pinner)
-
-      strictEqual(Object.values(pinner.dbs)[0].address, dbs1.pop().address)
-      strictEqual(Object.values(pinner.dbs)[1].address, dbs2.pop().address)
-
+    beforeEach(async function () {
+      client1 = await createClient({ directory: './client1' })
+      await pinner.auth.add(client1.identity.publicKey)
+      
+      client2 = await createClient({ directory: './client2' })
+      await pinner.auth.add(client2.identity.publicKey)
+    })
+  
+    afterEach(async function () {
       await client1.stop()
       await client1.ipfs.stop()
       await rimraf('./client1')
@@ -65,6 +67,14 @@ describe('Pin', function () {
       await client2.stop()
       await client2.ipfs.stop()
       await rimraf('./client2')
+    })
+      
+    it('pins a database', async function () {
+      const dbs1 = await createPins(1, client1, pinner)
+      const dbs2 = await createPins(1, client2, pinner)
+
+      strictEqual(Object.values(pinner.dbs)[0].address, dbs1.pop().address)
+      strictEqual(Object.values(pinner.dbs)[1].address, dbs2.pop().address)
     })
   })
 })
