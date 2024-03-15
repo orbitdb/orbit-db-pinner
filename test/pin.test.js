@@ -25,9 +25,9 @@ describe('Pin', function () {
 
     beforeEach(async function () {
       client = await createClient()
-      await pinner.auth.add(client.identity.publicKey)        
+      await pinner.auth.add(client.identity.publicKey)
     })
-    
+
     afterEach(async function () {
       await client.stop()
       await client.ipfs.stop()
@@ -54,11 +54,11 @@ describe('Pin', function () {
     beforeEach(async function () {
       client1 = await createClient({ directory: './client1' })
       await pinner.auth.add(client1.identity.publicKey)
-      
+
       client2 = await createClient({ directory: './client2' })
       await pinner.auth.add(client2.identity.publicKey)
     })
-  
+
     afterEach(async function () {
       await client1.stop()
       await client1.ipfs.stop()
@@ -68,7 +68,7 @@ describe('Pin', function () {
       await client2.ipfs.stop()
       await rimraf('./client2')
     })
-      
+
     it('pins a database', async function () {
       const dbs1 = await createPins(1, client1, pinner)
       const dbs2 = await createPins(1, client2, pinner)

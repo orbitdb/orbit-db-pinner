@@ -17,14 +17,14 @@ export const processMessage = (auth, registry, pinnedDBs) => source => {
       if (!await auth.hasAccess(pubkey)) {
         throw new Error('user is not authorized to pin')
       }
-      
+
       // verify that the params have come from the user who owns the pubkey.
       if (!await registry.orbitdb.identity.verify(signature, pubkey, params)) {
         throw new Error('invalid signature')
       }
-      
+
       const func = Messages[message]
-      
+
       let response
 
       if (func) {

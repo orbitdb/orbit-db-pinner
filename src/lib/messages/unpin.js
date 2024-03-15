@@ -1,45 +1,21 @@
 export default async (registry, pinnedDBs, params) => {
-  const removePin = async address => {
-    await registry.pins.del(address)
-  }
-
-  const removePinIndex = async (address, id) => {
-    const indexedIds = await registry.pinIndex.get(id)
-    if (indexedIds) {
-      const index = indexedIds.indexOf(address)
-      if (index > -1) {
-        indexedIds.splice(index, 1)
-      }
-
-      await registry.ids.set(id, indexedIds)
-    } else {
-      await registry.ids.del(id)
-    }
-  }
-
-  const removeId = async (id, address) => {
-    const indexedPins = await registry.ids.get(id)
-    if (indexedPins) {
-      const index = indexedPins.indexOf(address)
-      if (index > -1) {
-        indexedPins.splice(index, 1)
-      }
-
-      await registry.ids.set(id, indexedPins)
-    } else {
-      await registry.ids.del(id)
-    }
-  }
-
   const { id, addresses } = params
 
   for (const address of addresses) {
     try {
-      await removePin(address)
-      await removePinIndex(address, id)
+      const ids = await registry.pins.get(id)
+      if (ids) {
+        const index = ids.indexOf(address)
+        if (index > -1) {
+          ids.splice(index, 1)
+        }
 
-      if (!await registry.pinIndex.get(id) && !await registry.ids.get(id)) {
-        await removeId(id, address)
+        await registry.pins.set(address, ids)
+      } else {
+        await registry.pins.del(address)
+      }
+
+      if (!await registry.pins.get()) {
         await pinnedDBs[address].close()
         delete pinnedDBs[address]
         console.log(address, 'unpinned')

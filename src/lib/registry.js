@@ -7,10 +7,9 @@ import { tcp } from '@libp2p/tcp'
 import { webSockets } from '@libp2p/websockets'
 import { gossipsub } from '@chainsafe/libp2p-gossipsub'
 import { mdns } from '@libp2p/mdns'
-import { createOrbitDB, Identities, KeyStore, useDatabaseType } from '@orbitdb/core'
+import { createOrbitDB, Identities, KeyStore } from '@orbitdb/core'
 import { LevelBlockstore } from 'blockstore-level'
 import { LevelDatastore } from 'datastore-level'
-import { Set } from '@orbitdb/set-db'
 import { join } from 'path'
 
 const options = {
@@ -50,17 +49,13 @@ export default async () => {
   const libp2p = await createLibp2p(options)
   const ipfs = await createHelia({ libp2p, datastore, blockstore })
 
-  useDatabaseType(Set)
-
   const keystore = await KeyStore({ path })
   const identities = await Identities({ keystore })
   const id = 'pinner'
 
   const orbitdb = await createOrbitDB({ ipfs, directory, identities, id })
 
-  const ids = await orbitdb.open('ids', { type: 'keyvalue' })
-  const pinIndex = await orbitdb.open('pinIndex', { type: 'keyvalue' })
-  const pins = await orbitdb.open('pins', { type: 'set' })
+  const pins = await orbitdb.open('pins', { type: 'keyvalue' })
 
   const stop = async () => {
     await orbitdb.stop()
@@ -68,8 +63,6 @@ export default async () => {
   }
 
   return {
-    ids,
-    pinIndex,
     pins,
     orbitdb,
     stop

@@ -14,7 +14,7 @@ describe('Unpin', function () {
   this.timeout(10000)
 
   let pinner
-  
+
   const unpinDBs = (client, pins) => source => {
     return (async function * () {
       const identity = client.identity
@@ -33,7 +33,7 @@ describe('Unpin', function () {
         yield value
       }
     })()
-  }  
+  }
 
   beforeEach(async function () {
     pinner = await Pinner()
@@ -58,7 +58,7 @@ describe('Unpin', function () {
       await client.stop()
       await client.ipfs.stop()
       await rimraf('./client')
-    })    
+    })
 
     it('unpins a database', async function () {
       const pins = await createPins(1, client, pinner)
