@@ -32,7 +32,7 @@ export const createPins = async (howMany, client, pinner) => {
     })()
   }
 
-  const stream = await client.ipfs.libp2p.dialProtocol(pinner.registry.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
+  const stream = await client.ipfs.libp2p.dialProtocol(pinner.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
 
   await pipe(pinDBs, stream, async source => {
     await drain(source)

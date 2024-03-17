@@ -40,8 +40,8 @@ describe('Unpin', function () {
   })
 
   afterEach(async function () {
-    await pinner.registry.orbitdb.ipfs.blockstore.child.child.close()
-    await pinner.registry.orbitdb.ipfs.datastore.close()
+    await pinner.orbitdb.ipfs.blockstore.child.child.close()
+    await pinner.orbitdb.ipfs.datastore.close()
     await pinner.stop()
     await rimraf('./pinner')
   })
@@ -63,37 +63,39 @@ describe('Unpin', function () {
     it('unpins a database', async function () {
       const pins = await createPins(1, client, pinner)
 
-      const stream = await client.ipfs.libp2p.dialProtocol(pinner.registry.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
+      const stream = await client.ipfs.libp2p.dialProtocol(pinner.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
 
       await pipe(unpinDBs(client, pins), stream, async source => {
         await drain(source)
       })
 
+      strictEqual((await pinner.pins.all()).length, 0)
       strictEqual(Object.values(pinner.dbs).length, 0)
     })
 
     it('unpins multiple databases', async function () {
       const pins = await createPins(2, client, pinner)
 
-      const stream = await client.ipfs.libp2p.dialProtocol(pinner.registry.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
+      const stream = await client.ipfs.libp2p.dialProtocol(pinner.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
 
       await pipe(unpinDBs(client, pins), stream, async source => {
         await drain(source)
       })
 
+      strictEqual((await pinner.pins.all()).length, 0)
       strictEqual(Object.values(pinner.dbs).length, 0)
     })
 
     it('unpins a database when multiple databases have been pinned', async function () {
       const pins = await createPins(2, client, pinner)
 
-      const stream = await client.ipfs.libp2p.dialProtocol(pinner.registry.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
+      const stream = await client.ipfs.libp2p.dialProtocol(pinner.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
 
       await pipe(unpinDBs(client, pins.slice(0, 1)), stream, async source => {
         await drain(source)
       })
 
-      strictEqual(Object.values(pinner.dbs).length, 1)
+      strictEqual((await pinner.pins.all()).length, 1)
       strictEqual(Object.values(pinner.dbs).pop().address, pins[1].address)
     })
   })

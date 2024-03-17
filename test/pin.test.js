@@ -14,8 +14,8 @@ describe('Pin', function () {
   })
 
   afterEach(async function () {
-    await pinner.registry.orbitdb.ipfs.blockstore.child.child.close()
-    await pinner.registry.orbitdb.ipfs.datastore.close()
+    await pinner.orbitdb.ipfs.blockstore.child.child.close()
+    await pinner.orbitdb.ipfs.datastore.close()
     await pinner.stop()
     await rimraf('./pinner')
   })
@@ -36,7 +36,6 @@ describe('Pin', function () {
 
     it('pins a database', async function () {
       const dbs = await createPins(1, client, pinner)
-
       strictEqual(Object.values(pinner.dbs).pop().address, dbs.pop().address)
     })
 
