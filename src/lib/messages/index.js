@@ -8,29 +8,43 @@ export const Messages = Object.freeze({
   UNPIN: unpinMessage
 })
 
+export const Responses = Object.freeze({
+  OK: 0,
+  E_INVALID_SIGNATURE: 101,
+  E_NOT_AUTHORIZED: 200,
+  E_INTERNAL_ERROR: 300
+})
+
 export const processMessage = (pinner) => source => {
   return (async function * () {
     for await (const chunk of source) {
       const { message, signature, pubkey, ...params } = JSON.parse(uint8ArrayToString(chunk.subarray()))
-      // check that the user is authorized to store their dbs on this pinner.
-      if (!await pinner.auth.hasAccess(pubkey)) {
-        throw new Error('user is not authorized to pin')
-      }
+      
+      let response      
+      
+      try {
+        // check that the user is authorized to store their dbs on this pinner.
+        if (!await pinner.auth.hasAccess(pubkey)) {
+          throw new Error({ type: Messages.E_NOT_AUTHORIZED, response: 'user is not authorized to pin' })
+        }
 
-      // verify that the params have come from the user who owns the pubkey.
-      if (!await pinner.orbitdb.identity.verify(signature, pubkey, params)) {
-        throw new Error('invalid signature')
-      }
+        // verify that the params have come from the user who owns the pubkey.
+        if (!await pinner.orbitdb.identity.verify(signature, pubkey, params)) {
+          throw new Error({ type: Messages.E_INVALID_SIGNATURE, response: 'invalid signature' })
+        }
 
-      const func = Messages[message]
+        const func = Messages[message]
 
-      let response
-
-      if (func) {
-        response = await func(pinner, params)
+        if (func) {
+          await func(pinner, params)
+          response = { type: Responses.OK }
+        } else {
+          throw new Error({ type: Messages.E_INTERNAL_ERROR, response: `unknown function ${func}` })
+        }
+      } catch (err) {
+        response = err
+      } finally {
         yield uint8ArrayFromString(JSON.stringify(response))
-      } else {
-        throw new Error(`unknown function ${func}`)
       }
     }
   })()
