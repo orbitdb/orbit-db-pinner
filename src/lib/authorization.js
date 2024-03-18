@@ -8,7 +8,7 @@ export const Access = Object.freeze({
 
 export default async ({ orbitdb, defaultAccess }) => {
   defaultAccess = defaultAccess || Access.DENY
-  
+
   useDatabaseType(Set)
 
   const access = await orbitdb.open('access', { type: 'set' })

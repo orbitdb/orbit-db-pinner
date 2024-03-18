@@ -19,18 +19,18 @@ export const processMessage = (pinner) => source => {
   return (async function * () {
     for await (const chunk of source) {
       const { message, signature, pubkey, ...params } = JSON.parse(uint8ArrayToString(chunk.subarray()))
-      
-      let response      
-      
+
+      let response
+
       try {
         // check that the user is authorized to store their dbs on this pinner.
         if (!await pinner.auth.hasAccess(pubkey)) {
-          throw new Error({ type: Messages.E_NOT_AUTHORIZED, response: 'user is not authorized to pin' })
+          throw Object.assign(new Error('user is not authorized to pin'), { type: Responses.E_NOT_AUTHORIZED })
         }
 
         // verify that the params have come from the user who owns the pubkey.
         if (!await pinner.orbitdb.identity.verify(signature, pubkey, params)) {
-          throw new Error({ type: Messages.E_INVALID_SIGNATURE, response: 'invalid signature' })
+          throw Object.assign(new Error('invalid signature'), { type: Responses.E_INVALID_SIGNATURE })
         }
 
         const func = Messages[message]
@@ -39,10 +39,10 @@ export const processMessage = (pinner) => source => {
           await func(pinner, params)
           response = { type: Responses.OK }
         } else {
-          throw new Error({ type: Messages.E_INTERNAL_ERROR, response: `unknown function ${func}` })
+          throw Object.assign(new Error(`unknown function ${message}`), { type: Responses.E_INTERNAL_ERROR })
         }
       } catch (err) {
-        response = err
+        response = { type: err.type, response: err.message }
       } finally {
         yield uint8ArrayFromString(JSON.stringify(response))
       }

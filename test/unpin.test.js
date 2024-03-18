@@ -5,7 +5,7 @@ import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import Pinner from '../src/lib/pinner.js'
 import { createClient } from './utils/create-client.js'
 import { createPins } from './utils/create-pins.js'
-import Message from './utils/message-types.js'
+import { Messages } from './utils/message-types.js'
 import { rimraf } from 'rimraf'
 
 const pinnerProtocol = '/orbitdb/pinner/v1.0.0'
@@ -18,7 +18,7 @@ describe('Unpin', function () {
   const unpinDBs = (client, pins) => source => {
     return (async function * () {
       const identity = client.identity
-      const message = Message.UNPIN
+      const message = Messages.UNPIN
       const pubkey = client.identity.publicKey
       const id = client.identity.id
       const addresses = pins.map(p => p.address)

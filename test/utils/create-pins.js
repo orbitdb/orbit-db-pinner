@@ -1,11 +1,14 @@
 import { pipe } from 'it-pipe'
 import drain from 'it-drain'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import Message from './message-types.js'
+import { Messages } from './message-types.js'
 
 const pinnerProtocol = '/orbitdb/pinner/v1.0.0'
 
-export const createPins = async (howMany, client, pinner) => {
+export const createPins = async (howMany, client, pinner, sink) => {
+  const defaultSink = async (source) => { await drain(source) }
+  sink = sink || defaultSink
+
   const dbs = []
 
   for (let i = 1; i <= howMany; i++) {
@@ -15,7 +18,7 @@ export const createPins = async (howMany, client, pinner) => {
   const pinDBs = source => {
     return (async function * () {
       const identity = client.identity
-      const message = Message.PIN
+      const message = Messages.PIN
       const pubkey = client.identity.publicKey
       const id = client.identity.id
       const addresses = dbs.map(p => p.address)
@@ -34,9 +37,7 @@ export const createPins = async (howMany, client, pinner) => {
 
   const stream = await client.ipfs.libp2p.dialProtocol(pinner.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
 
-  await pipe(pinDBs, stream, async source => {
-    await drain(source)
-  })
+  await pipe(pinDBs, stream, sink)
 
   return dbs
 }

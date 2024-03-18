@@ -35,7 +35,7 @@ export default async ({ defaultAccess } = {}) => {
   const dbs = []
 
   const handleMessage = async ({ stream }) => {
-    await pipe(stream, processMessage({ orbitdb, pins, dbs, orbitdb, auth }), stream)
+    await pipe(stream, processMessage({ orbitdb, pins, dbs, auth }), stream)
   }
 
   for await (const db of pins.iterator()) {
