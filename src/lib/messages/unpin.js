@@ -2,10 +2,10 @@ export default async (pinner, params) => {
   const { id, addresses } = params
 
   for (const address of addresses) {
-    const ids = await pinner.pins.get(id)
+    const ids = await pinner.pins.get(address)
 
     if (ids) {
-      const index = ids.indexOf(address)
+      const index = ids.indexOf(id)
 
       if (index > -1) {
         ids.splice(index, 1)
