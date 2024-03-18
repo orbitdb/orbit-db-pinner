@@ -1,16 +1,16 @@
-export default async (pinner, params) => {
-  const { id, addresses } = params
+export default async ({ orbitdb, pins, dbs, pubkey, params }) => {
+  const { addresses } = params
 
   for (const address of addresses) {
-    let ids = await pinner.pins.get(address)
+    let pubkeys = await pins.get(address)
 
-    if (ids) {
-      ids.push(id)
+    if (pubkeys) {
+      pubkeys.push(pubkey)
     } else {
-      ids = [id]
+      pubkeys = [pubkey]
     }
 
-    pinner.dbs[address] = await pinner.orbitdb.open(address)
-    await pinner.pins.set(address, ids)
+    dbs[address] = await orbitdb.open(address)
+    await pins.set(address, pubkeys)
   }
 }

@@ -4,8 +4,8 @@ import pinMessage from './pin.js'
 import unpinMessage from './unpin.js'
 
 export const Messages = Object.freeze({
-  PIN: pinMessage,
-  UNPIN: unpinMessage
+  PIN: 0,
+  UNPIN: 1
 })
 
 export const Responses = Object.freeze({
@@ -33,13 +33,19 @@ export const processMessage = (pinner) => source => {
           throw Object.assign(new Error('invalid signature'), { type: Responses.E_INVALID_SIGNATURE })
         }
 
-        const func = Messages[message]
+        const { orbitdb, pins, dbs } = pinner
 
-        if (func) {
-          await func(pinner, params)
-          response = { type: Responses.OK }
-        } else {
-          throw Object.assign(new Error(`unknown function ${message}`), { type: Responses.E_INTERNAL_ERROR })
+        switch (message) {
+          case Messages.PIN:
+            await pinMessage({ orbitdb, pins, dbs, pubkey, params })
+            response = { type: Responses.OK }
+            break
+          case Messages.UNPIN:
+            await unpinMessage({ orbitdb, pins, dbs, pubkey, params })
+            response = { type: Responses.OK }
+            break
+          default:
+            throw Object.assign(new Error(`unknown function ${message}`), { type: Responses.E_INTERNAL_ERROR })
         }
       } catch (err) {
         response = { type: err.type, response: err.message }

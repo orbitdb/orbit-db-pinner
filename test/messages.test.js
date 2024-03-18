@@ -21,9 +21,8 @@ describe('Messages', function () {
       const identity = client.identity
       message = message || Messages.PIN
       const pubkey = client.identity.publicKey
-      const id = client.identity.id
       const addresses = [db.address]
-      const params = { id, addresses }
+      const params = { addresses }
       const signature = sign ? sign(params) : await identity.sign(identity, params)
 
       const values = [

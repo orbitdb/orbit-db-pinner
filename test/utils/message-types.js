@@ -1,6 +1,6 @@
 export const Messages = Object.freeze({
-  PIN: 'PIN',
-  UNPIN: 'UNPIN'
+  PIN: 0,
+  UNPIN: 1
 })
 
 export const Responses = Object.freeze({

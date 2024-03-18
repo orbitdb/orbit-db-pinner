@@ -1,24 +1,24 @@
-export default async (pinner, params) => {
-  const { id, addresses } = params
+export default async ({ orbitdb, pins, dbs, pubkey, params }) => {
+  const { addresses } = params
 
   for (const address of addresses) {
-    const ids = await pinner.pins.get(address)
+    const pubkeys = await pins.get(address)
 
-    if (ids) {
-      const index = ids.indexOf(id)
+    if (pubkeys && pubkeys.length > 1) {
+      const index = pubkeys.indexOf(pubkey)
 
       if (index > -1) {
-        ids.splice(index, 1)
+        pubkeys.splice(index, 1)
       }
 
-      await pinner.pins.set(address, ids)
+      await pins.set(address, pubkeys)
     } else {
-      await pinner.pins.del(address)
+      await pins.del(address)
     }
 
-    if (!await pinner.pins.get(address)) {
-      await pinner.dbs[address].close()
-      delete pinner.dbs[address]
+    if (!await pins.get(address)) {
+      await dbs[address].close()
+      delete dbs[address]
       console.log(address, 'unpinned')
     }
   }

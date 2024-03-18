@@ -20,9 +20,8 @@ describe('Unpin', function () {
       const identity = client.identity
       const message = Messages.UNPIN
       const pubkey = client.identity.publicKey
-      const id = client.identity.id
       const addresses = pins.map(p => p.address)
-      const params = { id, addresses }
+      const params = { addresses }
       const signature = await identity.sign(identity, params)
 
       const values = [

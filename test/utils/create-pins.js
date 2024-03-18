@@ -20,9 +20,8 @@ export const createPins = async (howMany, client, pinner, sink) => {
       const identity = client.identity
       const message = Messages.PIN
       const pubkey = client.identity.publicKey
-      const id = client.identity.id
       const addresses = dbs.map(p => p.address)
-      const params = { id, addresses }
+      const params = { addresses }
       const signature = await identity.sign(identity, params)
 
       const values = [
