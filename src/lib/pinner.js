@@ -5,7 +5,7 @@ import { createOrbitDB, Identities, KeyStore, KeyValueIndexed } from '@orbitdb/c
 import { LevelBlockstore } from 'blockstore-level'
 import { LevelDatastore } from 'datastore-level'
 import { join } from 'path'
-import libp2pConfig from './libp2p/index.js'
+import libp2pConfig from './libp2p/config.js'
 import Authorization, { Access } from './authorization.js'
 import { handleRequest } from './handlers/index.js'
 import { pinnerProtocol } from './protocol.js'
