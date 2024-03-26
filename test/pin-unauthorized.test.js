@@ -4,7 +4,7 @@ import { createClient } from './utils/create-client.js'
 import { createPins } from './utils/create-pins.js'
 import { rimraf } from 'rimraf'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
-import { Responses } from './utils/message-types.js'
+import { Responses } from '../src/lib/messages/index.js'
 import connectPeers from './utils/connect-nodes.js'
 
 describe('Pin - Unauthorized', function () {

@@ -1,7 +1,7 @@
 import { pipe } from 'it-pipe'
 import drain from 'it-drain'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { Messages } from './message-types.js'
+import { Messages } from '../../src/lib/messages/index.js'
 import { pinnerProtocol } from '../../src/lib/protocol.js'
 
 export const createPins = async (howMany, client, pinner, sink) => {

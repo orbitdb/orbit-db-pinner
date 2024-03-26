@@ -1,13 +1,12 @@
 import { deepStrictEqual } from 'assert'
 import Pinner from '../src/lib/pinner.js'
-import { processMessage } from '../src/lib/messages/index.js'
+import { processMessage, Messages, Responses } from '../src/lib/messages/index.js'
 import { createClient } from './utils/create-client.js'
 import { rimraf } from 'rimraf'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import { pipe } from 'it-pipe'
 import { Identities } from '@orbitdb/core'
-import { Messages, Responses } from './utils/message-types.js'
 import connectPeers from './utils/connect-nodes.js'
 
 describe('Messages', function () {
