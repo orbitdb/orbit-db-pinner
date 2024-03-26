@@ -28,7 +28,7 @@ export default async ({ orbitdb, defaultAccess }) => {
     for await (const a of access.iterator()) {
       if (a.value === id) {
         found = true
-        continue
+        break
       }
     }
 
