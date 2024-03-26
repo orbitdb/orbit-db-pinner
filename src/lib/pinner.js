@@ -1,7 +1,7 @@
 import { pipe } from 'it-pipe'
 import { createLibp2p } from 'libp2p'
 import { createHelia } from 'helia'
-import { createOrbitDB, Identities, KeyStore } from '@orbitdb/core'
+import { createOrbitDB, Identities, KeyStore, KeyValueIndexed } from '@orbitdb/core'
 import { LevelBlockstore } from 'blockstore-level'
 import { LevelDatastore } from 'datastore-level'
 import { join } from 'path'
@@ -27,7 +27,7 @@ export default async ({ defaultAccess } = {}) => {
 
   const orbitdb = await createOrbitDB({ ipfs, directory, identities, id })
 
-  const pins = await orbitdb.open('pins', { type: 'keyvalue' })
+  const pins = await orbitdb.open('pins', { Database: KeyValueIndexed() })
 
   const auth = await Authorization({ orbitdb, defaultAccess })
 
