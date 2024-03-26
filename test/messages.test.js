@@ -1,13 +1,12 @@
 import { deepStrictEqual } from 'assert'
 import Pinner from '../src/lib/pinner.js'
-import { processMessage } from '../src/lib/messages/index.js'
+import { Requests, Responses, createRequestMessage, parseMessage } from '../src/lib/messages/index.js'
+import { handleRequest } from '../src/lib/handlers/index.js'
 import { createClient } from './utils/create-client.js'
 import { rimraf } from 'rimraf'
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import { pipe } from 'it-pipe'
-import { Messages, Responses } from './utils/message-types.js'
 import { Identities } from '@orbitdb/core'
+import connectPeers from './utils/connect-nodes.js'
 
 describe('Messages', function () {
   this.timeout(10000)
@@ -16,40 +15,26 @@ describe('Messages', function () {
   let client
   let db
 
-  const pinDBs = ({ message, sign } = {}) => source => {
+  const pinDBs = ({ type, signer } = {}) => source => {
     return (async function * () {
-      const identity = client.identity
-      message = message || Messages.PIN
-      const pubkey = client.identity.publicKey
       const addresses = [db.address]
-      const params = { addresses }
-      const signature = sign ? sign(params) : await identity.sign(identity, params)
-
-      const values = [
-        uint8ArrayFromString(JSON.stringify({ message, signature, pubkey, ...params }))
-      ]
-
-      for await (const value of values) {
-        yield value
-      }
+      const message = await createRequestMessage(type || Requests.PIN, addresses, client.identity, signer)
+      yield message
     })()
   }
 
   beforeEach(async function () {
     pinner = await Pinner()
     client = await createClient()
-
+    await connectPeers(pinner.ipfs, client.ipfs)
     db = await client.open('db')
   })
 
   afterEach(async function () {
+    await pinner.stop()
     await client.stop()
     await client.ipfs.stop()
     await rimraf('./client')
-
-    await pinner.orbitdb.ipfs.blockstore.child.child.close()
-    await pinner.orbitdb.ipfs.datastore.close()
-    await pinner.stop()
     await rimraf('./pinner')
   })
 
@@ -58,23 +43,23 @@ describe('Messages', function () {
 
     const sink = async source => {
       for await (const chunk of source) {
-        const response = JSON.parse(uint8ArrayToString(chunk.subarray()))
+        const response = parseMessage(chunk.subarray())
         deepStrictEqual(response, { type: Responses.OK })
       }
     }
 
-    await pipe(pinDBs(), processMessage(pinner), sink)
+    await pipe(pinDBs(), handleRequest(pinner), sink)
   })
 
   it('pins a database with E_NOT_AUTHORIZED response', async function () {
     const sink = async source => {
       for await (const chunk of source) {
-        const response = JSON.parse(uint8ArrayToString(chunk.subarray()))
-        deepStrictEqual(response, { response: 'user is not authorized to pin', type: Responses.E_NOT_AUTHORIZED })
+        const response = parseMessage(chunk.subarray())
+        deepStrictEqual(response, { message: 'user is not authorized to pin', type: Responses.E_NOT_AUTHORIZED })
       }
     }
 
-    await pipe(pinDBs(), processMessage(pinner), sink)
+    await pipe(pinDBs(), handleRequest(pinner), sink)
   })
 
   it('pins a database with E_INVALID_SIGNATURE response', async function () {
@@ -82,16 +67,16 @@ describe('Messages', function () {
 
     const identities = await Identities({ path: './client/identities', ipfs: client.ipfs })
     const invalidIdentity = await identities.createIdentity({ id: 'client2' })
-    const sign = async params => { await invalidIdentity.sign(invalidIdentity, params) }
+    const createInvalidSignature = async addresses => invalidIdentity.sign(invalidIdentity, addresses)
 
     const sink = async source => {
       for await (const chunk of source) {
-        const response = JSON.parse(uint8ArrayToString(chunk.subarray()))
-        deepStrictEqual(response, { response: 'invalid signature', type: Responses.E_INVALID_SIGNATURE })
+        const response = parseMessage(chunk.subarray())
+        deepStrictEqual(response, { message: 'invalid signature', type: Responses.E_INVALID_SIGNATURE })
       }
     }
 
-    await pipe(pinDBs({ sign }), processMessage(pinner), sink)
+    await pipe(pinDBs({ signer: { sign: createInvalidSignature } }), handleRequest(pinner), sink)
   })
 
   it('tries to pin a database with non-existent message', async function () {
@@ -99,11 +84,11 @@ describe('Messages', function () {
 
     const sink = async source => {
       for await (const chunk of source) {
-        const response = JSON.parse(uint8ArrayToString(chunk.subarray()))
-        deepStrictEqual(response, { response: 'unknown function UNKNOWN', type: 300 })
+        const response = parseMessage(chunk.subarray())
+        deepStrictEqual(response, { message: 'unknown message type UNKNOWN', type: 300 })
       }
     }
 
-    await pipe(pinDBs({ message: 'UNKNOWN' }), processMessage(pinner), sink)
+    await pipe(pinDBs({ type: 'UNKNOWN' }), handleRequest(pinner), sink)
   })
 })

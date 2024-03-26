@@ -1,6 +1,4 @@
-export default async ({ orbitdb, pins, dbs, pubkey, params }) => {
-  const { addresses } = params
-
+export default async ({ orbitdb, pins, dbs, pubkey, addresses }) => {
   for (const address of addresses) {
     const pubkeys = await pins.get(address)
 
@@ -19,7 +17,6 @@ export default async ({ orbitdb, pins, dbs, pubkey, params }) => {
     if (!await pins.get(address)) {
       await dbs[address].close()
       delete dbs[address]
-      console.log(address, 'unpinned')
     }
   }
 }

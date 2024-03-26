@@ -11,8 +11,6 @@ describe('Authorization', function () {
   })
 
   after(async function () {
-    await pinner.orbitdb.ipfs.blockstore.child.child.close()
-    await pinner.orbitdb.ipfs.datastore.close()
     await pinner.stop()
     await rimraf('./pinner')
   })

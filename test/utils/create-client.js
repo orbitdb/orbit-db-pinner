@@ -40,7 +40,7 @@ const options = {
 export const createClient = async ({ directory } = {}) => {
   const libp2p = await createLibp2p({ ...options })
   const ipfs = await createHelia({ libp2p })
-  console.log(ipfs.libp2p.getMultiaddrs())
+  // console.log(ipfs.libp2p.getMultiaddrs())
 
   directory = directory || './client'
 

@@ -1,11 +1,9 @@
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import pinMessage from './pin.js'
-import unpinMessage from './unpin.js'
 
-export const Messages = Object.freeze({
-  PIN: 0,
-  UNPIN: 1
+export const Requests = Object.freeze({
+  PIN: 1,
+  UNPIN: 2
 })
 
 export const Responses = Object.freeze({
@@ -15,43 +13,25 @@ export const Responses = Object.freeze({
   E_INTERNAL_ERROR: 300
 })
 
-export const processMessage = (pinner) => source => {
-  return (async function * () {
-    for await (const chunk of source) {
-      const { message, signature, pubkey, ...params } = JSON.parse(uint8ArrayToString(chunk.subarray()))
+export const serialize = (message) => {
+  return uint8ArrayFromString(JSON.stringify(message))
+}
 
-      let response
+export const deserialize = (message) => {
+  return JSON.parse(uint8ArrayToString(message))
+}
 
-      try {
-        // check that the user is authorized to store their dbs on this pinner.
-        if (!await pinner.auth.hasAccess(pubkey)) {
-          throw Object.assign(new Error('user is not authorized to pin'), { type: Responses.E_NOT_AUTHORIZED })
-        }
+export const parseMessage = (bytes) => {
+  return deserialize(bytes)
+}
 
-        // verify that the params have come from the user who owns the pubkey.
-        if (!await pinner.orbitdb.identity.verify(signature, pubkey, params)) {
-          throw Object.assign(new Error('invalid signature'), { type: Responses.E_INVALID_SIGNATURE })
-        }
+export const createRequestMessage = async (type, addresses, identity, signer) => {
+  const pubkey = identity.publicKey
+  const signature = signer ? await signer.sign(addresses) : await identity.sign(identity, addresses)
+  return serialize({ type, pubkey, signature, addresses })
+}
 
-        const { orbitdb, pins, dbs } = pinner
-
-        switch (message) {
-          case Messages.PIN:
-            await pinMessage({ orbitdb, pins, dbs, pubkey, params })
-            response = { type: Responses.OK }
-            break
-          case Messages.UNPIN:
-            await unpinMessage({ orbitdb, pins, dbs, pubkey, params })
-            response = { type: Responses.OK }
-            break
-          default:
-            throw Object.assign(new Error(`unknown function ${message}`), { type: Responses.E_INTERNAL_ERROR })
-        }
-      } catch (err) {
-        response = { type: err.type, response: err.message }
-      } finally {
-        yield uint8ArrayFromString(JSON.stringify(response))
-      }
-    }
-  })()
+export const createResponseMessage = async (type, message) => {
+  const response = { type, message }
+  return serialize(response)
 }

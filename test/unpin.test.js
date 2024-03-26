@@ -1,14 +1,13 @@
 import { strictEqual } from 'assert'
+import { rimraf } from 'rimraf'
 import { pipe } from 'it-pipe'
 import drain from 'it-drain'
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import Pinner from '../src/lib/pinner.js'
+import { Requests, createRequestMessage } from '../src/lib/messages/index.js'
+import { pinnerProtocol } from '../src/lib/protocol.js'
 import { createClient } from './utils/create-client.js'
 import { createPins } from './utils/create-pins.js'
-import { Messages } from './utils/message-types.js'
-import { rimraf } from 'rimraf'
-
-const pinnerProtocol = '/orbitdb/pinner/v1.0.0'
+import connectPeers from './utils/connect-nodes.js'
 
 describe('Unpin', function () {
   this.timeout(10000)
@@ -17,20 +16,9 @@ describe('Unpin', function () {
 
   const unpinDBs = (client, pins) => source => {
     return (async function * () {
-      const identity = client.identity
-      const message = Messages.UNPIN
-      const pubkey = client.identity.publicKey
       const addresses = pins.map(p => p.address)
-      const params = { addresses }
-      const signature = await identity.sign(identity, params)
-
-      const values = [
-        uint8ArrayFromString(JSON.stringify({ message, signature, pubkey, ...params }))
-      ]
-
-      for await (const value of values) {
-        yield value
-      }
+      const message = await createRequestMessage(Requests.UNPIN, addresses, client.identity)
+      yield message
     })()
   }
 
@@ -39,8 +27,6 @@ describe('Unpin', function () {
   })
 
   afterEach(async function () {
-    await pinner.orbitdb.ipfs.blockstore.child.child.close()
-    await pinner.orbitdb.ipfs.datastore.close()
     await pinner.stop()
     await rimraf('./pinner')
   })
@@ -50,6 +36,7 @@ describe('Unpin', function () {
 
     beforeEach(async function () {
       client = await createClient()
+      await connectPeers(pinner.ipfs, client.ipfs)
       await pinner.auth.add(client.identity.publicKey)
     })
 

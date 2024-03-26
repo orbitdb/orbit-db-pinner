@@ -1,6 +1,4 @@
-export default async ({ orbitdb, pins, dbs, pubkey, params }) => {
-  const { addresses } = params
-
+export default async ({ orbitdb, pins, dbs, pubkey, addresses }) => {
   for (const address of addresses) {
     let pubkeys = await pins.get(address)
 
