@@ -2,8 +2,7 @@ import { pipe } from 'it-pipe'
 import drain from 'it-drain'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { Messages } from './message-types.js'
-
-const pinnerProtocol = '/orbitdb/pinner/v1.0.0'
+import { pinnerProtocol } from '../../src/lib/protocol.js'
 
 export const createPins = async (howMany, client, pinner, sink) => {
   const defaultSink = async (source) => { await drain(source) }

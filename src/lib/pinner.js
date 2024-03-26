@@ -8,13 +8,12 @@ import { join } from 'path'
 import libp2pConfig from './libp2p/index.js'
 import Authorization, { Access } from './authorization.js'
 import { processMessage } from './messages/index.js'
+import { pinnerProtocol } from './protocol.js'
 
 const directory = join('./', 'pinner')
 const path = join(directory, '/', 'keystore')
 
 export default async ({ defaultAccess } = {}) => {
-  const protocol = '/orbitdb/pinner/v1.0.0'
-
   defaultAccess = defaultAccess || Access.DENY
 
   const blockstore = new LevelBlockstore(join(directory, '/', 'ipfs', '/', 'blocks'))
@@ -38,7 +37,7 @@ export default async ({ defaultAccess } = {}) => {
     await pipe(stream, processMessage({ orbitdb, pins, dbs, auth }), stream)
   }
 
-  await orbitdb.ipfs.libp2p.handle(protocol, handleMessage)
+  await orbitdb.ipfs.libp2p.handle(pinnerProtocol, handleMessage)
 
   for await (const db of pins.iterator()) {
     dbs[db.value] = await orbitdb.open(db.value)
@@ -47,7 +46,7 @@ export default async ({ defaultAccess } = {}) => {
   console.log('dbs loaded')
 
   const stop = async () => {
-    await orbitdb.ipfs.libp2p.unhandle(protocol)
+    await orbitdb.ipfs.libp2p.unhandle(pinnerProtocol)
     await orbitdb.stop()
     await ipfs.stop()
     await blockstore.close()

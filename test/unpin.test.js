@@ -4,12 +4,11 @@ import { pipe } from 'it-pipe'
 import drain from 'it-drain'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import Pinner from '../src/lib/pinner.js'
+import { pinnerProtocol } from '../src/lib/protocol.js'
 import { createClient } from './utils/create-client.js'
 import { createPins } from './utils/create-pins.js'
 import { Messages } from './utils/message-types.js'
 import connectPeers from './utils/connect-nodes.js'
-
-const pinnerProtocol = '/orbitdb/pinner/v1.0.0'
 
 describe('Unpin', function () {
   this.timeout(10000)
