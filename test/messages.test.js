@@ -6,8 +6,9 @@ import { rimraf } from 'rimraf'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import { pipe } from 'it-pipe'
-import { Messages, Responses } from './utils/message-types.js'
 import { Identities } from '@orbitdb/core'
+import { Messages, Responses } from './utils/message-types.js'
+import connectPeers from './utils/connect-nodes.js'
 
 describe('Messages', function () {
   this.timeout(10000)
@@ -38,18 +39,15 @@ describe('Messages', function () {
   beforeEach(async function () {
     pinner = await Pinner()
     client = await createClient()
-
+    await connectPeers(pinner.ipfs, client.ipfs)
     db = await client.open('db')
   })
 
   afterEach(async function () {
+    await pinner.stop()
     await client.stop()
     await client.ipfs.stop()
     await rimraf('./client')
-
-    await pinner.orbitdb.ipfs.blockstore.child.child.close()
-    await pinner.orbitdb.ipfs.datastore.close()
-    await pinner.stop()
     await rimraf('./pinner')
   })
 
