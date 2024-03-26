@@ -7,7 +7,7 @@ import { LevelDatastore } from 'datastore-level'
 import { join } from 'path'
 import libp2pConfig from './libp2p/index.js'
 import Authorization, { Access } from './authorization.js'
-import { processMessage } from './messages/index.js'
+import { handleRequest } from './handlers/index.js'
 import { pinnerProtocol } from './protocol.js'
 
 const directory = join('./', 'pinner')
@@ -33,11 +33,11 @@ export default async ({ defaultAccess } = {}) => {
 
   const dbs = []
 
-  const handleMessage = async ({ stream }) => {
-    await pipe(stream, processMessage({ orbitdb, pins, dbs, auth }), stream)
+  const handleMessages = async ({ stream }) => {
+    await pipe(stream, handleRequest({ orbitdb, pins, dbs, auth }), stream)
   }
 
-  await orbitdb.ipfs.libp2p.handle(pinnerProtocol, handleMessage)
+  await orbitdb.ipfs.libp2p.handle(pinnerProtocol, handleMessages)
 
   for await (const db of pins.iterator()) {
     dbs[db.value] = await orbitdb.open(db.value)

@@ -1,7 +1,6 @@
 import { pipe } from 'it-pipe'
 import drain from 'it-drain'
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { Messages } from '../../src/lib/messages/index.js'
+import { Requests, createRequestMessage } from '../../src/lib/messages/index.js'
 import { pinnerProtocol } from '../../src/lib/protocol.js'
 
 export const createPins = async (howMany, client, pinner, sink) => {
@@ -16,20 +15,9 @@ export const createPins = async (howMany, client, pinner, sink) => {
 
   const pinDBs = source => {
     return (async function * () {
-      const identity = client.identity
-      const message = Messages.PIN
-      const pubkey = client.identity.publicKey
       const addresses = dbs.map(p => p.address)
-      const params = { addresses }
-      const signature = await identity.sign(identity, params)
-
-      const values = [
-        uint8ArrayFromString(JSON.stringify({ message, signature, pubkey, ...params }))
-      ]
-
-      for await (const value of values) {
-        yield value
-      }
+      const message = await createRequestMessage(Requests.PIN, addresses, client.identity)
+      yield message
     })()
   }
 
