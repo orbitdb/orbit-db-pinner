@@ -38,24 +38,27 @@ export default async ({ defaultAccess } = {}) => {
     await pipe(stream, processMessage({ orbitdb, pins, dbs, auth }), stream)
   }
 
+  await orbitdb.ipfs.libp2p.handle(protocol, handleMessage)
+
   for await (const db of pins.iterator()) {
     dbs[db.value] = await orbitdb.open(db.value)
     console.log('db opened', db.value)
   }
   console.log('dbs loaded')
 
-  await orbitdb.ipfs.libp2p.handle(protocol, handleMessage)
-
   const stop = async () => {
     await orbitdb.ipfs.libp2p.unhandle(protocol)
     await orbitdb.stop()
     await ipfs.stop()
+    await blockstore.close()
+    await datastore.close()
   }
 
   return {
     pins,
     dbs,
     orbitdb,
+    ipfs,
     auth,
     stop
   }
