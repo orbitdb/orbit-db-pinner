@@ -1,20 +1,19 @@
 import { pipe } from 'it-pipe'
 import { createLibp2p } from 'libp2p'
 import { createHelia } from 'helia'
-import { createOrbitDB, Identities, KeyStore } from '@orbitdb/core'
+import { createOrbitDB, Identities, KeyStore, KeyValueIndexed } from '@orbitdb/core'
 import { LevelBlockstore } from 'blockstore-level'
 import { LevelDatastore } from 'datastore-level'
 import { join } from 'path'
-import libp2pConfig from './libp2p/index.js'
+import libp2pConfig from './libp2p/config.js'
 import Authorization, { Access } from './authorization.js'
-import { processMessage } from './messages/index.js'
+import { handleRequest } from './handlers/index.js'
+import { pinnerProtocol } from './protocol.js'
 
 const directory = join('./', 'pinner')
 const path = join(directory, '/', 'keystore')
 
 export default async ({ defaultAccess } = {}) => {
-  const protocol = '/orbitdb/pinner/v1.0.0'
-
   defaultAccess = defaultAccess || Access.DENY
 
   const blockstore = new LevelBlockstore(join(directory, '/', 'ipfs', '/', 'blocks'))
@@ -28,15 +27,17 @@ export default async ({ defaultAccess } = {}) => {
 
   const orbitdb = await createOrbitDB({ ipfs, directory, identities, id })
 
-  const pins = await orbitdb.open('pins', { type: 'keyvalue' })
+  const pins = await orbitdb.open('pins', { Database: KeyValueIndexed() })
 
   const auth = await Authorization({ orbitdb, defaultAccess })
 
   const dbs = []
 
-  const handleMessage = async ({ stream }) => {
-    await pipe(stream, processMessage({ orbitdb, pins, dbs, auth }), stream)
+  const handleMessages = async ({ stream }) => {
+    await pipe(stream, handleRequest({ orbitdb, pins, dbs, auth }), stream)
   }
+
+  await orbitdb.ipfs.libp2p.handle(pinnerProtocol, handleMessages)
 
   for await (const db of pins.iterator()) {
     dbs[db.value] = await orbitdb.open(db.value)
@@ -44,18 +45,19 @@ export default async ({ defaultAccess } = {}) => {
   }
   console.log('dbs loaded')
 
-  await orbitdb.ipfs.libp2p.handle(protocol, handleMessage)
-
   const stop = async () => {
-    await orbitdb.ipfs.libp2p.unhandle(protocol)
+    await orbitdb.ipfs.libp2p.unhandle(pinnerProtocol)
     await orbitdb.stop()
     await ipfs.stop()
+    await blockstore.close()
+    await datastore.close()
   }
 
   return {
     pins,
     dbs,
     orbitdb,
+    ipfs,
     auth,
     stop
   }

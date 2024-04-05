@@ -1,8 +1,9 @@
 import { strictEqual } from 'assert'
+import { rimraf } from 'rimraf'
 import Pinner from '../src/lib/pinner.js'
 import { createClient } from './utils/create-client.js'
 import { createPins } from './utils/create-pins.js'
-import { rimraf } from 'rimraf'
+import connectPeers from './utils/connect-nodes.js'
 
 describe('Pin', function () {
   this.timeout(10000)
@@ -14,8 +15,6 @@ describe('Pin', function () {
   })
 
   afterEach(async function () {
-    await pinner.orbitdb.ipfs.blockstore.child.child.close()
-    await pinner.orbitdb.ipfs.datastore.close()
     await pinner.stop()
     await rimraf('./pinner')
   })
@@ -25,6 +24,7 @@ describe('Pin', function () {
 
     beforeEach(async function () {
       client = await createClient()
+      await connectPeers(pinner.ipfs, client.ipfs)
       await pinner.auth.add(client.identity.publicKey)
     })
 
@@ -52,9 +52,11 @@ describe('Pin', function () {
 
     beforeEach(async function () {
       client1 = await createClient({ directory: './client1' })
+      await connectPeers(pinner.ipfs, client1.ipfs)
       await pinner.auth.add(client1.identity.publicKey)
 
       client2 = await createClient({ directory: './client2' })
+      await connectPeers(pinner.ipfs, client2.ipfs)
       await pinner.auth.add(client2.identity.publicKey)
     })
 
