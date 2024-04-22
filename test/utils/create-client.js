@@ -8,6 +8,7 @@ import { webSockets } from '@libp2p/websockets'
 import { gossipsub } from '@chainsafe/libp2p-gossipsub'
 import { mdns } from '@libp2p/mdns'
 import { createOrbitDB } from '@orbitdb/core'
+import PinnerClient from '../../src/lib/client.js'
 
 const options = {
   peerDiscovery: [
@@ -37,12 +38,14 @@ const options = {
   }
 }
 
-export const createClient = async ({ directory } = {}) => {
+export const createClient = async ({ directory, pinnerAddressOrId } = {}) => {
   const libp2p = await createLibp2p({ ...options })
   const ipfs = await createHelia({ libp2p })
   // console.log(ipfs.libp2p.getMultiaddrs())
 
   directory = directory || './client'
 
-  return createOrbitDB({ ipfs, directory })
+  const orbitdb = await createOrbitDB({ ipfs, directory })
+
+  return await PinnerClient({ orbitdb, pinnerAddressOrId })
 }

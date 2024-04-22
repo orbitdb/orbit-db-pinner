@@ -13,17 +13,11 @@ describe('Unpin', function () {
   this.timeout(10000)
 
   let pinner
-
-  const unpinDBs = (client, pins) => source => {
-    return (async function * () {
-      const addresses = pins.map(p => p.address)
-      const message = await createRequestMessage(Requests.UNPIN, addresses, client.identity)
-      yield message
-    })()
-  }
+  let pinnerAddressOrId
 
   beforeEach(async function () {
     pinner = await Pinner()
+    pinnerAddressOrId = pinner.orbitdb.ipfs.libp2p.peerId
   })
 
   afterEach(async function () {
@@ -35,54 +29,45 @@ describe('Unpin', function () {
     let client
 
     beforeEach(async function () {
-      client = await createClient()
-      await connectPeers(pinner.ipfs, client.ipfs)
-      await pinner.auth.add(client.identity.publicKey)
+      client = await createClient({ pinnerAddressOrId })
+      await connectPeers(pinner.ipfs, client.orbitdb.ipfs)
+      await pinner.auth.add(client.orbitdb.identity.publicKey)
     })
 
     afterEach(async function () {
-      await client.stop()
-      await client.ipfs.stop()
+      await client.orbitdb.stop()
+      await client.orbitdb.ipfs.stop()
       await rimraf('./client')
     })
 
     it('unpins a database', async function () {
-      const pins = await createPins(1, client, pinner)
+      const { pinned, dbs } = await createPins(1, client, pinner)
 
-      const stream = await client.ipfs.libp2p.dialProtocol(pinner.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
+      const unpinned = await client.unpin(dbs)
 
-      await pipe(unpinDBs(client, pins), stream, async source => {
-        await drain(source)
-      })
-
+      strictEqual(unpinned, true)
       strictEqual((await pinner.pins.all()).length, 0)
       strictEqual(Object.values(pinner.dbs).length, 0)
     })
 
     it('unpins multiple databases', async function () {
-      const pins = await createPins(2, client, pinner)
+      const { pinned, dbs } = await createPins(2, client, pinner)
+      
+      const unpinned = await client.unpin(dbs)
 
-      const stream = await client.ipfs.libp2p.dialProtocol(pinner.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
-
-      await pipe(unpinDBs(client, pins), stream, async source => {
-        await drain(source)
-      })
-
+      strictEqual(unpinned, true)
       strictEqual((await pinner.pins.all()).length, 0)
       strictEqual(Object.values(pinner.dbs).length, 0)
     })
 
     it('unpins a database when multiple databases have been pinned', async function () {
-      const pins = await createPins(2, client, pinner)
+      const { pinned, dbs } = await createPins(2, client, pinner)
+      
+      const unpinned = await client.unpin(dbs.slice(0, 1))
 
-      const stream = await client.ipfs.libp2p.dialProtocol(pinner.orbitdb.ipfs.libp2p.peerId, pinnerProtocol)
-
-      await pipe(unpinDBs(client, pins.slice(0, 1)), stream, async source => {
-        await drain(source)
-      })
-
+      strictEqual(unpinned, true)
       strictEqual((await pinner.pins.all()).length, 1)
-      strictEqual(Object.values(pinner.dbs).pop().address, pins[1].address)
+      strictEqual(Object.values(pinner.dbs).pop().address, dbs[1].address)
     })
   })
 })

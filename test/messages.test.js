@@ -18,28 +18,29 @@ describe('Messages', function () {
   const pinDBs = ({ type, signer } = {}) => source => {
     return (async function * () {
       const addresses = [db.address]
-      const message = await createRequestMessage(type || Requests.PIN, addresses, client.identity, signer)
+      const message = await createRequestMessage(type || Requests.PIN, addresses, client.orbitdb.identity, signer)
       yield message
     })()
   }
 
   beforeEach(async function () {
     pinner = await Pinner()
-    client = await createClient()
-    await connectPeers(pinner.ipfs, client.ipfs)
-    db = await client.open('db')
+    const pinnerAddressOrId = pinner.orbitdb.ipfs.libp2p.peerId
+    client = await createClient({ pinnerAddressOrId })
+    await connectPeers(pinner.ipfs, client.orbitdb.ipfs)
+    db = await client.orbitdb.open('db')
   })
 
   afterEach(async function () {
     await pinner.stop()
-    await client.stop()
-    await client.ipfs.stop()
+    await client.orbitdb.stop()
+    await client.orbitdb.ipfs.stop()
     await rimraf('./client')
     await rimraf('./pinner')
   })
 
   it('pins a database with OK response', async function () {
-    await pinner.auth.add(client.identity.publicKey)
+    await pinner.auth.add(client.orbitdb.identity.publicKey)
 
     const sink = async source => {
       for await (const chunk of source) {
@@ -63,7 +64,7 @@ describe('Messages', function () {
   })
 
   it('pins a database with E_INVALID_SIGNATURE response', async function () {
-    await pinner.auth.add(client.identity.publicKey)
+    await pinner.auth.add(client.orbitdb.identity.publicKey)
 
     const identities = await Identities({ path: './client/identities', ipfs: client.ipfs })
     const invalidIdentity = await identities.createIdentity({ id: 'client2' })
@@ -80,7 +81,7 @@ describe('Messages', function () {
   })
 
   it('tries to pin a database with non-existent message', async function () {
-    await pinner.auth.add(client.identity.publicKey)
+    await pinner.auth.add(client.orbitdb.identity.publicKey)
 
     const sink = async source => {
       for await (const chunk of source) {
