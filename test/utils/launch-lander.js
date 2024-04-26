@@ -43,7 +43,7 @@ export const launchLander = async ({ directory, orbiterAddressOrId } = {}) => {
   const ipfs = await createHelia({ libp2p })
   // console.log(ipfs.libp2p.getMultiaddrs())
 
-  directory = directory || './client'
+  directory = directory || './lander'
 
   const orbitdb = await createOrbitDB({ ipfs, directory })
 
