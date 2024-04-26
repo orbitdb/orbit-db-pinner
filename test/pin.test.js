@@ -1,94 +1,94 @@
 import { strictEqual } from 'assert'
 import { rimraf } from 'rimraf'
-import Pinner from '../src/lib/pinner.js'
-import { createClient } from './utils/create-client.js'
+import Orbiter from '../src/lib/orbiter.js'
+import { launchLander } from './utils/launch-lander.js'
 import { createPins } from './utils/create-pins.js'
 import connectPeers from './utils/connect-nodes.js'
 
 describe('Pin', function () {
   this.timeout(10000)
 
-  let pinner
-  let pinnerAddressOrId
+  let orbiter
+  let orbiterAddressOrId
 
   beforeEach(async function () {
-    pinner = await Pinner()
-    pinnerAddressOrId = pinner.orbitdb.ipfs.libp2p.peerId
+    orbiter = await Orbiter()
+    orbiterAddressOrId = orbiter.orbitdb.ipfs.libp2p.peerId
   })
 
   afterEach(async function () {
-    await pinner.stop()
-    await rimraf('./pinner')
+    await orbiter.stop()
+    await rimraf('./orbiter')
   })
 
-  describe('Single Client', function () {
-    let client
+  describe('Single Transient Peer', function () {
+    let lander
 
     beforeEach(async function () {
-      client = await createClient({ pinnerAddressOrId })
-      await connectPeers(pinner.ipfs, client.orbitdb.ipfs)
-      await pinner.auth.add(client.orbitdb.identity.publicKey)
+      lander = await launchLander({ orbiterAddressOrId })
+      await connectPeers(orbiter.ipfs, lander.orbitdb.ipfs)
+      await orbiter.auth.add(lander.orbitdb.identity.publicKey)
     })
 
     afterEach(async function () {
-      await client.orbitdb.stop()
-      await client.orbitdb.ipfs.stop()
-      await rimraf('./client')
+      await lander.orbitdb.stop()
+      await lander.orbitdb.ipfs.stop()
+      await rimraf('./lander')
     })
 
     it('pins a database', async function () {
-      const { pinned, dbs } = await createPins(1, client, pinner)
+      const { pinned, dbs } = await createPins(1, lander, orbiter)
       
       strictEqual(pinned, true)
-      strictEqual(Object.values(pinner.dbs).pop().address, dbs.pop().address)
+      strictEqual(Object.values(orbiter.dbs).pop().address, dbs.pop().address)
     })
 
     it('pins multiple databases', async function () {
-      const { pinned, dbs } = await createPins(2, client, pinner)
+      const { pinned, dbs } = await createPins(2, lander, orbiter)
       
       strictEqual(pinned, true)
-      strictEqual(Object.values(pinner.dbs)[0].address, dbs[0].address)
-      strictEqual(Object.values(pinner.dbs)[1].address, dbs[1].address)
+      strictEqual(Object.values(orbiter.dbs)[0].address, dbs[0].address)
+      strictEqual(Object.values(orbiter.dbs)[1].address, dbs[1].address)
     })
     
     it('tries to pin a database when not authorized', async function () {
-      await pinner.auth.del(client.orbitdb.identity.publicKey)
-      const dbs = [await client.orbitdb.open('db')]
-      const pinned = await client.pin(dbs, pinner.orbitdb.ipfs.libp2p.peerId)
+      await orbiter.auth.del(lander.orbitdb.identity.publicKey)
+      const dbs = [await lander.orbitdb.open('db')]
+      const pinned = await lander.pin(dbs, orbiter.orbitdb.ipfs.libp2p.peerId)
 
       strictEqual(pinned, false)
     })    
   })
 
-  describe('Multiple Clients', function () {
-    let client1, client2
+  describe('Multiple Transient Peers', function () {
+    let lander1, lander2
 
     beforeEach(async function () {        
-      client1 = await createClient({ directory: './client1', pinnerAddressOrId })
-      await connectPeers(pinner.ipfs, client1.orbitdb.ipfs)
-      await pinner.auth.add(client1.orbitdb.identity.publicKey)
+      lander1 = await launchLander({ directory: './lander1', orbiterAddressOrId })
+      await connectPeers(orbiter.ipfs, lander1.orbitdb.ipfs)
+      await orbiter.auth.add(lander1.orbitdb.identity.publicKey)
 
-      client2 = await createClient({ directory: './client2', pinnerAddressOrId })
-      await connectPeers(pinner.ipfs, client2.orbitdb.ipfs)
-      await pinner.auth.add(client2.orbitdb.identity.publicKey)
+      lander2 = await launchLander({ directory: './lander2', orbiterAddressOrId })
+      await connectPeers(orbiter.ipfs, lander2.orbitdb.ipfs)
+      await orbiter.auth.add(lander2.orbitdb.identity.publicKey)
     })
 
     afterEach(async function () {
-      await client1.orbitdb.stop()
-      await client1.orbitdb.ipfs.stop()
-      await rimraf('./client1')
+      await lander1.orbitdb.stop()
+      await lander1.orbitdb.ipfs.stop()
+      await rimraf('./lander1')
 
-      await client2.orbitdb.stop()
-      await client2.orbitdb.ipfs.stop()
-      await rimraf('./client2')
+      await lander2.orbitdb.stop()
+      await lander2.orbitdb.ipfs.stop()
+      await rimraf('./lander2')
     })
 
     it('pins a database', async function () {
-      const { pinned: pinned1, dbs: dbs1 } = await createPins(1, client1, pinner)
-      const { pinned: pinned2, dbs: dbs2 } = await createPins(1, client2, pinner)
+      const { pinned: pinned1, dbs: dbs1 } = await createPins(1, lander1, orbiter)
+      const { pinned: pinned2, dbs: dbs2 } = await createPins(1, lander2, orbiter)
 
-      strictEqual(Object.values(pinner.dbs)[0].address, dbs1.pop().address)
-      strictEqual(Object.values(pinner.dbs)[1].address, dbs2.pop().address)
+      strictEqual(Object.values(orbiter.dbs)[0].address, dbs1.pop().address)
+      strictEqual(Object.values(orbiter.dbs)[1].address, dbs2.pop().address)
     })
   })
 })

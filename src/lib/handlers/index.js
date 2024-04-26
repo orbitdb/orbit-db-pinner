@@ -2,7 +2,7 @@ import handlePinRequest from './pin.js'
 import handleUnpinRequest from './unpin.js'
 import { createResponseMessage, parseMessage, Requests, Responses } from '../messages/index.js'
 
-export const handleRequest = (pinner) => source => {
+export const handleRequest = (orbiter) => source => {
   return (async function * () {
     for await (const chunk of source) {
       const { type, signature, pubkey, addresses } = parseMessage(chunk.subarray())
@@ -10,17 +10,17 @@ export const handleRequest = (pinner) => source => {
       let response
 
       try {
-        // check that the user is authorized to store their dbs on this pinner.
-        if (!await pinner.auth.hasAccess(pubkey)) {
+        // check that the user is authorized to store their dbs on this orbiter.
+        if (!await orbiter.auth.hasAccess(pubkey)) {
           throw Object.assign(new Error('user is not authorized to pin'), { type: Responses.E_NOT_AUTHORIZED })
         }
 
         // verify that the params have come from the user who owns the pubkey.
-        if (!await pinner.orbitdb.identity.verify(signature, pubkey, addresses)) {
+        if (!await orbiter.orbitdb.identity.verify(signature, pubkey, addresses)) {
           throw Object.assign(new Error('invalid signature'), { type: Responses.E_INVALID_SIGNATURE })
         }
 
-        const { orbitdb, pins, dbs } = pinner
+        const { orbitdb, pins, dbs } = orbiter
 
         switch (type) {
           case Requests.PIN:

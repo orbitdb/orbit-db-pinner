@@ -1,40 +1,40 @@
 import { strictEqual } from 'assert'
-import Pinner from '../src/lib/pinner.js'
+import Orbiter from '../src/lib/orbiter.js'
 import { Access } from '../src/lib/authorization.js'
 import { rimraf } from 'rimraf'
 
 describe('Authorization', function () {
-  let pinner
+  let orbiter
 
   before(async function () {
-    pinner = await Pinner()
+    orbiter = await Orbiter()
   })
 
   after(async function () {
-    await pinner.stop()
-    await rimraf('./pinner')
+    await orbiter.stop()
+    await rimraf('./orbiter')
   })
 
   it('defaults access to deny all', function () {
-    strictEqual(pinner.auth.defaultAccess, Access.DENY)
+    strictEqual(orbiter.auth.defaultAccess, Access.DENY)
   })
 
   it('sets default access as allow all', function () {
-    pinner.auth.defaultAccess = Access.ALLOW
-    strictEqual(pinner.auth.defaultAccess, Access.ALLOW)
+    orbiter.auth.defaultAccess = Access.ALLOW
+    strictEqual(orbiter.auth.defaultAccess, Access.ALLOW)
   })
 
   it('adds an authorized user', async function () {
     const id = '037ba2545db2e2ec0ba17fc9b35fbbf6bc09db82c9ab324521e62693e8aa96ceb4'
-    await pinner.auth.add(id)
+    await orbiter.auth.add(id)
 
-    strictEqual(await pinner.auth.hasAccess(id), true)
+    strictEqual(await orbiter.auth.hasAccess(id), true)
   })
 
   it('removes an authorized user', async function () {
     const id = '037ba2545db2e2ec0ba17fc9b35fbbf6bc09db82c9ab324521e62693e8aa96ceb4'
-    await pinner.auth.add(id)
-    await pinner.auth.del(id)
-    strictEqual(await pinner.auth.hasAccess(id), false)
+    await orbiter.auth.add(id)
+    await orbiter.auth.del(id)
+    strictEqual(await orbiter.auth.hasAccess(id), false)
   })
 })

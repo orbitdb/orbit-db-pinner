@@ -8,9 +8,9 @@ import { join } from 'path'
 import libp2pConfig from './libp2p/config.js'
 import Authorization, { Access } from './authorization.js'
 import { handleRequest } from './handlers/index.js'
-import { pinnerProtocol } from './protocol.js'
+import { voyagerProtocol } from './protocol.js'
 
-const directory = join('./', 'pinner')
+const directory = join('./', 'orbiter')
 const path = join(directory, '/', 'keystore')
 
 export default async ({ defaultAccess } = {}) => {
@@ -23,7 +23,7 @@ export default async ({ defaultAccess } = {}) => {
 
   const keystore = await KeyStore({ path })
   const identities = await Identities({ keystore })
-  const id = 'pinner'
+  const id = 'voyager'
 
   const orbitdb = await createOrbitDB({ ipfs, directory, identities, id })
 
@@ -37,7 +37,7 @@ export default async ({ defaultAccess } = {}) => {
     await pipe(stream, handleRequest({ orbitdb, pins, dbs, auth }), stream)
   }
 
-  await orbitdb.ipfs.libp2p.handle(pinnerProtocol, handleMessages)
+  await orbitdb.ipfs.libp2p.handle(voyagerProtocol, handleMessages)
 
   for await (const db of pins.iterator()) {
     dbs[db.value] = await orbitdb.open(db.value)
@@ -46,7 +46,7 @@ export default async ({ defaultAccess } = {}) => {
   console.log('dbs loaded')
 
   const stop = async () => {
-    await orbitdb.ipfs.libp2p.unhandle(pinnerProtocol)
+    await orbitdb.ipfs.libp2p.unhandle(voyagerProtocol)
     await orbitdb.stop()
     await ipfs.stop()
     await blockstore.close()

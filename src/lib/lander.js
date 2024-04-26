@@ -1,8 +1,8 @@
 import { pipe } from 'it-pipe'
 import { Requests, Responses, createRequestMessage, parseMessage } from './messages/index.js'
-import { pinnerProtocol } from './protocol.js'
+import { voyagerProtocol } from './protocol.js'
 
-export default async ({ orbitdb, pinnerAddressOrId }) => {
+export default async ({ orbitdb, orbiterAddressOrId }) => {
   const pin = async (dbs) => {
     let pinned = false
     const pinDBs = source => {
@@ -13,7 +13,7 @@ export default async ({ orbitdb, pinnerAddressOrId }) => {
       })()
     }
 
-    const stream = await orbitdb.ipfs.libp2p.dialProtocol(pinnerAddressOrId, pinnerProtocol)
+    const stream = await orbitdb.ipfs.libp2p.dialProtocol(orbiterAddressOrId, voyagerProtocol)
 
     await pipe(pinDBs, stream, async (source) => {
       for await (const chunk of source) {
@@ -39,7 +39,7 @@ export default async ({ orbitdb, pinnerAddressOrId }) => {
       })()
     }
 
-    const stream = await orbitdb.ipfs.libp2p.dialProtocol(pinnerAddressOrId, pinnerProtocol)
+    const stream = await orbitdb.ipfs.libp2p.dialProtocol(orbiterAddressOrId, voyagerProtocol)
 
     await pipe(unpinDBs, stream, async source => {
       for await (const chunk of source) {

@@ -1,11 +1,15 @@
 {
-  "name": "@orbitdb/pinner",
+  "name": "@orbitdb/voyager",
   "version": "1.0.0",
-  "description": "",
+  "description": "A pinning peer for OrbitDB databases.",
   "main": "./src/index.js",
   "type": "module",
   "author": "OrbitDB",
   "license": "MIT",
+  "exports": {
+    ".": "./src/index.js",
+    "./lander": "./src/lander.js"
+  },
   "dependencies": {
     "@chainsafe/libp2p-gossipsub": "^12.0.0",
     "@orbitdb/core": "^2.1.0",

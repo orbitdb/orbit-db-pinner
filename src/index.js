@@ -1,12 +1,12 @@
-import Pinner from './lib/pinner.js'
+import Orbiter from './lib/orbiter.js'
 
 const main = async () => {
-  const pinner = await Pinner()
+  const orbiter = await Orbiter()
 
-  console.log(pinner.registry.orbitdb.ipfs.libp2p.getMultiaddrs())
+  console.log(orbiter.registry.orbitdb.ipfs.libp2p.getMultiaddrs())
 
   process.on('SIGINT', async () => {
-    await pinner.stop()
+    await orbiter.stop()
     process.exit(0)
   })
 }
