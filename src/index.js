@@ -11,7 +11,7 @@ const main = async () => {
   }).option('verbose', {
     alias: 'v',
     description: 'Be more verbose. Outputs errors and other connection messages.'
-}).option('allow', {
+  }).option('allow', {
     alias: 'a',
     type: 'boolean',
     description: 'Allow anyone to pin a database. Defaults to false.'

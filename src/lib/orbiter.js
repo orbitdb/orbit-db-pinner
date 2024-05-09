@@ -11,10 +11,9 @@ import { handleRequest } from './handlers/index.js'
 import { voyagerProtocol } from './protocol.js'
 import { logger, enable } from '@libp2p/logger'
 
-
 export default async ({ directory, verbose, defaultAccess } = {}) => {
   const log = logger('orbitdb:voyager:orbiter')
-  
+
   directory = directory || join('./', 'orbiter')
 
   defaultAccess = defaultAccess || Access.DENY
@@ -22,9 +21,9 @@ export default async ({ directory, verbose, defaultAccess } = {}) => {
   if (verbose && verbose >= 1 && verbose <= 2) {
     enable('orbitdb:voyager:orbiter' + (verbose > 1 ? '*' : ':error'))
   }
-  
+
   log('directory:', directory)
-  
+
   log('default access:', defaultAccess === Access.ALLOW ? 'allow all' : 'deny all')
 
   const path = join(directory, '/', 'keystore')
