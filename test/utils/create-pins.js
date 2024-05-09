@@ -1,7 +1,3 @@
-import { pipe } from 'it-pipe'
-import drain from 'it-drain'
-import { Requests, createRequestMessage } from '../../src/lib/messages/index.js'
-
 export const createPins = async (howMany, lander) => {
   const dbs = []
 

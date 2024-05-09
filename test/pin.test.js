@@ -38,32 +38,32 @@ describe('Pin', function () {
 
     it('pins a database', async function () {
       const { pinned, dbs } = await createPins(1, lander, orbiter)
-      
+
       strictEqual(pinned, true)
       strictEqual(Object.values(orbiter.dbs).pop().address, dbs.pop().address)
     })
 
     it('pins multiple databases', async function () {
       const { pinned, dbs } = await createPins(2, lander, orbiter)
-      
+
       strictEqual(pinned, true)
       strictEqual(Object.values(orbiter.dbs)[0].address, dbs[0].address)
       strictEqual(Object.values(orbiter.dbs)[1].address, dbs[1].address)
     })
-    
+
     it('tries to pin a database when not authorized', async function () {
       await orbiter.auth.del(lander.orbitdb.identity.publicKey)
       const dbs = [await lander.orbitdb.open('db')]
       const pinned = await lander.pin(dbs, orbiter.orbitdb.ipfs.libp2p.peerId)
 
       strictEqual(pinned, false)
-    })    
+    })
   })
 
   describe('Multiple Transient Peers', function () {
     let lander1, lander2
 
-    beforeEach(async function () {        
+    beforeEach(async function () {
       lander1 = await launchLander({ directory: './lander1', orbiterAddressOrId })
       await connectPeers(orbiter.ipfs, lander1.orbitdb.ipfs)
       await orbiter.auth.add(lander1.orbitdb.identity.publicKey)
@@ -84,8 +84,8 @@ describe('Pin', function () {
     })
 
     it('pins a database', async function () {
-      const { pinned: pinned1, dbs: dbs1 } = await createPins(1, lander1, orbiter)
-      const { pinned: pinned2, dbs: dbs2 } = await createPins(1, lander2, orbiter)
+      const { dbs: dbs1 } = await createPins(1, lander1, orbiter)
+      const { dbs: dbs2 } = await createPins(1, lander2, orbiter)
 
       strictEqual(Object.values(orbiter.dbs)[0].address, dbs1.pop().address)
       strictEqual(Object.values(orbiter.dbs)[1].address, dbs2.pop().address)

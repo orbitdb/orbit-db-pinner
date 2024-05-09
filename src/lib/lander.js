@@ -18,19 +18,19 @@ export default async ({ orbitdb, orbiterAddressOrId }) => {
     await pipe(pinDBs, stream, async (source) => {
       for await (const chunk of source) {
         const message = parseMessage(chunk.subarray())
-        
+
         if (message.type === Responses.OK) {
           pinned = true
         }
       }
     })
-    
+
     return pinned
   }
-  
+
   const unpin = async (dbs) => {
     let unpinned = false
-    
+
     const unpinDBs = source => {
       return (async function * () {
         const addresses = dbs.map(p => p.address)
@@ -44,13 +44,13 @@ export default async ({ orbitdb, orbiterAddressOrId }) => {
     await pipe(unpinDBs, stream, async source => {
       for await (const chunk of source) {
         const message = parseMessage(chunk.subarray())
-          
+
         if (message.type === Responses.OK) {
           unpinned = true
         }
       }
     })
-    
+
     return unpinned
   }
 
@@ -60,4 +60,3 @@ export default async ({ orbitdb, orbiterAddressOrId }) => {
     unpin
   }
 }
-

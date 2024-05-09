@@ -1,9 +1,6 @@
 import { strictEqual } from 'assert'
 import { rimraf } from 'rimraf'
-import { pipe } from 'it-pipe'
-import drain from 'it-drain'
 import Orbiter from '../src/lib/orbiter.js'
-import { Requests, createRequestMessage } from '../src/lib/messages/index.js'
 import { launchLander } from './utils/launch-lander.js'
 import { createPins } from './utils/create-pins.js'
 import connectPeers from './utils/connect-nodes.js'
@@ -40,7 +37,7 @@ describe('Unpin', function () {
     })
 
     it('unpins a database', async function () {
-      const { pinned, dbs } = await createPins(1, lander, orbiter)
+      const { dbs } = await createPins(1, lander, orbiter)
 
       const unpinned = await lander.unpin(dbs)
 
@@ -50,8 +47,8 @@ describe('Unpin', function () {
     })
 
     it('unpins multiple databases', async function () {
-      const { pinned, dbs } = await createPins(2, lander, orbiter)
-      
+      const { dbs } = await createPins(2, lander, orbiter)
+
       const unpinned = await lander.unpin(dbs)
 
       strictEqual(unpinned, true)
@@ -60,8 +57,8 @@ describe('Unpin', function () {
     })
 
     it('unpins a database when multiple databases have been pinned', async function () {
-      const { pinned, dbs } = await createPins(2, lander, orbiter)
-      
+      const { dbs } = await createPins(2, lander, orbiter)
+
       const unpinned = await lander.unpin(dbs.slice(0, 1))
 
       strictEqual(unpinned, true)

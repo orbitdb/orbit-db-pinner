@@ -10,11 +10,14 @@ import Authorization, { Access } from './authorization.js'
 import { handleRequest } from './handlers/index.js'
 import { voyagerProtocol } from './protocol.js'
 
-const directory = join('./', 'orbiter')
-const path = join(directory, '/', 'keystore')
+export default async ({ directory, verbose, defaultAccess } = {}) => {
+  directory = directory || join('./', 'orbiter')
 
-export default async ({ defaultAccess } = {}) => {
   defaultAccess = defaultAccess || Access.DENY
+
+  verbose = verbose || 0
+
+  const path = join(directory, '/', 'keystore')
 
   const blockstore = new LevelBlockstore(join(directory, '/', 'ipfs', '/', 'blocks'))
   const datastore = new LevelDatastore(join(directory, '/', 'ipfs', '/', 'data'))
@@ -41,9 +44,10 @@ export default async ({ defaultAccess } = {}) => {
 
   for await (const db of pins.iterator()) {
     dbs[db.value] = await orbitdb.open(db.value)
-    console.log('db opened', db.value)
+    if (verbose === 3) console.log('db opened', db.value)
   }
-  console.log('dbs loaded')
+
+  if (verbose === 3) console.log(dbs.length, 'dbs loaded')
 
   const stop = async () => {
     await orbitdb.ipfs.libp2p.unhandle(voyagerProtocol)

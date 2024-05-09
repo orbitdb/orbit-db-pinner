@@ -7,7 +7,7 @@
   "author": "OrbitDB",
   "license": "MIT",
   "exports": {
-    ".": "./src/index.js",
+    "./orbiter": "./src/orbiter.js",
     "./lander": "./src/lander.js"
   },
   "dependencies": {
@@ -16,16 +16,19 @@
     "@orbitdb/set-db": "^1.0.0",
     "blockstore-level": "^1.1.8",
     "datastore-level": "^10.1.7",
-    "helia": "^4.0.1"
+    "helia": "^4.0.1",
+    "yargs": "^17.7.2"
   },
   "devDependencies": {
+    "c8": "^9.1.0",
     "it-drain": "^3.0.5",
     "mocha": "^10.3.0",
     "rimraf": "^5.0.5",
     "standard": "^17.1.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha -config ./test/.mocharc.json",
+    "test": "mocha -config ./test/.mocharc.json",
+    "test:ci": "c8 npm run test",
     "lint": "standard",
     "lint:fix": "standard --fix"
   },
