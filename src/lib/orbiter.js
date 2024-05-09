@@ -9,13 +9,23 @@ import libp2pConfig from './libp2p/config.js'
 import Authorization, { Access } from './authorization.js'
 import { handleRequest } from './handlers/index.js'
 import { voyagerProtocol } from './protocol.js'
+import { logger, enable } from '@libp2p/logger'
+
 
 export default async ({ directory, verbose, defaultAccess } = {}) => {
+  const log = logger('orbitdb:voyager:orbiter')
+  
   directory = directory || join('./', 'orbiter')
 
   defaultAccess = defaultAccess || Access.DENY
 
-  verbose = verbose || 0
+  if (verbose && verbose >= 1 && verbose <= 2) {
+    enable('orbitdb:voyager:orbiter' + (verbose > 1 ? '*' : ':error'))
+  }
+  
+  log('directory:', directory)
+  
+  log('default access:', defaultAccess === Access.ALLOW ? 'allow all' : 'deny all')
 
   const path = join(directory, '/', 'keystore')
 
@@ -23,6 +33,8 @@ export default async ({ directory, verbose, defaultAccess } = {}) => {
   const datastore = new LevelDatastore(join(directory, '/', 'ipfs', '/', 'data'))
   const libp2p = await createLibp2p(libp2pConfig)
   const ipfs = await createHelia({ libp2p, datastore, blockstore })
+
+  log('listening on', libp2p.getMultiaddrs())
 
   const keystore = await KeyStore({ path })
   const identities = await Identities({ keystore })
@@ -44,10 +56,10 @@ export default async ({ directory, verbose, defaultAccess } = {}) => {
 
   for await (const db of pins.iterator()) {
     dbs[db.value] = await orbitdb.open(db.value)
-    if (verbose === 3) console.log('db opened', db.value)
+    log('db opened', db.value)
   }
 
-  if (verbose === 3) console.log(dbs.length, 'dbs loaded')
+  log(dbs.length, 'dbs loaded')
 
   const stop = async () => {
     await orbitdb.ipfs.libp2p.unhandle(voyagerProtocol)
