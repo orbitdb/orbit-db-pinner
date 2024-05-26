@@ -3,19 +3,11 @@ import { noise } from '@chainsafe/libp2p-noise'
 import { yamux } from '@chainsafe/libp2p-yamux'
 import { webSockets } from '@libp2p/websockets'
 import { gossipsub } from '@chainsafe/libp2p-gossipsub'
-import { createFromPrivKey } from '@libp2p/peer-id-factory'
-import { unmarshalPrivateKey } from '@libp2p/crypto/keys'
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-
-const encoded = uint8ArrayFromString(process.env.PRIVATE_KEY, 'hex')
-const privateKey = await unmarshalPrivateKey(encoded)
-const peerId = await createFromPrivKey(privateKey)
 
 export default {
-  peerId,
   addresses: {
     listen: [
-      '/ip4/0.0.0.0/tcp/43301/ws'
+      '/ip4/0.0.0.0/tcp/0/ws'
     ]
   },
   transports: [

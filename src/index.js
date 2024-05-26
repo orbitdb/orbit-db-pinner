@@ -1,42 +1,78 @@
+#!/usr/bin/env node
+
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
-import Orbiter from './lib/orbiter.js'
-import { Access } from './lib/authorization.js'
+import { init, daemon, authAdd, authDel, authList } from './lib/commands/index.js'
 
-const main = async () => {
-  const argv = yargs(hideBin(process.argv)).option('directory', {
+yargs(hideBin(process.argv))
+  .scriptName('voyager')
+  .command(
+    'init',
+    'Initialize Voyager',
+    () => {},
+    async argv => {
+      await init(argv)
+      process.exit(0)
+    }
+  ).command(
+    'daemon',
+    'Launch Voyager',
+    () => {},
+    argv => {
+      daemon(argv)
+    })
+  .command('auth', 'Add/remove authorized addresses', yargs => {
+    yargs
+      .command(
+        'add <id>',
+        'Add an authorized address',
+        yargs => {
+          yargs.positional('id', {
+            describe: 'The id of the user who is allowed to pin one or more databases (or denied depending on default access settings).',
+            type: 'string'
+          })
+        },
+        async argv => {
+          await authAdd(argv)
+          process.exit(0)
+        })
+      .command(
+        'del <id>',
+        'Remove an authorized address',
+        yargs => {
+          yargs.positional('id', {
+            describe: 'The id of the user who will no longer be allowed to pin one or more databases (or denied depending on default access settings).',
+            type: 'string'
+          })
+        },
+        async argv => {
+          await authDel(argv)
+          process.exit(0)
+        })
+      .command(
+        'list',
+        'List authorized addresses',
+        () => {},
+        async argv => {
+          await authList(argv)
+          process.exit(0)
+        })
+      .demandCommand(1, 'Error: use add or remove')
+  })
+  .option('verbose', {
+    alias: 'v',
+    description: 'Be more verbose. Outputs errors and other connection messages. Use multiple -vvv for more verbose logging.',
+    type: 'count'
+  })
+  .option('directory', {
     alias: 'd',
     type: 'string',
     description: 'Specify a directory to store IPFS and OrbitDB data.'
-  }).option('verbose', {
-    alias: 'v',
-    description: 'Be more verbose. Outputs errors and other connection messages.'
   }).option('allow', {
     alias: 'a',
     type: 'boolean',
-    description: 'Allow anyone to pin a database. Defaults to false.'
-  }).parse()
-
-  const options = {}
-
-  if (argv.directory) {
-    options.directory = argv.directory
-  }
-
-  if (argv.allow) {
-    options.defaultAccess = Access.ALLOW
-  }
-
-  if (argv.verbose) {
-    options.verbose = Array.isArray(argv.verbose) ? argv.verbose.length : 1
-  }
-
-  const orbiter = await Orbiter(options)
-
-  process.on('SIGINT', async () => {
-    await orbiter.stop()
-    process.exit(0)
+    description: 'Allow anyone to pin a database. The default is false.'
   })
-}
-
-main()
+  .demandCommand(1, 'Error: specify a command.')
+  .help()
+  .parse()

@@ -14,13 +14,53 @@ Voyager, like OrbitDB, does not have a traditional server/client architecture an
 npm i @orbitdb/voyager
 ```
 
+## Running as a daemon
+
+Voyager's Orbiter (the pinning service) can be run as a daemon process.
+
+To use:
+
+```
+git clone https://github.com/orbitdb/orbit-db-pinner.git
+node . init 
+PRIVATE_KEY=0x123 node . daemon
+```
+
+where PRIVATE_KEY is a valid private key for deploying Orbiter with a deterministic peer id.
+
+## Interacting with the daemon
+
+You can interact with the Orbiter daemon using various command line calls.
+
+### Add an authorized public key to Orbiter
+
+```
+node . auth add <publickey>
+```
+
+where <publickey> identifies a user who can pin databases to this Orbiter.
+
+### Remove an authorized public key to Orbiter
+
+```
+node . auth del <publickey>
+```
+
+where <publickey> identifies a user who can pin databases to this Orbiter.
+
+### List authorized public keys
+
+```
+node . auth list
+```
+
 ## The OrbitDB Voyager Pinning Protocol
 
 The OrbitDB Voyager uses Libp2p to pin and unpin databases to and from the pinning service. A database can be pinned or unpinned by dialling the pinning protocol and issuing a message as part of the protocol's request.
 
 ### Pinning Protocol
 
-The pinning protocol is currently:
+The pinning protocol is:
 
 ```
 /orbitdb/voyager/v1.0.0

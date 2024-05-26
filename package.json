@@ -10,6 +10,9 @@
     "./orbiter": "./src/orbiter.js",
     "./lander": "./src/lander.js"
   },
+  "bin": {
+    "voyager": "./src/index.js"
+  },
   "dependencies": {
     "@chainsafe/libp2p-gossipsub": "^12.0.0",
     "@orbitdb/core": "^2.2.0",

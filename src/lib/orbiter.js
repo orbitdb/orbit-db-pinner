@@ -8,20 +8,25 @@ import { join } from 'path'
 import libp2pConfig from './libp2p/config.js'
 import Authorization, { Access } from './authorization.js'
 import { handleRequest } from './handlers/index.js'
-import { voyagerProtocol } from './protocol.js'
+import { handleControllerRequest } from './controller/handlers/index.js'
+import { voyagerProtocol, voyagerControllerProtocol } from './protocol.js'
 import { logger, enable } from '@libp2p/logger'
+import { app, orbiter, orbiterPath } from './utils/id.js'
 
 export default async ({ directory, verbose, defaultAccess } = {}) => {
   const log = logger('orbitdb:voyager:orbiter')
+  const id = orbiter
 
-  directory = directory || join('./', 'orbiter')
+  directory = orbiterPath(directory)
 
   defaultAccess = defaultAccess || Access.DENY
 
-  if (verbose && verbose >= 1 && verbose <= 2) {
+  if (verbose > 0) {
     enable('orbitdb:voyager:orbiter' + (verbose > 1 ? '*' : ':error'))
   }
-
+ 
+  log('app:', app)
+  log('id:', id)
   log('directory:', directory)
 
   log('default access:', defaultAccess === Access.ALLOW ? 'allow all' : 'deny all')
@@ -37,7 +42,6 @@ export default async ({ directory, verbose, defaultAccess } = {}) => {
 
   const keystore = await KeyStore({ path })
   const identities = await Identities({ keystore })
-  const id = 'voyager'
 
   const orbitdb = await createOrbitDB({ ipfs, directory, identities, id })
 
@@ -51,7 +55,12 @@ export default async ({ directory, verbose, defaultAccess } = {}) => {
     await pipe(stream, handleRequest({ orbitdb, pins, dbs, auth }), stream)
   }
 
+  const handleControllerMessages = async ({ stream }) => {
+    await pipe(stream, handleControllerRequest({ orbitdb, pins, dbs, auth }), stream)
+  }
+
   await orbitdb.ipfs.libp2p.handle(voyagerProtocol, handleMessages)
+  await orbitdb.ipfs.libp2p.handle(voyagerControllerProtocol, handleControllerMessages)
 
   for await (const db of pins.iterator()) {
     dbs[db.value] = await orbitdb.open(db.value)

@@ -6,6 +6,12 @@ export const Requests = Object.freeze({
   UNPIN: 2
 })
 
+export const ControllerRequests = Object.freeze({
+  AUTH_ADD: 1,
+  AUTH_DEL: 2,
+  AUTH_LIST: 3
+})
+
 export const Responses = Object.freeze({
   OK: 0,
   E_INVALID_SIGNATURE: 101,
