@@ -12,7 +12,7 @@ describe('Authorization', function () {
 
   after(async function () {
     await orbiter.stop()
-    await rimraf('./orbiter')
+    await rimraf('./voyager')
   })
 
   it('defaults access to deny all', function () {

@@ -36,7 +36,7 @@ describe('Messages', function () {
     await lander.orbitdb.stop()
     await lander.orbitdb.ipfs.stop()
     await rimraf('./lander')
-    await rimraf('./orbiter')
+    await rimraf('./voyager')
   })
 
   it('pins a database with OK response', async function () {

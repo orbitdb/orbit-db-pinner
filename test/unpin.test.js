@@ -18,7 +18,7 @@ describe('Unpin', function () {
 
   afterEach(async function () {
     await orbiter.stop()
-    await rimraf('./orbiter')
+    await rimraf('./voyager')
   })
 
   describe('Single Transient Peer', function () {
@@ -37,7 +37,7 @@ describe('Unpin', function () {
     })
 
     it('unpins a database', async function () {
-      const { dbs } = await createPins(1, lander, orbiter)
+      const { dbs } = await createPins(1, lander)
 
       const unpinned = await lander.unpin(dbs)
 
@@ -47,7 +47,7 @@ describe('Unpin', function () {
     })
 
     it('unpins multiple databases', async function () {
-      const { dbs } = await createPins(2, lander, orbiter)
+      const { dbs } = await createPins(2, lander)
 
       const unpinned = await lander.unpin(dbs)
 
@@ -57,7 +57,7 @@ describe('Unpin', function () {
     })
 
     it('unpins a database when multiple databases have been pinned', async function () {
-      const { dbs } = await createPins(2, lander, orbiter)
+      const { dbs } = await createPins(2, lander)
 
       const unpinned = await lander.unpin(dbs.slice(0, 1))
 

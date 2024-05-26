@@ -7,9 +7,13 @@ import { createFromPrivKey } from '@libp2p/peer-id-factory'
 import { unmarshalPrivateKey } from '@libp2p/crypto/keys'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 
-const encoded = uint8ArrayFromString(process.env.PRIVATE_KEY, 'hex')
-const privateKey = await unmarshalPrivateKey(encoded)
-const peerId = await createFromPrivKey(privateKey)
+let peerId
+
+if (process.env.PRIVATE_KEY) {
+  const encoded = uint8ArrayFromString(process.env.PRIVATE_KEY, 'hex')
+  const privateKey = await unmarshalPrivateKey(encoded)
+  peerId = await createFromPrivKey(privateKey)
+}
 
 export default {
   peerId,

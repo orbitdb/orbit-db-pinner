@@ -18,7 +18,7 @@ describe('Pin', function () {
 
   afterEach(async function () {
     await orbiter.stop()
-    await rimraf('./orbiter')
+    await rimraf('./voyager')
   })
 
   describe('Single Transient Peer', function () {
@@ -37,14 +37,14 @@ describe('Pin', function () {
     })
 
     it('pins a database', async function () {
-      const { pinned, dbs } = await createPins(1, lander, orbiter)
+      const { pinned, dbs } = await createPins(1, lander)
 
       strictEqual(pinned, true)
       strictEqual(Object.values(orbiter.dbs).pop().address, dbs.pop().address)
     })
 
     it('pins multiple databases', async function () {
-      const { pinned, dbs } = await createPins(2, lander, orbiter)
+      const { pinned, dbs } = await createPins(2, lander)
 
       strictEqual(pinned, true)
       strictEqual(Object.values(orbiter.dbs)[0].address, dbs[0].address)
@@ -84,8 +84,8 @@ describe('Pin', function () {
     })
 
     it('pins a database', async function () {
-      const { dbs: dbs1 } = await createPins(1, lander1, orbiter)
-      const { dbs: dbs2 } = await createPins(1, lander2, orbiter)
+      const { dbs: dbs1 } = await createPins(1, lander1)
+      const { dbs: dbs2 } = await createPins(1, lander2)
 
       strictEqual(Object.values(orbiter.dbs)[0].address, dbs1.pop().address)
       strictEqual(Object.values(orbiter.dbs)[1].address, dbs2.pop().address)
