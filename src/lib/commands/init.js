@@ -10,12 +10,12 @@ import { orbiter, controller, orbiterPath, controllerPath } from '../utils/id.js
 
 export default async (argv) => {
   const id = orbiter
-    
+
   const directory = orbiterPath(argv.directory)
   const path = join(directory, 'keystore')
   const keystore = await KeyStore({ path })
   const identities = await Identities({ keystore })
-  const identity = await identities.createIdentity({ id })
+  await identities.createIdentity({ id })
 
   const blockstore = new LevelBlockstore(join(directory, 'ipfs', 'blocks'))
   const datastore = new LevelDatastore(join(directory, 'ipfs', 'data'))
@@ -25,19 +25,19 @@ export default async (argv) => {
   const orbitdb = await createOrbitDB({ ipfs, directory, identities, id })
 
   const addresses = libp2p.getMultiaddrs()
-  
+
   const controllerPubKey = await initController({ addresses, rootDir: argv.directory })
-  
+
   const config = await orbitdb.open('config', { type: 'keyvalue' })
   await config.put('controller-pubkey', controllerPubKey)
   await orbitdb.stop()
-    
+
   return { addresses }
 }
 
 const initController = async ({ addresses, rootDir }) => {
   const id = controller
-  
+
   const directory = controllerPath(rootDir)
   const path = join(directory, 'keystore')
   const keystore = await KeyStore({ path })

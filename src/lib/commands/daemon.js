@@ -1,4 +1,5 @@
 import Orbiter from '../orbiter.js'
+import { Access } from './authentication.js'
 
 export default async (argv) => {
   const options = {}

@@ -14,7 +14,7 @@ export const handleControllerRequest = (orbiter) => source => {
         const { auth, orbitdb } = orbiter
 
         const config = await orbitdb.open('config', { type: 'keyvalue' })
-        const controllerPubKey = await config.get('controller-pubkey')        
+        const controllerPubKey = await config.get('controller-pubkey')
         await config.close()
 
         // check that the user is authorized to store their dbs on this orbiter.
@@ -36,10 +36,11 @@ export const handleControllerRequest = (orbiter) => source => {
             await handleAuthDelRequest({ auth, addresses })
             response = createResponseMessage(Responses.OK)
             break
-          case ControllerRequests.AUTH_LIST:
+          case ControllerRequests.AUTH_LIST: {
             const list = await handleAuthListRequest({ auth })
             response = createResponseMessage(Responses.OK, list)
             break
+          }
           default:
             throw Object.assign(new Error(`unknown message type ${type}`), { type: Responses.E_INTERNAL_ERROR })
         }

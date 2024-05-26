@@ -24,7 +24,7 @@ export default async ({ directory, verbose, defaultAccess } = {}) => {
   if (verbose > 0) {
     enable('orbitdb:voyager:orbiter' + (verbose > 1 ? '*' : ':error'))
   }
- 
+
   log('app:', app)
   log('id:', id)
   log('directory:', directory)

@@ -13,4 +13,3 @@ export const controllerPath = (rootDir) => {
   rootDir = rootDir || '.'
   return join(rootDir, app, controller)
 }
-    
