@@ -2,19 +2,11 @@
 
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
-import { init, daemon, authAdd, authDel, authList } from './lib/commands/index.js'
+import { daemon, authAdd, authDel, authList } from './lib/commands/index.js'
 
 yargs(hideBin(process.argv))
   .scriptName('voyager')
   .command(
-    'init',
-    'Initialize Voyager',
-    () => {},
-    async argv => {
-      await init(argv)
-      process.exit(0)
-    }
-  ).command(
     'daemon',
     'Launch Voyager',
     () => {},

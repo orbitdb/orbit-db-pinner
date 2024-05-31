@@ -11,15 +11,10 @@ export const handleControllerRequest = (orbiter) => source => {
       let response
 
       try {
-        const { auth, orbitdb } = orbiter
-
-        const config = await orbitdb.open('config', { type: 'keyvalue' })
-        const controllerPubKey = await config.get('controller-pubkey')
-        await config.close()
-
+        const { auth, config } = orbiter
         // check that the user is authorized to store their dbs on this orbiter.
-        if (pubkey !== controllerPubKey) {
-          throw Object.assign(new Error('user is not authorized to pin'), { type: Responses.E_NOT_AUTHORIZED })
+        if (pubkey !== config.controller.publicKey) {
+          throw Object.assign(new Error('user is not authorized'), { type: Responses.E_NOT_AUTHORIZED })
         }
 
         // verify that the params have come from the user who owns the pubkey.
