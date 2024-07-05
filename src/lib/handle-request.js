@@ -1,6 +1,6 @@
-import handlePinRequest from './pin.js'
-import handleUnpinRequest from './unpin.js'
-import { createResponseMessage, parseMessage, Requests, Responses } from '../messages/index.js'
+import handlePinRequest from './handlers/pin.js'
+import handleUnpinRequest from './handlers/unpin.js'
+import { createResponseMessage, parseMessage, Requests, Responses } from './messages/index.js'
 
 export const handleRequest = (orbiter) => source => {
   return (async function * () {
@@ -16,7 +16,7 @@ export const handleRequest = (orbiter) => source => {
         }
 
         // verify that the params have come from the user who owns the pubkey.
-        if (!await orbiter.orbitdb.identity.verify(signature, pubkey, addresses)) {
+        if (!await orbiter.orbitdb.identity.verify(signature, pubkey, JSON.stringify(addresses))) {
           throw Object.assign(new Error('invalid signature'), { type: Responses.E_INVALID_SIGNATURE })
         }
 

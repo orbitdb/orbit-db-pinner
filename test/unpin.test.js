@@ -1,38 +1,33 @@
 import { strictEqual } from 'assert'
 import { rimraf } from 'rimraf'
-import Orbiter from '../src/lib/orbiter.js'
 import { launchLander } from './utils/launch-lander.js'
+import { launchOrbiter } from './utils/launch-orbiter.js'
 import { createPins } from './utils/create-pins.js'
-import connectPeers from './utils/connect-nodes.js'
 
 describe('Unpin', function () {
   this.timeout(10000)
 
   let orbiter
-  let orbiterAddressOrId
 
   beforeEach(async function () {
-    orbiter = await Orbiter()
-    orbiterAddressOrId = orbiter.orbitdb.ipfs.libp2p.peerId
+    orbiter = await launchOrbiter()
   })
 
   afterEach(async function () {
-    await orbiter.stop()
-    await rimraf('./voyager')
+    await orbiter.shutdown()
+    await rimraf('./orbiter')
   })
 
   describe('Single Transient Peer', function () {
     let lander
 
     beforeEach(async function () {
-      lander = await launchLander({ orbiterAddressOrId })
-      await connectPeers(orbiter.ipfs, lander.orbitdb.ipfs)
+      lander = await launchLander({ orbiter })
       await orbiter.auth.add(lander.orbitdb.identity.publicKey)
     })
 
     afterEach(async function () {
-      await lander.orbitdb.stop()
-      await lander.orbitdb.ipfs.stop()
+      await lander.shutdown()
       await rimraf('./lander')
     })
 

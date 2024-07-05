@@ -1,3 +1,3 @@
 export default async ({ auth }) => {
-  return await auth.all()
+  return auth.all()
 }

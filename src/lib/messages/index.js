@@ -6,12 +6,6 @@ export const Requests = Object.freeze({
   UNPIN: 2
 })
 
-export const ControllerRequests = Object.freeze({
-  AUTH_ADD: 1,
-  AUTH_DEL: 2,
-  AUTH_LIST: 3
-})
-
 export const Responses = Object.freeze({
   OK: 0,
   E_INVALID_SIGNATURE: 101,
@@ -33,7 +27,9 @@ export const parseMessage = (bytes) => {
 
 export const createRequestMessage = async (type, addresses, identity, signer) => {
   const pubkey = identity.publicKey
-  const signature = signer ? await signer.sign(addresses) : await identity.sign(identity, addresses)
+  const signature = signer
+    ? await signer.sign(JSON.stringify(addresses))
+    : await identity.sign(identity, JSON.stringify(addresses))
   return serialize({ type, pubkey, signature, addresses })
 }
 

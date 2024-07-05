@@ -2,7 +2,7 @@ import { join } from 'path'
 
 export const app = 'voyager'
 export const orbiter = 'orbiter'
-export const controller = 'controller'
+export const rpc = 'rpc'
 
 export const appPath = (rootDir) => {
   rootDir = rootDir || '.'
@@ -14,7 +14,7 @@ export const orbiterPath = (rootDir) => {
   return join(appPath(rootDir), orbiter)
 }
 
-export const controllerPath = (rootDir) => {
+export const rpcPath = (rootDir) => {
   rootDir = rootDir || '.'
-  return join(appPath(rootDir), controller)
+  return join(appPath(rootDir), rpc)
 }

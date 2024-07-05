@@ -1,12 +1,11 @@
 import { deepStrictEqual } from 'assert'
-import Orbiter from '../src/lib/orbiter.js'
 import { Requests, Responses, createRequestMessage, parseMessage } from '../src/lib/messages/index.js'
-import { handleRequest } from '../src/lib/handlers/index.js'
+import { handleRequest } from '../src/lib/handle-request.js'
 import { launchLander } from './utils/launch-lander.js'
+import { launchOrbiter } from './utils/launch-orbiter.js'
 import { rimraf } from 'rimraf'
 import { pipe } from 'it-pipe'
 import { Identities } from '@orbitdb/core'
-import connectPeers from './utils/connect-nodes.js'
 
 describe('Messages', function () {
   this.timeout(10000)
@@ -24,19 +23,16 @@ describe('Messages', function () {
   }
 
   beforeEach(async function () {
-    orbiter = await Orbiter()
-    const orbiterAddressOrId = orbiter.orbitdb.ipfs.libp2p.peerId
-    lander = await launchLander({ orbiterAddressOrId })
-    await connectPeers(orbiter.ipfs, lander.orbitdb.ipfs)
+    orbiter = await launchOrbiter()
+    lander = await launchLander({ orbiter })
     db = await lander.orbitdb.open('db')
   })
 
   afterEach(async function () {
-    await orbiter.stop()
-    await lander.orbitdb.stop()
-    await lander.orbitdb.ipfs.stop()
+    await orbiter.shutdown()
+    await lander.shutdown()
     await rimraf('./lander')
-    await rimraf('./voyager')
+    await rimraf('./orbiter')
   })
 
   it('pins a database with OK response', async function () {

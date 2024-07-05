@@ -1,18 +1,18 @@
 import { strictEqual } from 'assert'
-import Orbiter from '../src/lib/orbiter.js'
 import { Access } from '../src/lib/authorization.js'
 import { rimraf } from 'rimraf'
+import { launchOrbiter } from './utils/launch-orbiter.js'
 
 describe('Authorization', function () {
   let orbiter
 
   before(async function () {
-    orbiter = await Orbiter()
+    orbiter = await launchOrbiter()
   })
 
   after(async function () {
-    await orbiter.stop()
-    await rimraf('./voyager')
+    await orbiter.shutdown()
+    await rimraf('./orbiter')
   })
 
   it('defaults access to deny all', function () {

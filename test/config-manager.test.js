@@ -1,5 +1,5 @@
 import { deepStrictEqual } from 'assert'
-import { saveConfig, loadConfig } from '../src/lib/utils/config-manager.js'
+import { saveConfig, loadConfig } from '../src/utils/config-manager.js'
 import { rimraf } from 'rimraf'
 import { join } from 'path'
 
