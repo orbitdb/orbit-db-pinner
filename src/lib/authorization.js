@@ -6,21 +6,19 @@ export const Access = Object.freeze({
   DENY: 2
 })
 
-export default ({ orbitdb, defaultAccess }) => {
+export default async ({ orbitdb, defaultAccess }) => {
   defaultAccess = defaultAccess || Access.DENY
 
   useDatabaseType(Set)
 
+  const access = await orbitdb.open('access', { type: 'set' })
+
   const add = async (id) => {
-    const access = await orbitdb.open('access', { type: 'set' })
     await access.add(id)
-    await access.close()
   }
 
   const del = async (id) => {
-    const access = await orbitdb.open('access', { type: 'set' })
     await access.del(id)
-    await access.close()
   }
 
   const hasAccess = async (id) => {
@@ -30,24 +28,23 @@ export default ({ orbitdb, defaultAccess }) => {
 
     // @TODO is there a database which stores unique values + can get by value?
     // @TODO add has(value) function to SetDB
-    for await (const a of access.iterator()) {
-      if (a.value === id) {
+    for await (const { value } of access.iterator()) {
+      if (value === id) {
         found = true
         break
       }
     }
 
-    await access.close()
-
     return defaultAccess === Access.DENY ? found : !found
   }
 
   const all = async () => {
-    const access = await orbitdb.open('access', { type: 'set' })
-    const all = await access.all()
-    await access.close()
-
+    const all = (await access.all()).map(e => e.value)
     return all
+  }
+
+  const close = async () => {
+    await access.close()
   }
 
   return {
@@ -55,6 +52,7 @@ export default ({ orbitdb, defaultAccess }) => {
     add,
     del,
     hasAccess,
-    all
+    all,
+    close
   }
 }

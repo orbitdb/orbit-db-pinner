@@ -2,7 +2,9 @@
 
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
-import { daemon, authAdd, authDel, authList } from './lib/commands/index.js'
+import daemon from './daemon.js'
+import RPC from './rpc-client.js'
+import { Responses } from './lib/messages/index.js'
 
 yargs(hideBin(process.argv))
   .scriptName('voyager')
@@ -10,8 +12,8 @@ yargs(hideBin(process.argv))
     'daemon',
     'Launch Voyager',
     () => {},
-    argv => {
-      daemon(argv)
+    async (argv) => {
+      await daemon({ options: argv })
     })
   .command('auth', 'Add/remove authorized addresses', yargs => {
     yargs
@@ -25,8 +27,15 @@ yargs(hideBin(process.argv))
           })
         },
         async argv => {
-          await authAdd(argv)
-          process.exit(0)
+          const { authAdd } = await RPC(argv)
+          const res = await authAdd(argv)
+          if (res.type === Responses.OK) {
+            console.log('ok')
+            process.exit(0)
+          } else {
+            console.error(res)
+            process.exit(1)
+          }
         })
       .command(
         'del <id>',
@@ -38,16 +47,32 @@ yargs(hideBin(process.argv))
           })
         },
         async argv => {
-          await authDel(argv)
-          process.exit(0)
+          const { authDel } = await RPC(argv)
+          const res = await authDel(argv)
+          if (res.type === Responses.OK) {
+            console.log('ok')
+            process.exit(0)
+          } else {
+            console.error(res)
+            process.exit(1)
+          }
         })
       .command(
         'list',
         'List authorized addresses',
         () => {},
         async argv => {
-          await authList(argv)
-          process.exit(0)
+          const { authList } = await RPC(argv)
+          const res = await authList()
+          if (res.type === Responses.OK) {
+            for (const id of res.message) {
+              console.log(id)
+            }
+            process.exit(0)
+          } else {
+            console.error(res)
+            process.exit(1)
+          }
         })
       .demandCommand(1, 'Error: use add or remove')
   })

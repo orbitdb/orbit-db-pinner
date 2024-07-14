@@ -8,8 +8,7 @@ import { webSockets } from '@libp2p/websockets'
 import { gossipsub } from '@chainsafe/libp2p-gossipsub'
 import { mdns } from '@libp2p/mdns'
 import { createOrbitDB } from '@orbitdb/core'
-import Lander from '../../src/lib/lander.js'
-import connectPeers from './connect-nodes.js'
+import Orbiter from '../../src/lib/orbiter.js'
 
 const options = {
   peerDiscovery: [
@@ -39,23 +38,19 @@ const options = {
   }
 }
 
-export const launchLander = async ({ directory, orbiter } = {}) => {
+export const launchOrbiter = async ({ directory } = {}) => {
+  directory = directory || './orbiter'
   const libp2p = await createLibp2p({ ...options })
   const ipfs = await createHelia({ libp2p })
-
-  directory = directory || './lander'
-
   const orbitdb = await createOrbitDB({ ipfs, directory })
-
-  await connectPeers(orbiter.orbitdb.ipfs, ipfs)
-
-  const lander = await Lander({ orbitdb, orbiterAddressOrId: orbiter.orbitdb.ipfs.libp2p.peerId })
+  const orbiter = await Orbiter({ orbitdb })
 
   // Helper function for tests
-  lander.shutdown = async () => {
+  orbiter.shutdown = async () => {
+    await orbiter.stop()
     await orbitdb.stop()
     await ipfs.stop()
   }
 
-  return lander
+  return orbiter
 }

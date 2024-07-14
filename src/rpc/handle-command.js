@@ -1,9 +1,10 @@
-import handleAuthAddRequest from './auth/add.js'
-import handleAuthDelRequest from './auth/del.js'
-import handleAuthListRequest from './auth/list.js'
-import { createResponseMessage, parseMessage, ControllerRequests, Responses } from '../../messages/index.js'
+import { Commands } from './commands.js'
+import handleAuthAddRequest from './handlers/auth/add.js'
+import handleAuthDelRequest from './handlers/auth/del.js'
+import handleAuthListRequest from './handlers/auth/list.js'
+import { createResponseMessage, parseMessage, Responses } from '../lib/messages/index.js'
 
-export const handleControllerRequest = (orbiter) => source => {
+export const handleCommand = (orbiter) => source => {
   return (async function * () {
     for await (const chunk of source) {
       const { type, signature, pubkey, addresses } = parseMessage(chunk.subarray())
@@ -12,26 +13,26 @@ export const handleControllerRequest = (orbiter) => source => {
 
       try {
         const { auth, config } = orbiter
-        // check that the user is authorized to store their dbs on this orbiter.
-        if (pubkey !== config.controller.publicKey) {
+        // check that the user is authorized to call this RPC
+        if (!config.rpc.publicKeys.includes(pubkey)) {
           throw Object.assign(new Error('user is not authorized'), { type: Responses.E_NOT_AUTHORIZED })
         }
 
-        // verify that the params have come from the user who owns the pubkey.
-        if (!await orbiter.orbitdb.identity.verify(signature, pubkey, addresses)) {
+        // verify that the params are signed by the authorized pubkey
+        if (!await orbiter.orbitdb.identity.verify(signature, pubkey, JSON.stringify(addresses))) {
           throw Object.assign(new Error('invalid signature'), { type: Responses.E_INVALID_SIGNATURE })
         }
 
         switch (type) {
-          case ControllerRequests.AUTH_ADD:
+          case Commands.AUTH_ADD:
             await handleAuthAddRequest({ auth, addresses })
             response = createResponseMessage(Responses.OK)
             break
-          case ControllerRequests.AUTH_DEL:
+          case Commands.AUTH_DEL:
             await handleAuthDelRequest({ auth, addresses })
             response = createResponseMessage(Responses.OK)
             break
-          case ControllerRequests.AUTH_LIST: {
+          case Commands.AUTH_LIST: {
             const list = await handleAuthListRequest({ auth })
             response = createResponseMessage(Responses.OK, list)
             break
