@@ -6,12 +6,8 @@
   "type": "module",
   "author": "OrbitDB",
   "license": "MIT",
-  "exports": {
-    "./orbiter": "./src/orbiter.js",
-    "./lander": "./src/lander.js"
-  },
   "bin": {
-    "voyager": "./src/index.js"
+    "voyager": "./src/bin/cli.js"
   },
   "dependencies": {
     "@chainsafe/libp2p-gossipsub": "^12.0.0",
