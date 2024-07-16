@@ -2,9 +2,9 @@
 
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
-import daemon from './daemon.js'
-import RPC from './rpc-client.js'
-import { Responses } from './lib/messages/index.js'
+import daemon from '../daemon.js'
+import RPC from '../rpc-client.js'
+import { Responses } from '../lib/messages/index.js'
 
 yargs(hideBin(process.argv))
   .scriptName('voyager')
