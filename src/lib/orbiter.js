@@ -31,11 +31,11 @@ export default async ({ orbitdb, defaultAccess, verbose } = {}) => {
   await orbitdb.ipfs.libp2p.handle(voyagerProtocol, handleMessages)
 
   for await (const db of pins.iterator()) {
-    dbs[db.value] = await orbitdb.open(db.value)
-    log('db opened', db.value)
+    dbs[db.key] = await orbitdb.open(db.key)
+    log('db opened', db.key)
   }
 
-  log(dbs.length, 'dbs loaded')
+  log(Object.keys(dbs).length, 'dbs loaded')
 
   const stop = async () => {
     await orbitdb.ipfs.libp2p.unhandle(voyagerProtocol)
