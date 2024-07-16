@@ -49,7 +49,7 @@ describe('Pin', function () {
     it('tries to pin a database when not authorized', async function () {
       await orbiter.auth.del(lander.orbitdb.identity.publicKey)
       const dbs = [await lander.orbitdb.open('db')]
-      const pinned = await lander.pin(dbs, orbiter.orbitdb.ipfs.libp2p.peerId)
+      const pinned = await lander.pin(dbs)
 
       strictEqual(pinned, false)
     })

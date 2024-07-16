@@ -10,48 +10,110 @@ Voyager, like OrbitDB, does not have a traditional server/client architecture an
 
 ## Installation
 
-```
+```sh
 npm i @orbitdb/voyager
 ```
 
-## Running as a daemon
+## Running "Orbiter"
 
-Voyager's Orbiter (the pinning service) can be run as a daemon process.
+Voyager's Orbiter (the pinning service) can be run as a daemon process. You can install the package globally and run it using the "voyager" binary:
 
-To use:
-
-```
-git clone https://github.com/orbitdb/orbit-db-pinner.git
-node . init 
-PRIVATE_KEY=0x123 node . daemon
+```sh
+npm i -g @orbitdb/voyager
+voyager daemon
 ```
 
-where PRIVATE_KEY is a valid private key for deploying Orbiter with a deterministic peer id.
+To store Orbiter's configuration to a different location, use the -d or --directory flag:
 
-## Interacting with the daemon
-
-You can interact with the Orbiter daemon using various command line calls.
-
-### Add an authorized public key to Orbiter
-
-```
-node . auth add <publickey>
+```sh
+voyager daemon -d /path/to/voyager
 ```
 
-where <publickey> identifies a user who can pin databases to this Orbiter.
+## Managing "Orbiter" access
 
-### Remove an authorized public key to Orbiter
+Access to Orbiter can be configured using the Voyager binary.
 
-```
-node . auth del <publickey>
+To add an authorized public key to Orbiter:
+
+```sh
+voyager auth add <publickey>
 ```
 
 where <publickey> identifies a user who can pin databases to this Orbiter.
 
-### List authorized public keys
+To remove an authorized public key to Orbiter:
 
+```sh
+voyager auth del <publickey>
 ```
-node . auth list
+
+where <publickey> identifies a user who can pin databases to this Orbiter.
+
+List authorized public keys:
+
+```sh
+voyager auth list
+```
+
+If Orbiter's configuration is deployed to a different location, call Voyager with the -d or --directory flag and specify Orbiter's custom directory:
+
+```sh
+voyager auth add -f <publickey>
+voyager auth list -f
+voyager auth remove -f <publickey>
+```
+
+## Pinning databases using "Lander"
+
+To make databases accessible from Voyager, the database needs to be pinned to an Orbiter instance. This can be achieved programmatically by using the "Lander" module.
+
+To use Lander, first install the @orbitdb/voyager package:
+
+```sh
+npm i @orbitdb/voyager
+```
+
+Next, instantiate Lander:
+
+```js
+import { createLibp2p } from 'libp2p'
+import { createHelia } from 'helia'
+import { createOrbitDB } from '@orbitdb/core'
+
+// set up configuration for libp2p and helia.
+
+const libp2p = await createLibp2p({ ...options })
+const ipfs = await createHelia({ libp2p })
+
+directory = directory || './lander'
+
+const orbitdb = await createOrbitDB({ ipfs, directory })
+
+await connectPeers(orbiter.orbitdb.ipfs, ipfs)
+
+const orbiterAddressOrId = // deployed orbiter peer id.
+
+const lander = await Lander({ orbitdb, orbiterAddressOrId })
+``` 
+
+To pin a db:
+
+```js
+// create a db for pinning
+const db = await orbitdb.open('my-db')
+const dbs = [db]
+
+await lander.pin(dbs)
+```
+
+To unpin a pinned db:
+
+```js
+// open an instance of the db you want to unpin.
+const db = await orbitdb.open('my-db')
+const dbs = [db]
+
+await lander.unpin(dbs)
 ```
 
 ## The OrbitDB Voyager Pinning Protocol
