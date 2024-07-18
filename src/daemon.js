@@ -28,6 +28,8 @@ export default async ({ options }) => {
 
   options.verbose = options.verbose || 0
 
+  options.silent = options.silent || false
+
   const id = orbiterId
 
   log('id:', id)
@@ -52,6 +54,7 @@ export default async ({ options }) => {
 
   log('peerid:', libp2p.peerId.toString())
   for (const addr of libp2p.getMultiaddrs().map(e => e.toString())) {
+    options.silent || console.log(addr)
     log('listening on', addr)
   }
 

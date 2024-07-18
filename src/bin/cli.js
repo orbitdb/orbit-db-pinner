@@ -11,7 +11,13 @@ yargs(hideBin(process.argv))
   .command(
     'daemon',
     'Launch Voyager',
-    () => {},
+    yargs => {
+      yargs.option('silent', {
+        alias: 's',
+        description: 'Silence startup information.',
+        type: 'boolean'
+      })
+    },
     async (argv) => {
       await daemon({ options: argv })
     })
