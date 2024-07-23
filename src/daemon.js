@@ -55,8 +55,9 @@ export default async ({ options }) => {
   log('peerid:', libp2p.peerId.toString())
   for (const addr of libp2p.getMultiaddrs().map(e => e.toString())) {
     options.silent || console.log(addr)
-    log('listening on', addr)
   }
+
+  log('listening on', libp2p.getMultiaddrs())
 
   const ipfs = await createHelia({ libp2p, datastore, blockstore })
 
