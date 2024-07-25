@@ -13,16 +13,16 @@ yargs(hideBin(process.argv))
     'Launch Voyager',
     yargs => {
       yargs
-      .option('silent', {
-        alias: 's',
-        description: 'Silence startup information.',
-        type: 'boolean'
-      })
-      .option('port', {
-        alias: 'p',
-        description: 'The port to listen on. Defaults to 0.',
-        type: 'number'
-      })
+        .option('silent', {
+          alias: 's',
+          description: 'Silence startup information.',
+          type: 'boolean'
+        })
+        .option('port', {
+          alias: 'p',
+          description: 'The port to listen on. Defaults to 0.',
+          type: 'number'
+        })
     },
     async (argv) => {
       await daemon({ options: argv })

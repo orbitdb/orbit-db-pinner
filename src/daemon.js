@@ -29,7 +29,7 @@ export default async ({ options }) => {
   options.verbose = options.verbose || 0
 
   options.silent = options.silent || false
-  
+
   options.port = options.port || 0
 
   const id = orbiterId
