@@ -24,11 +24,13 @@ export default async ({ options }) => {
     enable('orbitdb:voyager:daemon' + (options.verbose > 1 ? '*' : ':error'))
   }
 
-  options.defaultAccess = options.defaultAccess || Access.ALLOW
+  const defaultAccess = options.allow ? Access.ALLOW : Access.DENY
 
   options.verbose = options.verbose || 0
 
   options.silent = options.silent || false
+  
+  options.port = options.port || 0
 
   const id = orbiterId
 
@@ -50,7 +52,7 @@ export default async ({ options }) => {
   await identities.createIdentity({ id })
 
   const peerId = await createFromPrivKey(await keystore.getKey(id))
-  const libp2p = await createLibp2p(await libp2pConfig({ peerId }))
+  const libp2p = await createLibp2p(await libp2pConfig({ peerId, port: options.port }))
 
   log('peerid:', libp2p.peerId.toString())
   for (const addr of libp2p.getMultiaddrs().map(e => e.toString())) {
@@ -63,7 +65,7 @@ export default async ({ options }) => {
 
   const orbitdb = await createOrbitDB({ ipfs, directory: orbiterDirectory, identities, id })
 
-  const orbiter = await Orbiter({ defaultAccess: options.defaultAccess, verbose: options.verbose, orbitdb })
+  const orbiter = await Orbiter({ defaultAccess, verbose: options.verbose, orbitdb })
 
   // TODO: we might want to separate the key init to a separate 'init' CLI command
   const initRPCKey = async ({ directory }) => {

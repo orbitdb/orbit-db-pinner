@@ -10,7 +10,7 @@ export default (env, argv) => {
   const __dirname = path.dirname(__filename)
 
   return {
-    entry: glob.sync('./test/browser/**/*.js'),
+    entry: glob.sync('./test/e2e-browser.test.js'),
     output: {
       filename: '../test/browser/bundle.js'
     },
@@ -24,12 +24,7 @@ export default (env, argv) => {
     },
     plugins: [
       new webpack.ProvidePlugin({
-        process: 'process/browser.js',
         Buffer: ['buffer', 'Buffer']
-      }),
-      new webpack.DefinePlugin({
-        'process.env.ORBITER_ID': JSON.stringify(process.env.ORBITER_ID),
-        'process.env.ORBITER_ADDRESS': JSON.stringify(process.env.ORBITER_ADDRESS)
       })
     ],
     resolve: {
