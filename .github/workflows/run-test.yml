@@ -16,5 +16,9 @@ jobs:
         run: npm ci
       - name: Run linter
         run: npm run lint
+      - name: Run an Orbiter instance in the background
+        run: npm run start:orbiter:background
       - name: Run tests
         run: npm run test:ci
+      - name: Run browser tests
+        run: npm run test:browser
