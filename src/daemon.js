@@ -18,10 +18,10 @@ import { logger, enable } from '@libp2p/logger'
 export default async ({ options }) => {
   options = options || {}
 
-  const log = logger('orbitdb:voyager:daemon')
+  const log = logger('voyager:daemon')
 
   if (options.verbose > 0) {
-    enable('orbitdb:voyager:daemon' + (options.verbose > 1 ? '*' : ':error'))
+    enable('voyager:daemon' + (options.verbose > 1 ? '*' : ':error'))
   }
 
   const defaultAccess = options.allow ? Access.ALLOW : Access.DENY
@@ -48,10 +48,12 @@ export default async ({ options }) => {
   const datastore = new LevelDatastore(join(orbiterDirectory, '/', 'ipfs', '/', 'data'))
 
   const keystore = await KeyStore({ path })
-  const identities = await Identities({ keystore })
+  let identities = await Identities({ keystore })
   await identities.createIdentity({ id })
 
   const peerId = await createFromPrivKey(await keystore.getKey(id))
+  await keystore.close()
+
   const libp2p = await createLibp2p(await libp2pConfig({ peerId, port: options.port }))
 
   log('peerid:', libp2p.peerId.toString())
@@ -59,9 +61,13 @@ export default async ({ options }) => {
     options.silent || console.log(addr)
   }
 
-  log('listening on', libp2p.getMultiaddrs())
+  for (const addr of libp2p.getMultiaddrs().map(e => e.toString())) {
+    log('listening on', addr)
+  }
 
   const ipfs = await createHelia({ libp2p, datastore, blockstore })
+
+  identities = await Identities({ keystore, ipfs })
 
   const orbitdb = await createOrbitDB({ ipfs, directory: orbiterDirectory, identities, id })
 
