@@ -6,10 +6,10 @@ import { handleRequest } from './handle-request.js'
 import Authorization, { Access } from './authorization.js'
 
 export default async ({ orbitdb, defaultAccess, verbose } = {}) => {
-  const log = logger('orbitdb:voyager:orbiter')
+  const log = logger('voyager:orbiter')
 
   if (verbose > 0) {
-    enable('orbitdb:voyager:orbiter' + (verbose > 1 ? '*' : ':error'))
+    enable('voyager:orbiter' + (verbose > 1 ? '*' : ':error'))
   }
 
   log('start orbiter')
@@ -30,12 +30,14 @@ export default async ({ orbitdb, defaultAccess, verbose } = {}) => {
 
   await orbitdb.ipfs.libp2p.handle(voyagerProtocol, handleMessages)
 
+  log('open pinned databases')
+
   for await (const db of pins.iterator()) {
+    log('open', db.key)
     dbs[db.key] = await orbitdb.open(db.key)
-    log('db opened', db.key)
   }
 
-  log(Object.keys(dbs).length, 'dbs loaded')
+  log(Object.keys(dbs).length, 'databases opened')
 
   const stop = async () => {
     await orbitdb.ipfs.libp2p.unhandle(voyagerProtocol)
