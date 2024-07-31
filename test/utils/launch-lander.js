@@ -1,5 +1,6 @@
 import { createHelia } from 'helia'
 import { createLibp2p } from 'libp2p'
+import { bitswap } from '@helia/block-brokers'
 import { identify } from '@libp2p/identify'
 import { noise } from '@chainsafe/libp2p-noise'
 import { yamux } from '@chainsafe/libp2p-yamux'
@@ -33,9 +34,16 @@ const options = {
   }
 }
 
+const heliaOptions = {
+  blockBrokers: [
+    bitswap()
+  ],
+  routers: [
+  ]
+}
 export const launchLander = async ({ directory, orbiter } = {}) => {
   const libp2p = await createLibp2p({ ...options })
-  const ipfs = await createHelia({ libp2p })
+  const ipfs = await createHelia({ libp2p, ...heliaOptions })
 
   directory = directory || './lander'
 
