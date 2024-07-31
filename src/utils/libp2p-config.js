@@ -5,10 +5,7 @@ import { webSockets } from '@libp2p/websockets'
 import { gossipsub } from '@chainsafe/libp2p-gossipsub'
 
 export const config = ({ peerId, port } = {}) => {
-  peerId = peerId || null
-
-  return {
-    peerId,
+  const conf = {
     addresses: {
       listen: [
       `/ip4/0.0.0.0/tcp/${port || 0}/ws`
@@ -30,4 +27,10 @@ export const config = ({ peerId, port } = {}) => {
       })
     }
   }
+
+  if (peerId) {
+    conf.peerId = peerId
+  }
+
+  return conf
 }
