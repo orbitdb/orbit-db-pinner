@@ -1,10 +1,15 @@
 import { multiaddr } from '@multiformats/multiaddr'
 import { peerIdFromString } from '@libp2p/peer-id'
-import { strictEqual } from 'assert'
+import { strictEqual, deepStrictEqual } from 'assert'
 import { launchLander } from './utils/launch-lander.js'
+import waitFor from './utils/wait-for.js'
 
 describe('End-to-End Browser Test', function () {
-  let orbiter, lander
+  this.timeout(100000)
+
+  let orbiter
+  let lander1
+  let lander2
 
   beforeEach(async function () {
     const peerId = peerIdFromString('16Uiu2HAmBzKcgCfpJ4j4wJSLkKLbCVvnNBWPnhexrnJWJf1fDu5y')
@@ -24,22 +29,55 @@ describe('End-to-End Browser Test', function () {
       return [peerAddress]
     }
 
-    lander = await launchLander({ orbiter })
+    lander1 = await launchLander({ orbiter, directory: 'lander1' })
+    lander2 = await launchLander({ orbiter, directory: 'lander2' })
   })
 
   afterEach(async function () {
-    await lander.shutdown()
+    if (lander1) {
+      await lander1.shutdown()
+    }
+    if (lander2) {
+      await lander2.shutdown()
+    }
   })
 
   it('pin a db', async function () {
-    const db1 = await lander.orbitdb.open('my-db')
-    // await db1.add('hello world')
+    const entryAmount = 1000
+    let replicated = false
 
-    await lander.pin([db1])
+    const db1 = await lander1.orbitdb.open('my-db')
 
-    const fetcher = await launchLander({ orbiter })
-    const db2 = await fetcher.orbitdb.open(db1.address)
-    strictEqual(db2.address, db1.address)
-    strictEqual(db2.name, db1.name)
+    console.log('write')
+    for (let i = 0; i < entryAmount; i++) {
+      await db1.add('hello world ' + i)
+    }
+
+    const expected = await db1.all()
+
+    console.log('pin')
+    console.time('pin')
+    await lander1.pin([db1])
+    console.timeEnd('pin')
+    await lander1.shutdown()
+
+    console.log('replicate')
+    console.time('replicate')
+    const db2 = await lander2.orbitdb.open(db1.address)
+
+    const onConnected = (peerId, heads) => {
+      replicated = true
+    }
+
+    db2.events.on('join', onConnected)
+
+    await waitFor(() => replicated, () => true)
+    console.timeEnd('replicate')
+
+    const res = await db2.all()
+
+    strictEqual(expected.length, entryAmount)
+    strictEqual(res.length, entryAmount)
+    deepStrictEqual(expected, res)
   })
 })
