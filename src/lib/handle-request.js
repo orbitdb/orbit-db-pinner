@@ -35,7 +35,6 @@ export const handleRequest = (orbiter) => source => {
             throw Object.assign(new Error(`unknown message type ${type}`), { type: Responses.E_INTERNAL_ERROR })
         }
       } catch (err) {
-        console.error(err)
         response = createResponseMessage(err.type, err.message)
       } finally {
         yield response

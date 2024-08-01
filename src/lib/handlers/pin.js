@@ -13,8 +13,10 @@ export default async ({ orbitdb, pins, dbs, pubkey, addresses }) => {
   for (const address of addresses) {
     log('pin   ', address)
     let pubkeys = await pins.get(address)
+    let hasDb = false
 
     if (pubkeys) {
+      hasDb = true
       pubkeys.push(pubkey)
     } else {
       pubkeys = [pubkey]
@@ -23,7 +25,10 @@ export default async ({ orbitdb, pins, dbs, pubkey, addresses }) => {
     const db = await orbitdb.open(address)
     dbs[address] = db
 
-    await waitForReplication(db)
+    if (!hasDb) {
+      await waitForReplication(db)
+    }
+
     await pins.set(address, pubkeys)
 
     log('pinned', address)
