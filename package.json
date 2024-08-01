@@ -15,7 +15,7 @@
     "@orbitdb/set-db": "^1.0.2",
     "blockstore-level": "^1.1.8",
     "datastore-level": "^10.1.8",
-    "helia": "^4.2.4",
+    "helia": "^4.2.5",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
