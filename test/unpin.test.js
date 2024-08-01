@@ -22,7 +22,7 @@ describe('Unpin', function () {
     let lander
 
     beforeEach(async function () {
-      lander = await launchLander({ orbiter })
+      lander = await launchLander({ orbiterAddress: orbiter.orbitdb.ipfs.libp2p.getMultiaddrs().pop() })
       await orbiter.auth.add(lander.orbitdb.identity.publicKey)
     })
 
@@ -32,9 +32,9 @@ describe('Unpin', function () {
     })
 
     it('unpins a database', async function () {
-      const { dbs } = await createPins(1, lander)
+      const { addresses } = await createPins(1, lander)
 
-      const unpinned = await lander.unpin(dbs)
+      const unpinned = await lander.unpin(addresses)
 
       strictEqual(unpinned, true)
       strictEqual((await orbiter.pins.all()).length, 0)
@@ -42,9 +42,9 @@ describe('Unpin', function () {
     })
 
     it('unpins multiple databases', async function () {
-      const { dbs } = await createPins(2, lander)
+      const { addresses } = await createPins(2, lander)
 
-      const unpinned = await lander.unpin(dbs)
+      const unpinned = await lander.unpin(addresses)
 
       strictEqual(unpinned, true)
       strictEqual((await orbiter.pins.all()).length, 0)
@@ -52,13 +52,13 @@ describe('Unpin', function () {
     })
 
     it('unpins a database when multiple databases have been pinned', async function () {
-      const { dbs } = await createPins(2, lander)
+      const { addresses } = await createPins(2, lander)
 
-      const unpinned = await lander.unpin(dbs.slice(0, 1))
+      const unpinned = await lander.unpin(addresses.slice(0, 1))
 
       strictEqual(unpinned, true)
       strictEqual((await orbiter.pins.all()).length, 1)
-      strictEqual(Object.values(orbiter.dbs).pop().address, dbs[1].address)
+      strictEqual(Object.values(orbiter.dbs).pop().address, addresses[1])
     })
   })
 })

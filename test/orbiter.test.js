@@ -11,7 +11,7 @@ describe('Orbiter', function () {
 
   beforeEach(async function () {
     orbiter = await launchOrbiter()
-    lander = await launchLander({ orbiter })
+    lander = await launchLander({ orbiterAddress: orbiter.orbitdb.ipfs.libp2p.getMultiaddrs().pop() })
     await orbiter.auth.add(lander.orbitdb.identity.publicKey)
   })
 
@@ -24,12 +24,12 @@ describe('Orbiter', function () {
   })
 
   it('loads a pinned database', async function () {
-    const { dbs } = await createPins(1, lander)
+    const { addresses } = await createPins(1, lander)
 
     await orbiter.shutdown()
 
     orbiter = await launchOrbiter()
 
-    strictEqual(Object.values(orbiter.dbs).pop().address, dbs.pop().address)
+    strictEqual(Object.values(orbiter.dbs).pop().address, addresses.pop())
   })
 })

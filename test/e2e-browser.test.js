@@ -1,5 +1,4 @@
 import { multiaddr } from '@multiformats/multiaddr'
-import { peerIdFromString } from '@libp2p/peer-id'
 import { strictEqual, deepStrictEqual } from 'assert'
 import { rimraf } from 'rimraf'
 import { launchLander } from './utils/launch-lander.js'
@@ -8,50 +7,17 @@ import waitFor from './utils/wait-for.js'
 describe('End-to-End Browser Test', function () {
   this.timeout(10000)
 
-  const peerId1 = peerIdFromString('16Uiu2HAmBzKcgCfpJ4j4wJSLkKLbCVvnNBWPnhexrnJWJf1fDu5y')
-  const peerId2 = peerIdFromString('16Uiu2HAmATMovCwY46yyJib7bGZF2f2XLRar7d7R3NJCSJtuyQLt')
-  const peerAddress1 = multiaddr('/ip4/127.0.0.1/tcp/54321/ws/p2p/16Uiu2HAmBzKcgCfpJ4j4wJSLkKLbCVvnNBWPnhexrnJWJf1fDu5y')
-  const peerAddress2 = multiaddr('/ip4/127.0.0.1/tcp/54322/ws/p2p/16Uiu2HAmATMovCwY46yyJib7bGZF2f2XLRar7d7R3NJCSJtuyQLt')
-
-  let orbiter1
-  let orbiter2
+  const orbiterAddress1 = multiaddr('/ip4/127.0.0.1/tcp/54321/ws/p2p/16Uiu2HAmBzKcgCfpJ4j4wJSLkKLbCVvnNBWPnhexrnJWJf1fDu5y')
+  const orbiterAddress2 = multiaddr('/ip4/127.0.0.1/tcp/54322/ws/p2p/16Uiu2HAmATMovCwY46yyJib7bGZF2f2XLRar7d7R3NJCSJtuyQLt')
 
   let lander1
   let lander2
   let lander3
 
   beforeEach(async function () {
-    orbiter1 = {
-      orbitdb: {
-        ipfs: {
-          libp2p: {
-            peerId: peerId1
-          }
-        }
-      }
-    }
-
-    orbiter2 = {
-      orbitdb: {
-        ipfs: {
-          libp2p: {
-            peerId: peerId2
-          }
-        }
-      }
-    }
-
-    orbiter1.orbitdb.ipfs.libp2p.getMultiaddrs = () => {
-      return [peerAddress1]
-    }
-
-    orbiter2.orbitdb.ipfs.libp2p.getMultiaddrs = () => {
-      return [peerAddress2]
-    }
-
-    lander1 = await launchLander({ orbiter: orbiter1, directory: 'lander1' })
-    lander2 = await launchLander({ orbiter: orbiter1, directory: 'lander2' })
-    lander3 = await launchLander({ orbiter: orbiter2, directory: 'lander3' })
+    lander1 = await launchLander({ orbiterAddress: orbiterAddress1, directory: 'lander1' })
+    lander2 = await launchLander({ orbiterAddress: orbiterAddress1, directory: 'lander2' })
+    lander3 = await launchLander({ orbiterAddress: orbiterAddress2, directory: 'lander3' })
   })
 
   afterEach(async function () {
@@ -82,12 +48,12 @@ describe('End-to-End Browser Test', function () {
     const expected = await db1.all()
 
     console.time('pin')
-    await lander1.pin([db1])
+    await lander1.pin(db1.address)
     console.timeEnd('pin')
     await lander1.shutdown()
 
     console.time('pin')
-    await lander2.pin([db1])
+    await lander2.pin(db1.address)
     console.timeEnd('pin')
 
     console.time('replicate')
@@ -122,12 +88,12 @@ describe('End-to-End Browser Test', function () {
     const expected = await db1.all()
 
     console.time('pin')
-    await lander1.pin([db1])
+    await lander1.pin(db1.address)
     console.timeEnd('pin')
     await lander1.shutdown()
 
     console.time('pin')
-    await lander3.pin([db1])
+    await lander3.pin(db1.address)
     console.timeEnd('pin')
 
     console.time('replicate')

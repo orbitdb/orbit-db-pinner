@@ -41,7 +41,8 @@ const heliaOptions = {
   routers: [
   ]
 }
-export const launchLander = async ({ directory, orbiter } = {}) => {
+
+export const launchLander = async ({ directory, orbiterAddress } = {}) => {
   const libp2p = await createLibp2p({ ...options })
   const ipfs = await createHelia({ libp2p, ...heliaOptions })
 
@@ -49,9 +50,9 @@ export const launchLander = async ({ directory, orbiter } = {}) => {
 
   const orbitdb = await createOrbitDB({ ipfs, directory })
 
-  await connectPeers(orbiter.orbitdb.ipfs, ipfs)
+  await connectPeers(ipfs, orbiterAddress)
 
-  const lander = await Lander({ orbitdb, orbiterAddressOrId: orbiter.orbitdb.ipfs.libp2p.peerId })
+  const lander = await Lander({ orbitdb, orbiterAddressOrId: orbiterAddress })
 
   // Helper function for tests
   lander.shutdown = async () => {

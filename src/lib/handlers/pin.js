@@ -12,11 +12,11 @@ const waitForReplication = (db) => {
 export default async ({ orbitdb, pins, dbs, pubkey, addresses }) => {
   for (const address of addresses) {
     log('pin   ', address)
+
     let pubkeys = await pins.get(address)
-    let hasDb = false
+    const hasDb = pubkeys !== undefined
 
     if (pubkeys) {
-      hasDb = true
       pubkeys.push(pubkey)
     } else {
       pubkeys = [pubkey]

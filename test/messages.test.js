@@ -24,7 +24,7 @@ describe('Messages', function () {
 
   beforeEach(async function () {
     orbiter = await launchOrbiter()
-    lander = await launchLander({ orbiter })
+    lander = await launchLander({ orbiterAddress: orbiter.orbitdb.ipfs.libp2p.getMultiaddrs().pop() })
     db = await lander.orbitdb.open('db')
   })
 

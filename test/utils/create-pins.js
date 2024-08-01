@@ -1,11 +1,12 @@
 export const createPins = async (howMany, lander) => {
-  const dbs = []
+  const addresses = []
 
   for (let i = 1; i <= howMany; i++) {
-    dbs.push(await lander.orbitdb.open(`db${i}`))
+    const db = await lander.orbitdb.open(`db${i}`)
+    addresses.push(db.address)
   }
 
-  const pinned = await lander.pin(dbs)
+  const pinned = await lander.pin(addresses)
 
-  return { pinned, dbs }
+  return { pinned, addresses }
 }

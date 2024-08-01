@@ -22,7 +22,7 @@ describe('Pin', function () {
     let lander
 
     beforeEach(async function () {
-      lander = await launchLander({ orbiter })
+      lander = await launchLander({ orbiterAddress: orbiter.orbitdb.ipfs.libp2p.getMultiaddrs().pop() })
       await orbiter.auth.add(lander.orbitdb.identity.publicKey)
     })
 
@@ -32,24 +32,24 @@ describe('Pin', function () {
     })
 
     it('pins a database', async function () {
-      const { pinned, dbs } = await createPins(1, lander)
+      const { pinned, addresses } = await createPins(1, lander)
 
       strictEqual(pinned, true)
-      strictEqual(Object.values(orbiter.dbs).pop().address, dbs.pop().address)
+      strictEqual(Object.values(orbiter.dbs).pop().address, addresses.pop())
     })
 
     it('pins multiple databases', async function () {
-      const { pinned, dbs } = await createPins(2, lander)
+      const { pinned, addresses } = await createPins(2, lander)
 
       strictEqual(pinned, true)
-      strictEqual(Object.values(orbiter.dbs)[0].address, dbs[0].address)
-      strictEqual(Object.values(orbiter.dbs)[1].address, dbs[1].address)
+      strictEqual(Object.values(orbiter.dbs)[0].address, addresses[0])
+      strictEqual(Object.values(orbiter.dbs)[1].address, addresses[1])
     })
 
     it('tries to pin a database when not authorized', async function () {
       await orbiter.auth.del(lander.orbitdb.identity.publicKey)
-      const dbs = [await lander.orbitdb.open('db')]
-      const pinned = await lander.pin(dbs)
+      const db = await lander.orbitdb.open('db')
+      const pinned = await lander.pin(db.address)
 
       strictEqual(pinned, false)
     })
@@ -59,10 +59,10 @@ describe('Pin', function () {
     let lander1, lander2
 
     beforeEach(async function () {
-      lander1 = await launchLander({ directory: './lander1', orbiter })
+      lander1 = await launchLander({ orbiterAddress: orbiter.orbitdb.ipfs.libp2p.getMultiaddrs().pop(), directory: './lander1' })
       await orbiter.auth.add(lander1.orbitdb.identity.publicKey)
 
-      lander2 = await launchLander({ directory: './lander2', orbiter })
+      lander2 = await launchLander({ orbiterAddress: orbiter.orbitdb.ipfs.libp2p.getMultiaddrs().pop(), directory: './lander2' })
       await orbiter.auth.add(lander2.orbitdb.identity.publicKey)
     })
 
@@ -74,11 +74,11 @@ describe('Pin', function () {
     })
 
     it('pins a database', async function () {
-      const { dbs: dbs1 } = await createPins(1, lander1)
-      const { dbs: dbs2 } = await createPins(1, lander2)
+      const { addresses: addresses1 } = await createPins(1, lander1)
+      const { addresses: addresses2 } = await createPins(1, lander2)
 
-      strictEqual(Object.values(orbiter.dbs)[0].address, dbs1.pop().address)
-      strictEqual(Object.values(orbiter.dbs)[1].address, dbs2.pop().address)
+      strictEqual(Object.values(orbiter.dbs)[0].address, addresses1.pop())
+      strictEqual(Object.values(orbiter.dbs)[1].address, addresses2.pop())
     })
   })
 })

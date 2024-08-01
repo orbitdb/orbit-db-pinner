@@ -3,11 +3,11 @@ import { Requests, Responses, createRequestMessage, parseMessage } from './messa
 import { voyagerProtocol } from './protocol.js'
 
 export default async ({ orbitdb, orbiterAddressOrId }) => {
-  const pin = async (dbs) => {
+  const pin = async (addresses) => {
     let pinned = false
     const pinDBs = source => {
       return (async function * () {
-        const addresses = dbs.map(p => p.address)
+        addresses = Array.isArray(addresses) ? addresses : [addresses]
         const message = await createRequestMessage(Requests.PIN, addresses, orbitdb.identity)
         yield message
       })()
@@ -28,12 +28,12 @@ export default async ({ orbitdb, orbiterAddressOrId }) => {
     return pinned
   }
 
-  const unpin = async (dbs) => {
+  const unpin = async (addresses) => {
     let unpinned = false
 
     const unpinDBs = source => {
       return (async function * () {
-        const addresses = dbs.map(p => p.address)
+        addresses = Array.isArray(addresses) ? addresses : [addresses]
         const message = await createRequestMessage(Requests.UNPIN, addresses, orbitdb.identity)
         yield message
       })()
