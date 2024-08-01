@@ -9,17 +9,17 @@ const waitForReplication = (db) => {
   })
 }
 
-export default async ({ orbitdb, pins, dbs, pubkey, addresses }) => {
+export default async ({ orbitdb, pins, dbs, id, addresses }) => {
   for (const address of addresses) {
     log('pin   ', address)
 
-    let pubkeys = await pins.get(address)
-    const hasDb = pubkeys !== undefined
+    let identities = await pins.get(address)
+    const hasDb = identities !== undefined
 
-    if (pubkeys) {
-      pubkeys.push(pubkey)
+    if (identities) {
+      identities.push(id)
     } else {
-      pubkeys = [pubkey]
+      identities = [id]
     }
 
     const db = await orbitdb.open(address)
@@ -29,7 +29,7 @@ export default async ({ orbitdb, pins, dbs, pubkey, addresses }) => {
       await waitForReplication(db)
     }
 
-    await pins.set(address, pubkeys)
+    await pins.set(address, identities)
 
     log('pinned', address)
   }

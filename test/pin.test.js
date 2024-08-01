@@ -23,7 +23,7 @@ describe('Pin', function () {
 
     beforeEach(async function () {
       lander = await launchLander({ orbiterAddress: orbiter.orbitdb.ipfs.libp2p.getMultiaddrs().pop() })
-      await orbiter.auth.add(lander.orbitdb.identity.publicKey)
+      await orbiter.auth.add(lander.orbitdb.identity.id)
     })
 
     afterEach(async function () {
@@ -47,7 +47,7 @@ describe('Pin', function () {
     })
 
     it('tries to pin a database when not authorized', async function () {
-      await orbiter.auth.del(lander.orbitdb.identity.publicKey)
+      await orbiter.auth.del(lander.orbitdb.identity.id)
       const db = await lander.orbitdb.open('db')
       const pinned = await lander.pin(db.address)
 
@@ -60,10 +60,10 @@ describe('Pin', function () {
 
     beforeEach(async function () {
       lander1 = await launchLander({ orbiterAddress: orbiter.orbitdb.ipfs.libp2p.getMultiaddrs().pop(), directory: './lander1' })
-      await orbiter.auth.add(lander1.orbitdb.identity.publicKey)
+      await orbiter.auth.add(lander1.orbitdb.identity.id)
 
       lander2 = await launchLander({ orbiterAddress: orbiter.orbitdb.ipfs.libp2p.getMultiaddrs().pop(), directory: './lander2' })
-      await orbiter.auth.add(lander2.orbitdb.identity.publicKey)
+      await orbiter.auth.add(lander2.orbitdb.identity.id)
     })
 
     afterEach(async function () {

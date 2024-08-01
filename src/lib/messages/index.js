@@ -9,6 +9,7 @@ export const Requests = Object.freeze({
 export const Responses = Object.freeze({
   OK: 0,
   E_INVALID_SIGNATURE: 101,
+  E_INVALID_IDENTITY: 102,
   E_NOT_AUTHORIZED: 200,
   E_INTERNAL_ERROR: 300
 })
@@ -26,11 +27,11 @@ export const parseMessage = (bytes) => {
 }
 
 export const createRequestMessage = async (type, addresses, identity, signer) => {
-  const pubkey = identity.publicKey
+  const id = identity.hash
   const signature = signer
     ? await signer.sign(JSON.stringify(addresses))
     : await identity.sign(identity, JSON.stringify(addresses))
-  return serialize({ type, pubkey, signature, addresses })
+  return serialize({ type, id, signature, addresses })
 }
 
 export const createResponseMessage = async (type, message) => {

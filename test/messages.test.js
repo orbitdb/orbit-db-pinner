@@ -36,7 +36,7 @@ describe('Messages', function () {
   })
 
   it('pins a database with OK response', async function () {
-    await orbiter.auth.add(lander.orbitdb.identity.publicKey)
+    await orbiter.auth.add(lander.orbitdb.identity.id)
 
     const sink = async source => {
       for await (const chunk of source) {
@@ -60,7 +60,7 @@ describe('Messages', function () {
   })
 
   it('pins a database with E_INVALID_SIGNATURE response', async function () {
-    await orbiter.auth.add(lander.orbitdb.identity.publicKey)
+    await orbiter.auth.add(lander.orbitdb.identity.id)
 
     const identities = await Identities({ path: './lander/identities', ipfs: lander.ipfs })
     const invalidIdentity = await identities.createIdentity({ id: 'lander2' })
@@ -77,7 +77,7 @@ describe('Messages', function () {
   })
 
   it('tries to pin a database with non-existent message', async function () {
-    await orbiter.auth.add(lander.orbitdb.identity.publicKey)
+    await orbiter.auth.add(lander.orbitdb.identity.id)
 
     const sink = async source => {
       for await (const chunk of source) {
