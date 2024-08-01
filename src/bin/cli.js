@@ -23,6 +23,11 @@ yargs(hideBin(process.argv))
           description: 'The port to listen on. Defaults to 0.',
           type: 'number'
         })
+        .option('wsport', {
+          alias: 'w',
+          description: 'The port to listen on for WebSockets. Defaults to 0.',
+          type: 'number'
+        })
     },
     async (argv) => {
       await daemon({ options: argv })

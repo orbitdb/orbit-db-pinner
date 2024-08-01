@@ -1,38 +1,12 @@
 import { createHelia } from 'helia'
 import { createLibp2p } from 'libp2p'
 import { bitswap } from '@helia/block-brokers'
-import { identify } from '@libp2p/identify'
-import { noise } from '@chainsafe/libp2p-noise'
-import { yamux } from '@chainsafe/libp2p-yamux'
-import { webSockets } from '@libp2p/websockets'
-import { gossipsub } from '@chainsafe/libp2p-gossipsub'
 import { createOrbitDB } from '@orbitdb/core'
 import Lander from '../../src/lib/lander.js'
-import connectPeers from './connect-nodes.js'
-import { all } from '@libp2p/websockets/filters'
+// import connectPeers from './connect-nodes.js'
+import connect from './connect-nodes-via-relay.js'
 
-const options = {
-  transports: [
-    webSockets({
-      filter: all // connect to insecure sockets also (E.g. /ws/)
-    })
-  ],
-  connectionEncryption: [
-    noise()
-  ],
-  streamMuxers: [
-    yamux()
-  ],
-  connectionGater: {
-    denyDialMultiaddr: () => false // allow dialling of private addresses.
-  },
-  services: {
-    identify: identify(),
-    pubsub: gossipsub({
-      emitSelf: true
-    })
-  }
-}
+import Libp2pOptions from './test-config/lander-libp2p-config.js'
 
 const heliaOptions = {
   blockBrokers: [
@@ -43,6 +17,8 @@ const heliaOptions = {
 }
 
 export const launchLander = async ({ directory, orbiterAddress } = {}) => {
+  const options = Libp2pOptions
+
   const libp2p = await createLibp2p({ ...options })
   const ipfs = await createHelia({ libp2p, ...heliaOptions })
 
@@ -50,7 +26,8 @@ export const launchLander = async ({ directory, orbiterAddress } = {}) => {
 
   const orbitdb = await createOrbitDB({ ipfs, directory })
 
-  await connectPeers(ipfs, orbiterAddress)
+  // await connectPeers(ipfs, orbiterAddress)
+  await connect(ipfs, orbiterAddress)
 
   const lander = await Lander({ orbitdb, orbiterAddressOrId: orbiterAddress })
 

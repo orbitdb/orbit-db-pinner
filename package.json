@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@chainsafe/libp2p-gossipsub": "^13.1.0",
-    "@orbitdb/core": "^2.2.0",
+    "@orbitdb/core": "https://github.com/orbitdb/orbitdb.git#expose-identities",
     "@orbitdb/set-db": "^1.0.2",
     "blockstore-level": "^1.1.8",
     "datastore-level": "^10.1.8",
@@ -37,10 +37,12 @@
     "lint:fix": "standard --fix",
     "copy:fixtures1": "rm -rf ./orbiter1 && mkdir -p ./orbiter1/voyager/orbiter/keystore && cp -Rf test/fixtures/keystore1/** ./orbiter1/voyager/orbiter/keystore/",
     "copy:fixtures2": "rm -rf ./orbiter2 && mkdir -p ./orbiter2/voyager/orbiter/keystore && cp -Rf test/fixtures/keystore2/** ./orbiter2/voyager/orbiter/keystore/",
-    "start:orbiter1": "npm run copy:fixtures1 && node ./src/bin/cli.js daemon -p 54321 --allow --directory ./orbiter1 -vv",
-    "start:orbiter2": "npm run copy:fixtures2 && node ./src/bin/cli.js daemon -p 54322 --allow --directory ./orbiter2 -vv",
-    "start:orbiter1:background": "npm run copy:fixtures1 && node ./src/bin/cli.js daemon -p 54321 --allow --directory ./orbiter1 &",
-    "start:orbiter2:background": "npm run copy:fixtures2 && node ./src/bin/cli.js daemon -p 54322 --allow --directory ./orbiter2 &",
+    "start:relay": "node ./test/utils/relay.js",
+    "start:relay:background": "node ./test/utils/relay.js &",
+    "start:orbiter1": "npm run copy:fixtures1 && node ./src/bin/cli.js daemon -p 54321 -w 55441 --allow --directory ./orbiter1 -vv",
+    "start:orbiter2": "npm run copy:fixtures2 && node ./src/bin/cli.js daemon -p 54322 -w 55442 --allow --directory ./orbiter2 -vv",
+    "start:orbiter1:background": "npm run copy:fixtures1 && node ./src/bin/cli.js daemon -p 54321 -w 55441 --allow --directory ./orbiter1 &",
+    "start:orbiter2:background": "npm run copy:fixtures2 && node ./src/bin/cli.js daemon -p 54322 -w 55442 --allow --directory ./orbiter2 &",
     "test:browser": "npm run build:tests && ./node_modules/.bin/playwright-test test/browser/bundle.js --runner mocha"
   },
   "standard": {

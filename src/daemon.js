@@ -27,10 +27,9 @@ export default async ({ options }) => {
   const defaultAccess = options.allow ? Access.ALLOW : Access.DENY
 
   options.verbose = options.verbose || 0
-
   options.silent = options.silent || false
-
   options.port = options.port || 0
+  options.wsport = options.wsport || 0
 
   const id = orbiterId
 
@@ -54,7 +53,7 @@ export default async ({ options }) => {
   const peerId = await createFromPrivKey(await keystore.getKey(id))
   await keystore.close()
 
-  const libp2p = await createLibp2p(await libp2pConfig({ peerId, port: options.port }))
+  const libp2p = await createLibp2p(await libp2pConfig({ peerId, port: options.port, websocketPort: options.wsport }))
 
   log('peerid:', libp2p.peerId.toString())
   for (const addr of libp2p.getMultiaddrs().map(e => e.toString())) {

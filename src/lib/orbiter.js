@@ -28,7 +28,7 @@ export default async ({ orbitdb, defaultAccess, verbose } = {}) => {
     await pipe(stream, handleRequest({ log, orbitdb, pins, dbs, auth }), stream)
   }
 
-  await orbitdb.ipfs.libp2p.handle(voyagerProtocol, handleMessages)
+  await orbitdb.ipfs.libp2p.handle(voyagerProtocol, handleMessages, { runOnTransientConnection: true })
 
   log('open pinned databases')
 

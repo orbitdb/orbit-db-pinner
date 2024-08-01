@@ -6,12 +6,12 @@ import { webSockets } from '@libp2p/websockets'
 import { gossipsub } from '@chainsafe/libp2p-gossipsub'
 import { mdns } from '@libp2p/mdns'
 
-export const config = ({ peerId, port } = {}) => {
+export const config = ({ peerId, port, websocketPort } = {}) => {
   const conf = {
     addresses: {
       listen: [
-        '/ip4/0.0.0.0/tcp/0',
-      `/ip4/0.0.0.0/tcp/${port || 0}/ws`
+        `/ip4/0.0.0.0/tcp/${port || 0}`,
+        `/ip4/0.0.0.0/tcp/${websocketPort || 0}/ws`
       ]
     },
     transports: [
@@ -24,6 +24,9 @@ export const config = ({ peerId, port } = {}) => {
     streamMuxers: [
       yamux()
     ],
+    connectionGater: {
+      denyDialMultiaddr: () => false // allow dialling of private addresses.
+    },
     peerDiscovery: [
       mdns()
     ],

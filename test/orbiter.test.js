@@ -10,6 +10,8 @@ describe('Orbiter', function () {
   let orbiter, lander
 
   beforeEach(async function () {
+    await rimraf('./lander')
+    await rimraf('./orbiter')
     orbiter = await launchOrbiter()
     lander = await launchLander({ orbiterAddress: orbiter.orbitdb.ipfs.libp2p.getMultiaddrs().pop() })
     await orbiter.auth.add(lander.orbitdb.identity.id)

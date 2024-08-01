@@ -28,6 +28,9 @@ export default (env, argv) => {
       })
     ],
     resolve: {
+      alias: {
+        './test-config': path.resolve(__dirname, '../test/utils/test-config-browser')
+      },
       modules: [
         'node_modules',
         path.resolve(__dirname, '../node_modules')

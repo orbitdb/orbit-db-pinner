@@ -16,6 +16,8 @@ jobs:
         run: npm ci
       - name: Run linter
         run: npm run lint
+      - name: Run libp2p relay in the background
+        run: npm run start:relay:background
       - name: Run an Orbiter 1 instance in the background
         run: npm run start:orbiter1:background
       - name: Run an Orbiter 2 instance in the background

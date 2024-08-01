@@ -3,39 +3,30 @@ import { createHelia } from 'helia'
 import { LevelBlockstore } from 'blockstore-level'
 import { LevelDatastore } from 'datastore-level'
 import { createLibp2p } from 'libp2p'
-import { identify } from '@libp2p/identify'
-import { noise } from '@chainsafe/libp2p-noise'
-import { yamux } from '@chainsafe/libp2p-yamux'
-import { webSockets } from '@libp2p/websockets'
-import { gossipsub } from '@chainsafe/libp2p-gossipsub'
+import { bitswap } from '@helia/block-brokers'
+import { multiaddr } from '@multiformats/multiaddr'
 import { createOrbitDB } from '@orbitdb/core'
 import Orbiter from '../../src/lib/orbiter.js'
 import { orbiter as orbiterId } from '../../src/utils/id.js'
 
-const options = {
-  addresses: {
-    listen: [
-      '/ip4/0.0.0.0/tcp/0/ws'
-    ]
-  },
-  transports: [
-    webSockets()
+import Libp2pOptions from './test-config/orbiter-libp2p-config.js'
+
+const isBrowser = () => typeof window !== 'undefined'
+
+const relayId = '12D3KooWAJjbRkp8FPF5MKgMU53aUTxWkqvDrs4zc1VMbwRwfsbE'
+const relayAddress = multiaddr(`/ip4/127.0.0.1/tcp/12345/ws/p2p/${relayId}`)
+
+const heliaOptions = {
+  blockBrokers: [
+    bitswap()
   ],
-  connectionEncryption: [
-    noise()
-  ],
-  streamMuxers: [
-    yamux()
-  ],
-  services: {
-    identify: identify(),
-    pubsub: gossipsub({
-      emitSelf: true
-    })
-  }
+  routers: [
+  ]
 }
 
 export const launchOrbiter = async ({ directory } = {}) => {
+  const options = Libp2pOptions
+
   directory = directory || './orbiter'
 
   const id = orbiterId
@@ -44,9 +35,13 @@ export const launchOrbiter = async ({ directory } = {}) => {
   const datastore = new LevelDatastore(join(directory, '/', 'ipfs', '/', 'data'))
 
   const libp2p = await createLibp2p({ ...options })
-  const ipfs = await createHelia({ libp2p, datastore, blockstore })
+  const ipfs = await createHelia({ libp2p, ...heliaOptions, datastore, blockstore })
   const orbitdb = await createOrbitDB({ ipfs, directory, id })
   const orbiter = await Orbiter({ orbitdb })
+
+  if (isBrowser()) {
+    await ipfs.libp2p.dial(relayAddress)
+  }
 
   // Helper function for tests
   orbiter.shutdown = async () => {
