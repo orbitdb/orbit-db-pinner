@@ -35,8 +35,12 @@
     "test:ci": "c8 npm run test",
     "lint": "standard",
     "lint:fix": "standard --fix",
-    "start:orbiter": "mkdir -p ./voyager/orbiter && cp -Rf test/fixtures/keystore ./voyager/orbiter && node ./src/bin/cli.js daemon -p 54321 --allow -vv",
-    "start:orbiter:background": "mkdir -p ./voyager/orbiter && cp -Rf test/fixtures/keystore ./voyager/orbiter && node ./src/bin/cli.js daemon -p 54321 --allow &",
+    "copy:fixtures1": "rm -rf ./orbiter1 && mkdir -p ./orbiter1/voyager/orbiter/keystore && cp -Rf test/fixtures/keystore1/** ./orbiter1/voyager/orbiter/keystore/",
+    "copy:fixtures2": "rm -rf ./orbiter2 && mkdir -p ./orbiter2/voyager/orbiter/keystore && cp -Rf test/fixtures/keystore2/** ./orbiter2/voyager/orbiter/keystore/",
+    "start:orbiter1": "npm run copy:fixtures1 && node ./src/bin/cli.js daemon -p 54321 --allow --directory ./orbiter1 -vv",
+    "start:orbiter2": "npm run copy:fixtures2 && node ./src/bin/cli.js daemon -p 54322 --allow --directory ./orbiter2 -vv",
+    "start:orbiter1:background": "npm run copy:fixtures1 && node ./src/bin/cli.js daemon -p 54321 --allow --directory ./orbiter1 &",
+    "start:orbiter2:background": "npm run copy:fixtures2 && node ./src/bin/cli.js daemon -p 54322 --allow --directory ./orbiter2 &",
     "test:browser": "npm run build:tests && ./node_modules/.bin/playwright-test test/browser/bundle.js --runner mocha"
   },
   "standard": {

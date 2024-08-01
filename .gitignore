@@ -2,3 +2,5 @@ node_modules
 coverage
 voyager
 bundle.js*
+orbiter1/
+orbiter2/
