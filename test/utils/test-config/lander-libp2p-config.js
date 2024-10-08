@@ -32,7 +32,8 @@ const Libp2pOptions = {
   services: {
     identify: identify(),
     pubsub: gossipsub({
-      emitSelf: true
+      emitSelf: true,
+      allowPublishToZeroPeers: true
     })
   }
 }
