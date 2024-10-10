@@ -22,7 +22,7 @@ const Libp2pBrowserOptions = {
       discoverRelays: 1
     })
   ],
-  connectionEncryption: [
+  connectionEncrypters: [
     noise()
   ],
   streamMuxers: [

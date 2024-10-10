@@ -12,8 +12,8 @@ import { Access } from './lib/authorization.js'
 import { config as libp2pConfig } from './utils/libp2p-config.js'
 import { rpc as rpcId, appPath, rpcPath, app, orbiter as orbiterId, orbiterPath } from './utils/id.js'
 import { saveConfig } from './utils/config-manager.js'
-import { createFromPrivKey } from '@libp2p/peer-id-factory'
 import { logger, enable } from '@libp2p/logger'
+import { privateKeyFromProtobuf } from '@libp2p/crypto/keys'
 
 export default async ({ options }) => {
   options = options || {}
@@ -50,7 +50,7 @@ export default async ({ options }) => {
   let identities = await Identities({ keystore })
   await identities.createIdentity({ id })
 
-  const privateKey = await keystore.getKey(id)
+  const privateKey = privateKeyFromProtobuf((await keystore.getKey(id)).bytes)
   await keystore.close()
 
   const libp2p = await createLibp2p(await libp2pConfig({ privateKey, port: options.port, websocketPort: options.wsport }))

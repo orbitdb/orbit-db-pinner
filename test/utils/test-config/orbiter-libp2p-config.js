@@ -17,7 +17,7 @@ const Libp2pOptions = {
     tcp(),
     webSockets()
   ],
-  connectionEncryption: [
+  connectionEncrypters: [
     noise()
   ],
   streamMuxers: [

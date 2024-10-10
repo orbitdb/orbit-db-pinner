@@ -85,7 +85,7 @@ describe('End-to-End Browser Tests', function () {
       deepStrictEqual(expected, res)
     })
 
-    it('pin and replicate a database - lander1->orbiter1->orbiter2->lander3', async function () {
+    it.only('pin and replicate a database - lander1->orbiter1->orbiter2->lander3', async function () {
       const entryAmount = 100
       let replicated = false
 
@@ -96,7 +96,12 @@ describe('End-to-End Browser Tests', function () {
       }
 
       const expected = await db1.all()
-
+      lander1.orbitdb.ipfs.libp2p.services.pubsub.addEventListener('subscription-change', (event) => {
+          console.log("subscription lander 1")
+      })
+      lander3.orbitdb.ipfs.libp2p.services.pubsub.addEventListener('subscription-change', (event) => {
+          console.log("subscription lander 3")
+      })      
       console.time('pin')
       await lander1.pin(db1.address)
       console.timeEnd('pin')
@@ -108,7 +113,7 @@ describe('End-to-End Browser Tests', function () {
 
       console.time('replicate')
       const db2 = await lander3.orbitdb.open(db1.address)
-
+      console.log(lander1.orbitdb.ipfs.libp2p.peerId)
       const onConnected = (peerId, heads) => {
         replicated = true
       }

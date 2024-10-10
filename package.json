@@ -11,14 +11,11 @@
   },
   "dependencies": {
     "@chainsafe/libp2p-gossipsub": "^14.1.0",
-    "@orbitdb/core": "https://github.com/orbitdb/orbitdb.git#expose-identities",
+    "@orbitdb/core": "github:orbitdb/orbitdb#expose-identities",
     "@orbitdb/set-db": "^1.0.2",
-    "blockstore-level": "^1.1.8",
-    "datastore-level": "^10.1.8",
-    "helia": "^4.2.5",
-    "it-pipe": "^3.0.1",
-    "libp2p": "^2.1.8",
-    "yargs": "^17.7.2"
+    "blockstore-level": "^2.0.1",
+    "datastore-level": "^11.0.1",
+    "helia": "^5.0.0"
   },
   "devDependencies": {
     "c8": "^10.1.2",

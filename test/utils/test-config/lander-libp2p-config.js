@@ -17,7 +17,7 @@ const Libp2pOptions = {
     tcp(),
     webSockets()
   ],
-  connectionEncryption: [
+  connectionEncrypters: [
     noise()
   ],
   streamMuxers: [
@@ -32,8 +32,7 @@ const Libp2pOptions = {
   services: {
     identify: identify(),
     pubsub: gossipsub({
-      emitSelf: true,
-      allowPublishToZeroPeers: true
+      emitSelf: true
     })
   }
 }

@@ -18,7 +18,6 @@ const heliaOptions = {
 
 export const launchLander = async ({ directory, orbiterAddress } = {}) => {
   const options = Libp2pOptions
-
   const libp2p = await createLibp2p({ ...options })
   const ipfs = await createHelia({ libp2p, ...heliaOptions })
 
