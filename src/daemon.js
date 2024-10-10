@@ -50,11 +50,11 @@ export default async ({ options }) => {
   let identities = await Identities({ keystore })
   await identities.createIdentity({ id })
 
-  const peerId = await createFromPrivKey(await keystore.getKey(id))
+  const privateKey = await keystore.getKey(id)
   await keystore.close()
 
-  const libp2p = await createLibp2p(await libp2pConfig({ peerId, port: options.port, websocketPort: options.wsport }))
-
+  const libp2p = await createLibp2p(await libp2pConfig({ privateKey, port: options.port, websocketPort: options.wsport }))
+  
   log('peerid:', libp2p.peerId.toString())
   for (const addr of libp2p.getMultiaddrs().map(e => e.toString())) {
     options.silent || console.log(addr)

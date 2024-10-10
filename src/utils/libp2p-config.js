@@ -6,7 +6,7 @@ import { webSockets } from '@libp2p/websockets'
 import { gossipsub } from '@chainsafe/libp2p-gossipsub'
 import { mdns } from '@libp2p/mdns'
 
-export const config = ({ peerId, port, websocketPort } = {}) => {
+export const config = ({ privateKey, port, websocketPort } = {}) => {
   const conf = {
     addresses: {
       listen: [
@@ -18,7 +18,7 @@ export const config = ({ peerId, port, websocketPort } = {}) => {
       tcp(),
       webSockets()
     ],
-    connectionEncryption: [
+    connectionEncrypters: [
       noise()
     ],
     streamMuxers: [
@@ -38,8 +38,8 @@ export const config = ({ peerId, port, websocketPort } = {}) => {
     }
   }
 
-  if (peerId) {
-    conf.peerId = peerId
+  if (privateKey) {
+    conf.privateKey = privateKey
   }
 
   return conf
