@@ -54,7 +54,7 @@ export default async ({ options }) => {
   await keystore.close()
 
   const libp2p = await createLibp2p(await libp2pConfig({ privateKey, port: options.port, websocketPort: options.wsport }))
-  
+
   log('peerid:', libp2p.peerId.toString())
   for (const addr of libp2p.getMultiaddrs().map(e => e.toString())) {
     options.silent || console.log(addr)

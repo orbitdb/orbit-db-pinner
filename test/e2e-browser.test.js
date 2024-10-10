@@ -97,11 +97,11 @@ describe('End-to-End Browser Tests', function () {
 
       const expected = await db1.all()
       lander1.orbitdb.ipfs.libp2p.services.pubsub.addEventListener('subscription-change', (event) => {
-          console.log("subscription lander 1")
+        console.log('subscription lander 1')
       })
       lander3.orbitdb.ipfs.libp2p.services.pubsub.addEventListener('subscription-change', (event) => {
-          console.log("subscription lander 3")
-      })      
+        console.log('subscription lander 3')
+      })
       console.time('pin')
       await lander1.pin(db1.address)
       console.timeEnd('pin')

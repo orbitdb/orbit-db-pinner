@@ -5,7 +5,7 @@ import { circuitRelayServer } from '@libp2p/circuit-relay-v2'
 import { webSockets } from '@libp2p/websockets'
 import * as filters from '@libp2p/websockets/filters'
 import { identify } from '@libp2p/identify'
-import { generateKeyPair, privateKeyFromProtobuf } from '@libp2p/crypto/keys'
+import { privateKeyFromProtobuf } from '@libp2p/crypto/keys'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 
 // output of: console.log(server.peerId.privateKey.toString('hex'))
