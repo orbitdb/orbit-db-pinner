@@ -27,17 +27,36 @@ describe('End-to-End Browser Tests', function () {
     beforeEach(async function () {
       lander1 = await launchLander({ orbiterAddress: orbiterAddress1, directory: 'lander1' })
       lander2 = await launchLander({ orbiterAddress: orbiterAddress1, directory: 'lander2' })
+      console.log('launching lander 3')
       lander3 = await launchLander({ orbiterAddress: orbiterAddress2, directory: 'lander3' })
+      console.log('lander 3 launched')
+      console.log('lander1 peerId', lander1.orbitdb.ipfs.libp2p.peerId)
+      console.log('lander3 peerId', lander3.orbitdb.ipfs.libp2p.peerId)
+
+      lander1.orbitdb.ipfs.libp2p.services.pubsub.addEventListener('subscription-change', (event) => {
+        console.log('lander 1 subscription')
+      })
+
+      lander2.orbitdb.ipfs.libp2p.services.pubsub.addEventListener('subscription-change', (event) => {
+        console.log('lander 2 subscription')
+      })
+
+      lander3.orbitdb.ipfs.libp2p.services.pubsub.addEventListener('subscription-change', (event) => {
+        console.log('lander 3 subscription')
+      })
     })
 
     afterEach(async function () {
       if (lander1) {
+        lander1.orbitdb.ipfs.libp2p.services.pubsub.removeEventListener('subscription-change')
         await lander1.shutdown()
       }
       if (lander2) {
+        lander2.orbitdb.ipfs.libp2p.services.pubsub.removeEventListener('subscription-change')
         await lander2.shutdown()
       }
       if (lander3) {
+        lander3.orbitdb.ipfs.libp2p.services.pubsub.removeEventListener('subscription-change')
         await lander3.shutdown()
       }
       await rimraf('./lander1')
@@ -96,12 +115,7 @@ describe('End-to-End Browser Tests', function () {
       }
 
       const expected = await db1.all()
-      lander1.orbitdb.ipfs.libp2p.services.pubsub.addEventListener('subscription-change', (event) => {
-        console.log('subscription lander 1')
-      })
-      lander3.orbitdb.ipfs.libp2p.services.pubsub.addEventListener('subscription-change', (event) => {
-        console.log('subscription lander 3')
-      })
+
       console.time('pin')
       await lander1.pin(db1.address)
       console.timeEnd('pin')
@@ -113,7 +127,6 @@ describe('End-to-End Browser Tests', function () {
 
       console.time('replicate')
       const db2 = await lander3.orbitdb.open(db1.address)
-      console.log(lander1.orbitdb.ipfs.libp2p.peerId)
       const onConnected = (peerId, heads) => {
         replicated = true
       }
