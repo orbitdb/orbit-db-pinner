@@ -27,9 +27,7 @@ describe('End-to-End Browser Tests', function () {
     beforeEach(async function () {
       lander1 = await launchLander({ orbiterAddress: orbiterAddress1, directory: 'lander1' })
       lander2 = await launchLander({ orbiterAddress: orbiterAddress1, directory: 'lander2' })
-      console.log('launching lander 3')
       lander3 = await launchLander({ orbiterAddress: orbiterAddress2, directory: 'lander3' })
-      console.log('lander 3 launched')
       console.log('lander1 peerId', lander1.orbitdb.ipfs.libp2p.peerId)
       console.log('lander3 peerId', lander3.orbitdb.ipfs.libp2p.peerId)
 
