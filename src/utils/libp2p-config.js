@@ -4,7 +4,8 @@ import { yamux } from '@chainsafe/libp2p-yamux'
 import { tcp } from '@libp2p/tcp'
 import { webSockets } from '@libp2p/websockets'
 import { gossipsub } from '@chainsafe/libp2p-gossipsub'
-import { mdns } from '@libp2p/mdns'
+// import { mdns } from '@libp2p/mdns'
+import { bootstrap } from '@libp2p/bootstrap'
 
 export const config = ({ privateKey, port, websocketPort } = {}) => {
   const conf = {
@@ -28,7 +29,10 @@ export const config = ({ privateKey, port, websocketPort } = {}) => {
       denyDialMultiaddr: () => false // allow dialling of private addresses.
     },
     peerDiscovery: [
-      mdns()
+      bootstrap({
+        list: ['/ip4/127.0.0.1/tcp/54321/p2p/16Uiu2HAmBzKcgCfpJ4j4wJSLkKLbCVvnNBWPnhexrnJWJf1fDu5y']
+      })
+      /* mdns() */
     ],
     services: {
       identify: identify(),

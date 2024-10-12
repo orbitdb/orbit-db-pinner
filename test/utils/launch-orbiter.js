@@ -28,7 +28,6 @@ export const launchOrbiter = async ({ directory } = {}) => {
   const options = Libp2pOptions
 
   directory = directory || './orbiter'
-
   const id = orbiterId
 
   const blockstore = new LevelBlockstore(join(directory, '/', 'ipfs', '/', 'blocks'))

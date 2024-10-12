@@ -14,7 +14,6 @@ import { rpc as rpcId, appPath, rpcPath, app, orbiter as orbiterId, orbiterPath 
 import { saveConfig } from './utils/config-manager.js'
 import { logger, enable } from '@libp2p/logger'
 import { privateKeyFromProtobuf } from '@libp2p/crypto/keys'
-
 export default async ({ options }) => {
   options = options || {}
 
@@ -54,14 +53,6 @@ export default async ({ options }) => {
   await keystore.close()
 
   const libp2p = await createLibp2p(await libp2pConfig({ privateKey, port: options.port, websocketPort: options.wsport }))
-
-  libp2p.addEventListener('peer:connect', (event) => {
-    console.log('peer:connect', event.detail)
-  })
-
-  libp2p.addEventListener('peer:discovery', (event) => {
-    libp2p.dial(event.detail.id)
-  })
 
   log('peerid:', libp2p.peerId.toString())
   for (const addr of libp2p.getMultiaddrs().map(e => e.toString())) {

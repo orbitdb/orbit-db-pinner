@@ -13,7 +13,7 @@ export default async ({ orbitdb, orbiterAddressOrId }) => {
       })()
     }
 
-    const stream = await orbitdb.ipfs.libp2p.dialProtocol(orbiterAddressOrId, voyagerProtocol, { runOnTransientConnection: true })
+    const stream = await orbitdb.ipfs.libp2p.dialProtocol(orbiterAddressOrId, voyagerProtocol, { runOnLimitedConnection: true })
 
     await pipe(pinDBs, stream, async (source) => {
       for await (const chunk of source) {
@@ -39,7 +39,7 @@ export default async ({ orbitdb, orbiterAddressOrId }) => {
       })()
     }
 
-    const stream = await orbitdb.ipfs.libp2p.dialProtocol(orbiterAddressOrId, voyagerProtocol, { runOnTransientConnection: true })
+    const stream = await orbitdb.ipfs.libp2p.dialProtocol(orbiterAddressOrId, voyagerProtocol, { runOnLimitedConnection: true })
 
     await pipe(unpinDBs, stream, async source => {
       for await (const chunk of source) {
