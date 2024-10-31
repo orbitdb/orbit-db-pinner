@@ -37,7 +37,10 @@ export const config = ({ privateKey, port, websocketPort } = {}) => {
     services: {
       identify: identify(),
       pubsub: gossipsub({
-        emitSelf: true
+        emitSelf: true,
+        scoreThresholds: {
+          graylistThreshold: -80000000000,
+        }
       })
     }
   }
