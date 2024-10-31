@@ -35,13 +35,13 @@ describe('End-to-End Browser Tests', function () {
       await rimraf('./orbiter3')
     })
 
-    it.only('pin and replicate a database - lander1->orbiter1(nodejs)->orbiter2(nodejs)->lander2', async function () {
+    it('pin and replicate a database - lander1->orbiter1(nodejs)->orbiter2(nodejs)->lander2', async function () {
       const rounds = 50
       const entryAmount = 100
       const addr = orbiter.orbitdb.ipfs.libp2p.getMultiaddrs().shift()
 
-      console.log('start', addr)
-      for (let k = 1; k <= rounds; k++) {
+      console.log("start", addr)
+      for (let k = 1; k <= rounds; k ++) {
         let replicated = false
 
         // lander1 = await launchLander({ orbiterAddress: orbiterAddress1, directory: 'lander4' })
@@ -68,13 +68,14 @@ describe('End-to-End Browser Tests', function () {
         await orbiter.auth.add(lander2.orbitdb.identity.id)
         // lander2 = await launchLander({ orbiterAddress: orbiterAddress1, directory: 'lander5' })
 
+
         // console.time('pin2')
         // await lander2.pin(db1.address)
         // console.timeEnd('pin2')
 
         // console.time('replicate')
         // console.log("open", db1.address)
-        console.time('round ' + k + '/' + rounds)
+        console.time('round ' + k + "/" + rounds)
         const db2 = await lander2.orbitdb.open(db1.address)
 
         const onConnected = (peerId, heads) => {
@@ -85,7 +86,7 @@ describe('End-to-End Browser Tests', function () {
 
         await waitFor(() => replicated, () => true)
         // console.timeEnd('replicate')
-        console.timeEnd('round ' + k + '/' + rounds)
+        console.timeEnd('round ' + k + "/" + rounds)
 
         const res = await db2.all()
 
