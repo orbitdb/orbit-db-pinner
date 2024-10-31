@@ -9,15 +9,6 @@
   "bin": {
     "voyager": "./src/bin/cli.js"
   },
-  "dependencies": {
-    "@chainsafe/libp2p-gossipsub": "^13.1.0",
-    "@orbitdb/core": "https://github.com/orbitdb/orbitdb.git#expose-identities",
-    "@orbitdb/set-db": "^1.0.2",
-    "blockstore-level": "^1.1.8",
-    "datastore-level": "^10.1.8",
-    "helia": "^4.2.5",
-    "yargs": "^17.7.2"
-  },
   "devDependencies": {
     "c8": "^10.1.2",
     "it-drain": "^3.0.7",
@@ -49,5 +40,13 @@
     "env": [
       "mocha"
     ]
+  },
+  "dependencies": {
+    "@chainsafe/libp2p-gossipsub": "^14.1.0",
+    "@orbitdb/core": "^2.4.0",
+    "@orbitdb/set-db": "^1.1.0",
+    "blockstore-level": "^2.0.1",
+    "datastore-level": "^11.0.1",
+    "helia": "^5.1.0"
   }
 }

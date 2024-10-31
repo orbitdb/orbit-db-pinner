@@ -21,7 +21,6 @@ const connectIpfsNodes = async (ipfs, peerAddress, options = {
       address1 = ipfs.libp2p.getMultiaddrs().filter(ma => WebRTC.matches(ma)).pop()
       return address1 != null
     }, () => true)
-
     await ipfs.libp2p.dial(peerAddress)
   } else {
     if (peerAddress) {

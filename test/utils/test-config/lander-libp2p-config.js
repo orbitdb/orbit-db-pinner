@@ -4,7 +4,7 @@ import { yamux } from '@chainsafe/libp2p-yamux'
 import { webSockets } from '@libp2p/websockets'
 import { gossipsub } from '@chainsafe/libp2p-gossipsub'
 import { tcp } from '@libp2p/tcp'
-import { mdns } from '@libp2p/mdns'
+// import { mdns } from '@libp2p/mdns'
 
 const Libp2pOptions = {
   addresses: {
@@ -17,7 +17,7 @@ const Libp2pOptions = {
     tcp(),
     webSockets()
   ],
-  connectionEncryption: [
+  connectionEncrypters: [
     noise()
   ],
   streamMuxers: [
@@ -27,13 +27,12 @@ const Libp2pOptions = {
     denyDialMultiaddr: () => false // allow dialling of private addresses.
   },
   peerDiscovery: [
-    mdns()
+    /* mdns() */
   ],
   services: {
     identify: identify(),
     pubsub: gossipsub({
-      emitSelf: true,
-      allowPublishToZeroPeers: true
+      emitSelf: true
     })
   }
 }

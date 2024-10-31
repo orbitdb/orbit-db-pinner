@@ -108,7 +108,6 @@ describe('End-to-End Browser Tests', function () {
 
       console.time('replicate')
       const db2 = await lander3.orbitdb.open(db1.address)
-
       const onConnected = (peerId, heads) => {
         replicated = true
       }

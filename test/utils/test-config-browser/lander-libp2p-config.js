@@ -10,7 +10,8 @@ import { circuitRelayTransport } from '@libp2p/circuit-relay-v2'
 const Libp2pBrowserOptions = {
   addresses: {
     listen: [
-      '/webrtc'
+      '/webrtc',
+      '/p2p-circuit'
     ]
   },
   transports: [
@@ -18,11 +19,9 @@ const Libp2pBrowserOptions = {
       filter: all // connect to insecure sockets also (E.g. /ws/)
     }),
     webRTC(),
-    circuitRelayTransport({
-      discoverRelays: 1
-    })
+    circuitRelayTransport()
   ],
-  connectionEncryption: [
+  connectionEncrypters: [
     noise()
   ],
   streamMuxers: [

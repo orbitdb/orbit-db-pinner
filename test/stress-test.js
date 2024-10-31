@@ -1,12 +1,12 @@
-import { multiaddr } from '@multiformats/multiaddr'
+// import { multiaddr } from '@multiformats/multiaddr'
 import { strictEqual, deepStrictEqual } from 'assert'
 import { rimraf } from 'rimraf'
 import { launchLander } from './utils/launch-lander.js'
 import { launchOrbiter } from './utils/launch-orbiter.js'
 import waitFor from './utils/wait-for.js'
-import connectPeers from './utils/connect-nodes-via-relay.js'
+// import connectPeers from './utils/connect-nodes-via-relay.js'
 
-const isBrowser = () => typeof window !== 'undefined'
+// const isBrowser = () => typeof window !== 'undefined'
 
 describe('End-to-End Browser Tests', function () {
   describe('Orbiter in the browser', function () {
@@ -35,13 +35,13 @@ describe('End-to-End Browser Tests', function () {
       await rimraf('./orbiter3')
     })
 
-    it.only('pin and replicate a database - lander1->orbiter1(nodejs)->orbiter2(nodejs)->lander2', async function () {
+    it('pin and replicate a database - lander1->orbiter1(nodejs)->orbiter2(nodejs)->lander2', async function () {
       const rounds = 50
       const entryAmount = 100
       const addr = orbiter.orbitdb.ipfs.libp2p.getMultiaddrs().shift()
 
-      console.log("start", addr)
-      for (let k = 1; k <= rounds; k ++) {
+      console.log('start', addr)
+      for (let k = 1; k <= rounds; k++) {
         let replicated = false
 
         // lander1 = await launchLander({ orbiterAddress: orbiterAddress1, directory: 'lander4' })
@@ -68,14 +68,13 @@ describe('End-to-End Browser Tests', function () {
         await orbiter.auth.add(lander2.orbitdb.identity.id)
         // lander2 = await launchLander({ orbiterAddress: orbiterAddress1, directory: 'lander5' })
 
-
         // console.time('pin2')
         // await lander2.pin(db1.address)
         // console.timeEnd('pin2')
 
         // console.time('replicate')
         // console.log("open", db1.address)
-        console.time('round ' + k + "/" + rounds)
+        console.time('round ' + k + '/' + rounds)
         const db2 = await lander2.orbitdb.open(db1.address)
 
         const onConnected = (peerId, heads) => {
@@ -86,7 +85,7 @@ describe('End-to-End Browser Tests', function () {
 
         await waitFor(() => replicated, () => true)
         // console.timeEnd('replicate')
-        console.timeEnd('round ' + k + "/" + rounds)
+        console.timeEnd('round ' + k + '/' + rounds)
 
         const res = await db2.all()
 

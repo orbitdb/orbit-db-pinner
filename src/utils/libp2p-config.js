@@ -4,9 +4,10 @@ import { yamux } from '@chainsafe/libp2p-yamux'
 import { tcp } from '@libp2p/tcp'
 import { webSockets } from '@libp2p/websockets'
 import { gossipsub } from '@chainsafe/libp2p-gossipsub'
-import { mdns } from '@libp2p/mdns'
+// import { mdns } from '@libp2p/mdns'
+import { bootstrap } from '@libp2p/bootstrap'
 
-export const config = ({ peerId, port, websocketPort } = {}) => {
+export const config = ({ privateKey, port, websocketPort } = {}) => {
   const conf = {
     addresses: {
       listen: [
@@ -18,7 +19,7 @@ export const config = ({ peerId, port, websocketPort } = {}) => {
       tcp(),
       webSockets()
     ],
-    connectionEncryption: [
+    connectionEncrypters: [
       noise()
     ],
     streamMuxers: [
@@ -28,21 +29,24 @@ export const config = ({ peerId, port, websocketPort } = {}) => {
       denyDialMultiaddr: () => false // allow dialling of private addresses.
     },
     peerDiscovery: [
-      mdns()
+      bootstrap({
+        list: ['/ip4/127.0.0.1/tcp/54321/p2p/16Uiu2HAmBzKcgCfpJ4j4wJSLkKLbCVvnNBWPnhexrnJWJf1fDu5y']
+      })
+      /* mdns() */
     ],
     services: {
       identify: identify(),
       pubsub: gossipsub({
         emitSelf: true,
         scoreThresholds: {
-          graylistThreshold: -80000000000,
+          graylistThreshold: -80000000000
         }
       })
     }
   }
 
-  if (peerId) {
-    conf.peerId = peerId
+  if (privateKey) {
+    conf.privateKey = privateKey
   }
 
   return conf
