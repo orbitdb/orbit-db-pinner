@@ -14,7 +14,7 @@ Voyager, like OrbitDB, does not have a traditional server/client architecture an
 npm i @orbitdb/voyager
 ```
 
-## Running "Orbiter"
+### Running "Orbiter"
 
 Voyager's Orbiter (the pinning service) can be run as a daemon process. You can install the package globally and run it using the "voyager" binary:
 
@@ -28,6 +28,19 @@ To store Orbiter's configuration to a different location, use the -d or --direct
 ```sh
 voyager daemon -d /path/to/voyager
 ```
+
+### Docker
+
+You can run an Orbiter pinning service using a pre-configured Docker image.
+
+Once you have cloned this repo, cd into the voyager directory root and run:
+
+```
+docker build -t orbitdb-pinner ./
+docker run --rm -d -p 8000:8000 orbitdb-pinner
+```
+
+Adjust the port if required.
 
 ## Managing "Orbiter" access
 
