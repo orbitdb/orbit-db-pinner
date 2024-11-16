@@ -5,7 +5,7 @@ import { Commands, sendCommand } from './rpc/index.js'
 import { rpc as rpcId, appPath, rpcPath } from './utils/id.js'
 import { loadConfig } from './utils/config-manager.js'
 import { config as libp2pConfig } from './utils/libp2p-config.js'
-import { privateKeyFromProtobuf } from '@libp2p/crypto/keys'
+import { privateKeyFromRaw } from '@libp2p/crypto/keys'
 
 const authAdd = (identity, libp2p, address) => async ({ id }) => {
   return sendCommand(identity, libp2p, address, Commands.AUTH_ADD, [id])
@@ -19,7 +19,7 @@ const authList = (identity, libp2p, address) => async () => {
   return sendCommand(identity, libp2p, address, Commands.AUTH_LIST)
 }
 
-export default async ({ id, directory }) => {
+export default async ({ directory }) => {
   const appDirectory = appPath(directory)
   const rpcDirectory = rpcPath(directory)
 
@@ -31,13 +31,13 @@ export default async ({ id, directory }) => {
     console.error('No config found. Run daemon first.')
     return
   }
-
+  
+  const id = rpcId
   const path = join(rpcDirectory, 'keystore')
   const keystore = await KeyStore({ path })
   const identities = await Identities({ keystore })
-  const identity = await identities.createIdentity({ id: rpcId })
-
-  const privateKey = privateKeyFromProtobuf((await keystore.getKey(id)).bytes)
+  const identity = await identities.createIdentity({ id })
+  const privateKey = privateKeyFromRaw((await keystore.getKey(rpcId)).raw)
   const libp2p = await createLibp2p(await libp2pConfig({ privateKey }))
 
   return {

@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "@chainsafe/libp2p-gossipsub": "^14.1.0",
-    "@orbitdb/core": "^2.4.0",
+    "@orbitdb/core": "^2.4.3",
     "@orbitdb/set-db": "^1.1.0",
     "blockstore-level": "^2.0.1",
     "datastore-level": "^11.0.1",
