@@ -44,6 +44,8 @@ Adjust the port if required.
 
 ## Managing "Orbiter" access
 
+Orbiter will deny all pinning and unpinning requests by default. To allow a user to interact with Orbiter, the user's public key must be added to Orbiter's "allow" list.
+
 Access to Orbiter can be configured using the Voyager binary.
 
 To add an authorized public key to Orbiter:
@@ -52,7 +54,7 @@ To add an authorized public key to Orbiter:
 voyager auth add <publickey>
 ```
 
-where <publickey> identifies a user who can pin databases to this Orbiter.
+where <publickey> identifies a user who can pin databases to this Orbiter. 
 
 To remove an authorized public key to Orbiter:
 
@@ -68,13 +70,15 @@ List authorized public keys:
 voyager auth list
 ```
 
-If Orbiter's configuration is deployed to a different location, call Voyager with the -d or --directory flag and specify Orbiter's custom directory:
+If Orbiter's configuration is deployed to a different location, call Voyager with the -d or --directory flag and specify Orbiter's custom directory (**this is because you must use the Orbiter keystore to execute one of the following actions.**):
 
 ```sh
-voyager auth add -f <publickey>
-voyager auth list -f
-voyager auth remove -f <publickey>
+voyager auth add -d /custom/voyager/path <publickey>
+voyager auth list -d /custom/voyager/path
+voyager auth remove -d /custom/voyager/path <publickey>
 ```
+
+**You can retrieve the <publickey> from OrbitDB's identity publicKey field.**
 
 ## Pinning databases using "Lander"
 
