@@ -91,7 +91,7 @@ const orbitdb = await createOrbitDB({ ipfs, directory })
 
 await connectPeers(orbiter.orbitdb.ipfs, ipfs)
 
-const orbiterAddressOrId = // deployed orbiter peer id.
+const orbiterAddressOrId = // deployed orbiter peer id or listening address.
 
 const lander = await Lander({ orbitdb, orbiterAddressOrId })
 ``` 
@@ -101,8 +101,11 @@ To pin a db:
 ```js
 // create a db for pinning
 const db = await orbitdb.open('my-db')
-const dbs = [db]
 
+// store the address of the db to an array of addresses.
+const dbs = [db.address]
+
+// Pin the addresses to the pinner.
 await lander.pin(dbs)
 ```
 
@@ -111,8 +114,11 @@ To unpin a pinned db:
 ```js
 // open an instance of the db you want to unpin.
 const db = await orbitdb.open('my-db')
-const dbs = [db]
 
+// store the address of the db to an array of addresses.
+const dbs = [db.address]
+
+// Unpin the addresses from the pinner.
 await lander.unpin(dbs)
 ```
 
