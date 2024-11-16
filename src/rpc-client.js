@@ -31,7 +31,7 @@ export default async ({ directory }) => {
     console.error('No config found. Run daemon first.')
     return
   }
-  
+
   const id = rpcId
   const path = join(rpcDirectory, 'keystore')
   const keystore = await KeyStore({ path })
