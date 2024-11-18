@@ -3,8 +3,17 @@ import { strictEqual } from 'assert'
 
 describe('auth', function () {
   let pid
-  before(() => {
+
+  before(async () => {
     pid = exec('./src/bin/cli.js daemon')
+
+    // TODO: Probably a better way to establish if daemon is running.
+    // Maybe ping it?
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve()
+      }, 100)
+    })
   })
 
   after(() => {
