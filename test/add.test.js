@@ -31,14 +31,14 @@ describe('Pin', function () {
       await rimraf('./lander')
     })
 
-    it('pins a database', async function () {
+    it('adds a database', async function () {
       const { pinned, addresses } = await createPins(1, lander)
 
       strictEqual(pinned, true)
       strictEqual(Object.values(orbiter.dbs).pop().address, addresses.pop())
     })
 
-    it('pins multiple databases', async function () {
+    it('adds multiple databases', async function () {
       const { pinned, addresses } = await createPins(2, lander)
 
       strictEqual(pinned, true)
@@ -49,7 +49,7 @@ describe('Pin', function () {
     it('tries to pin a database when not authorized', async function () {
       await orbiter.auth.del(lander.orbitdb.identity.id)
       const db = await lander.orbitdb.open('db')
-      const pinned = await lander.pin(db.address)
+      const pinned = await lander.add(db.address)
 
       strictEqual(pinned, false)
     })

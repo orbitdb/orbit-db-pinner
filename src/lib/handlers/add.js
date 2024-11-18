@@ -1,6 +1,6 @@
 import { logger } from '@libp2p/logger'
 
-const log = logger('voyager:orbiter:pin')
+const log = logger('voyager:orbiter:pin:add')
 
 const waitForReplication = (db) => {
   return new Promise((resolve, reject) => {
@@ -11,7 +11,7 @@ const waitForReplication = (db) => {
 
 export default async ({ orbitdb, pins, dbs, id, addresses }) => {
   for (const address of addresses) {
-    log('pin   ', address)
+    log('add   ', address)
 
     let identities = await pins.get(address)
     const hasDb = identities !== undefined
@@ -31,6 +31,6 @@ export default async ({ orbitdb, pins, dbs, id, addresses }) => {
 
     await pins.set(address, identities)
 
-    log('pinned', address)
+    log('pin added', address)
   }
 }

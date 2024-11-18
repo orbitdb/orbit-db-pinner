@@ -39,7 +39,7 @@ yargs(hideBin(process.argv))
         'Add an authorized address',
         yargs => {
           yargs.positional('id', {
-            describe: 'The id of the user who is allowed to pin one or more databases (or denied depending on default access settings).',
+            describe: 'The id of the user who is allowed to add one or more databases (or denied depending on default access settings).',
             type: 'string'
           })
         },
@@ -59,7 +59,7 @@ yargs(hideBin(process.argv))
         'Remove an authorized address',
         yargs => {
           yargs.positional('id', {
-            describe: 'The id of the user who will no longer be allowed to pin one or more databases (or denied depending on default access settings).',
+            describe: 'The id of the user who will no longer be allowed to add one or more databases (or denied depending on default access settings).',
             type: 'string'
           })
         },
@@ -105,7 +105,7 @@ yargs(hideBin(process.argv))
   }).option('allow', {
     alias: 'a',
     type: 'boolean',
-    description: 'Allow anyone to pin a database. The default is false.'
+    description: 'Allow anyone to add a database. The default is false.'
   })
   .demandCommand(1, 'Error: specify a command.')
   .help()

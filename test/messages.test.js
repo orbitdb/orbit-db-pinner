@@ -14,10 +14,10 @@ describe('Messages', function () {
   let lander
   let db
 
-  const pinDBs = ({ type, signer } = {}) => source => {
+  const addDBs = ({ type, signer } = {}) => source => {
     return (async function * () {
       const addresses = [db.address]
-      const message = await createRequestMessage(type || Requests.PIN, addresses, lander.orbitdb.identity, signer)
+      const message = await createRequestMessage(type || Requests.PIN_ADD, addresses, lander.orbitdb.identity, signer)
       yield message
     })()
   }
@@ -35,7 +35,7 @@ describe('Messages', function () {
     await rimraf('./orbiter')
   })
 
-  it('pins a database with OK response', async function () {
+  it('adds a database with OK response', async function () {
     await orbiter.auth.add(lander.orbitdb.identity.id)
 
     const sink = async source => {
@@ -45,21 +45,21 @@ describe('Messages', function () {
       }
     }
 
-    await pipe(pinDBs(), handleRequest(orbiter), sink)
+    await pipe(addDBs(), handleRequest(orbiter), sink)
   })
 
-  it('pins a database with E_NOT_AUTHORIZED response', async function () {
+  it('adds a database with E_NOT_AUTHORIZED response', async function () {
     const sink = async source => {
       for await (const chunk of source) {
         const response = parseMessage(chunk.subarray())
-        deepStrictEqual(response, { message: 'user is not authorized to pin', type: Responses.E_NOT_AUTHORIZED })
+        deepStrictEqual(response, { message: 'user is not authorized to add', type: Responses.E_NOT_AUTHORIZED })
       }
     }
 
-    await pipe(pinDBs(), handleRequest(orbiter), sink)
+    await pipe(addDBs(), handleRequest(orbiter), sink)
   })
 
-  it('pins a database with E_INVALID_SIGNATURE response', async function () {
+  it('adds a database with E_INVALID_SIGNATURE response', async function () {
     await orbiter.auth.add(lander.orbitdb.identity.id)
 
     const identities = await Identities({ path: './lander/identities', ipfs: lander.ipfs })
@@ -73,10 +73,10 @@ describe('Messages', function () {
       }
     }
 
-    await pipe(pinDBs({ signer: { sign: createInvalidSignature } }), handleRequest(orbiter), sink)
+    await pipe(addDBs({ signer: { sign: createInvalidSignature } }), handleRequest(orbiter), sink)
   })
 
-  it('tries to pin a database with non-existent message', async function () {
+  it('tries to add a database with non-existent message', async function () {
     await orbiter.auth.add(lander.orbitdb.identity.id)
 
     const sink = async source => {
@@ -86,6 +86,6 @@ describe('Messages', function () {
       }
     }
 
-    await pipe(pinDBs({ type: 'UNKNOWN' }), handleRequest(orbiter), sink)
+    await pipe(addDBs({ type: 'UNKNOWN' }), handleRequest(orbiter), sink)
   })
 })

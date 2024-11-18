@@ -4,7 +4,7 @@ import { launchLander } from './utils/launch-lander.js'
 import { launchOrbiter } from './utils/launch-orbiter.js'
 import { createPins } from './utils/create-pins.js'
 
-describe('Unpin', function () {
+describe('Remove', function () {
   this.timeout(10000)
 
   let orbiter
@@ -31,10 +31,10 @@ describe('Unpin', function () {
       await rimraf('./lander')
     })
 
-    it('unpins a database', async function () {
+    it('removes a database', async function () {
       const { addresses } = await createPins(1, lander)
 
-      const unpinned = await lander.unpin(addresses)
+      const unpinned = await lander.remove(addresses)
 
       strictEqual(unpinned, true)
       strictEqual((await orbiter.pins.all()).length, 0)
@@ -44,17 +44,17 @@ describe('Unpin', function () {
     it('unpins multiple databases', async function () {
       const { addresses } = await createPins(2, lander)
 
-      const unpinned = await lander.unpin(addresses)
+      const unpinned = await lander.remove(addresses)
 
       strictEqual(unpinned, true)
       strictEqual((await orbiter.pins.all()).length, 0)
       strictEqual(Object.values(orbiter.dbs).length, 0)
     })
 
-    it('unpins a database when multiple databases have been pinned', async function () {
+    it('removes a database when multiple databases have been pinned', async function () {
       const { addresses } = await createPins(2, lander)
 
-      const unpinned = await lander.unpin(addresses.slice(0, 1))
+      const unpinned = await lander.remove(addresses.slice(0, 1))
 
       strictEqual(unpinned, true)
       strictEqual((await orbiter.pins.all()).length, 1)

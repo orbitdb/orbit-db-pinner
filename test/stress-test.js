@@ -35,7 +35,7 @@ describe('End-to-End Browser Tests', function () {
       await rimraf('./orbiter3')
     })
 
-    it('pin and replicate a database - lander1->orbiter1(nodejs)->orbiter2(nodejs)->lander2', async function () {
+    it('add and replicate a database - lander1->orbiter1(nodejs)->orbiter2(nodejs)->lander2', async function () {
       const rounds = 50
       const entryAmount = 100
       const addr = orbiter.orbitdb.ipfs.libp2p.getMultiaddrs().shift()
@@ -59,7 +59,7 @@ describe('End-to-End Browser Tests', function () {
         const expected = await db1.all()
 
         // console.time('pin')
-        await lander1.pin(db1.address)
+        await lander1.add(db1.address)
         // console.timeEnd('pin')
 
         await lander1.shutdown()

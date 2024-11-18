@@ -45,7 +45,7 @@ describe('End-to-End Browser Tests', function () {
       await rimraf('./lander3')
     })
 
-    it('pin and replicate a database - lander1->orbiter1->lander2', async function () {
+    it('add pins and replicate a database - lander1->orbiter1->lander2', async function () {
       const entryAmount = 100
       let replicated = false
 
@@ -58,12 +58,12 @@ describe('End-to-End Browser Tests', function () {
       const expected = await db1.all()
 
       console.time('pin')
-      await lander1.pin(db1.address)
+      await lander1.add(db1.address)
       console.timeEnd('pin')
       await lander1.shutdown()
 
       console.time('pin2')
-      await lander2.pin(db1.address)
+      await lander2.add(db1.address)
       console.timeEnd('pin2')
 
       console.time('replicate')
@@ -85,7 +85,7 @@ describe('End-to-End Browser Tests', function () {
       deepStrictEqual(expected, res)
     })
 
-    it('pin and replicate a database - lander1->orbiter1->orbiter2->lander3', async function () {
+    it('add pins and replicate a database - lander1->orbiter1->orbiter2->lander3', async function () {
       const entryAmount = 100
       let replicated = false
 
@@ -98,12 +98,12 @@ describe('End-to-End Browser Tests', function () {
       const expected = await db1.all()
 
       console.time('pin')
-      await lander1.pin(db1.address)
+      await lander1.add(db1.address)
       console.timeEnd('pin')
       await lander1.shutdown()
 
       console.time('pin2')
-      await lander3.pin(db1.address)
+      await lander3.add(db1.address)
       console.timeEnd('pin2')
 
       console.time('replicate')
@@ -159,7 +159,7 @@ describe('End-to-End Browser Tests', function () {
       await rimraf('./orbiter3')
     })
 
-    it('pin and replicate a database - lander1->orbiter1(nodejs)->orbiter2(browser)->lander3', async function () {
+    it('add pins and replicate a database - lander1->orbiter1(nodejs)->orbiter2(browser)->lander3', async function () {
       const entryAmount = 100
       let replicated = false
 
@@ -172,7 +172,7 @@ describe('End-to-End Browser Tests', function () {
       const expected = await db1.all()
 
       console.time('pin')
-      await lander1.pin(db1.address)
+      await lander1.add(db1.address)
       console.timeEnd('pin')
 
       await lander1.shutdown()
@@ -182,7 +182,7 @@ describe('End-to-End Browser Tests', function () {
       await orbiter.auth.add(lander2.orbitdb.identity.id)
 
       console.time('pin2')
-      await lander2.pin(db1.address)
+      await lander2.add(db1.address)
       console.timeEnd('pin2')
 
       console.time('replicate')
