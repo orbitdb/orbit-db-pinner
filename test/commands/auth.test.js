@@ -1,7 +1,16 @@
-import { execSync } from 'node:child_process'
+import { exec, execSync } from 'node:child_process'
 import { strictEqual } from 'assert'
 
-describe.only('auth', function () {
+describe('auth', function () {
+  let pid
+  before(() => {
+    pid = exec('./src/bin/cli.js daemon')
+  })
+
+  after(() => {
+    pid.kill()
+  })
+
   it('adds an address', function () {
     const ok = execSync('./src/bin/cli.js auth add 0x123')
     strictEqual(ok.toString(), 'ok\n')
