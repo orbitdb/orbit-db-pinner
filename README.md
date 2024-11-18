@@ -1,12 +1,12 @@
-# Voyager, OrbitDB's pinning service
+# Voyager
 
-Voyager is a pinning peer for OrbitDB.
+Voyager is a ***storage service*** for [OrbitDB](https://github.com/orbitdb/orbitdb) peer-to-peer databases.
 
-Voyager uses Libp2p protocols to send messages for pinning and unpinning databases. Once pinned, a database is replicated by Voyager so that it is available from the pinning peer rather than directly from the originating peer. Unpinning removes the replicated database from the pinning peer.
+Voyager replicates and stores OrbitDB databases and makes them available to others when the database's originating peer is offline.
 
-OrbitDB Voyager is designed to run on systems with guaranteed uptime and public availability. For example, a browser-based app running a local OrbitDB database may rely on one or more pinning peers to ensure the database is available when the browser peer goes offline.
+It is designed to run on systems with guaranteed uptime and public availability and can be seen as a "data availability node" for OrbitDB. For example, a browser-based app running a OrbitDB database may rely on one or more Voyager peers to ensure the database is available when the browser peer goes offline.
 
-Voyager, like OrbitDB, does not have a traditional server/client architecture and so terms "server" and "client" do not apply. Therefore, in keeping with OrbitDB's "planetary" naming convention, the pinning peer is called "Orbiter" and the interface which a 3rd party developer will use to communicate with the pinning peer is called "Lander".
+Voyager, like OrbitDB, is peer-to-peer and does not have a traditional server/client architecture and so terms "server" and "client" do not apply. Therefore, in keeping with OrbitDB's "celestial" naming convention, the storage service peer is called ***"Orbiter"*** and the interface which the developer or user uses to communicate with the storage service peer is called ***"Lander"***.
 
 ## Installation
 
@@ -16,7 +16,7 @@ npm i @orbitdb/voyager
 
 ### Running "Orbiter"
 
-Voyager's Orbiter (the pinning service) can be run as a daemon process. You can install the package globally and run it using the "voyager" binary:
+Voyager's Orbiter (the storage service) can be run as a daemon process. You can install the package globally and run it using the "voyager" binary:
 
 ```sh
 npm i -g @orbitdb/voyager
@@ -31,7 +31,7 @@ voyager daemon -d /path/to/voyager
 
 ### Docker
 
-You can run an Orbiter pinning service using a pre-configured Docker image.
+You can run an Orbiter storage service using a pre-configured Docker image.
 
 Once you have cloned this repo, cd into the voyager directory root and run:
 
@@ -44,27 +44,29 @@ Adjust the port if required.
 
 ## Managing "Orbiter" access
 
-Orbiter will deny all pinning and unpinning requests by default. To allow a user to interact with Orbiter, the user's public key must be added to Orbiter's "allow" list.
+Orbiter will deny all requests by default. To allow a user to interact with Orbiter, the (requesting) user's `id` must be added to Orbiter's "allow" list.
 
 Access to Orbiter can be configured using the Voyager binary.
 
-To add an authorized public key to Orbiter:
+**The user's `id` used in the examples below can be retrieved from the user's OrbitDB instance's `orbitdb.identity.id` field.**
+
+To add an authorized user to Orbiter:
 
 ```sh
-voyager auth add <publickey>
+voyager auth add <id>
 ```
 
-where <publickey> identifies a user who can pin databases to this Orbiter. 
+where <id> identifies a user who can pin databases to this Orbiter. The `<id>` is the string from user's OrbitDB instance `orbitdb.identity.id`.
 
-To remove an authorized public key to Orbiter:
+To remove an authorized user from Orbiter:
 
 ```sh
-voyager auth del <publickey>
+voyager auth del <id>
 ```
 
-where <publickey> identifies a user who can pin databases to this Orbiter.
+where <id> identifies a user who can pin databases to this Orbiter. The `<id>` is the string from user's OrbitDB instance `orbitdb.identity.id`.
 
-List authorized public keys:
+List authorized users:
 
 ```sh
 voyager auth list
@@ -73,16 +75,14 @@ voyager auth list
 If Orbiter's configuration is deployed to a different location, call Voyager with the -d or --directory flag and specify Orbiter's custom directory (**this is because you must use the Orbiter keystore to execute one of the following actions.**):
 
 ```sh
-voyager auth add -d /custom/voyager/path <publickey>
+voyager auth add -d /custom/voyager/path <id>
 voyager auth list -d /custom/voyager/path
-voyager auth remove -d /custom/voyager/path <publickey>
+voyager auth remove -d /custom/voyager/path <id>
 ```
 
-**You can retrieve the <publickey> from OrbitDB's identity publicKey field.**
+## Adding databases using "Lander"
 
-## Pinning databases using "Lander"
-
-To make databases accessible from Voyager, the database needs to be pinned to an Orbiter instance. This can be achieved programmatically by using the "Lander" module.
+To make databases accessible from Voyager, the database needs to be added to an Orbiter storage service instance. This can be achieved programmatically by using the "Lander" module.
 
 To use Lander, first install the @orbitdb/voyager package:
 
@@ -139,13 +139,13 @@ const dbs = [db.address]
 await lander.unpin(dbs)
 ```
 
-## The OrbitDB Voyager Pinning Protocol
+## The OrbitDB Voyager Protocol
 
-The OrbitDB Voyager uses Libp2p to pin and unpin databases to and from the pinning service. A database can be pinned or unpinned by dialling the pinning protocol and issuing a message as part of the protocol's request.
+Voyager uses Libp2p to add and remove databases to replicate to and from the storage service. A database can be added or removed by dialling the protocol and issuing a request message.
 
-### Pinning Protocol
+### Protocol
 
-The pinning protocol is:
+The protocol identifier is:
 
 ```
 /orbitdb/voyager/v1.0.0
@@ -153,28 +153,32 @@ The pinning protocol is:
 
 ### Messages
 
-Send one of the following messages to the pinning protocol in order to communicate with the pinning service:
+Send one of the following messages to the protocol in order to communicate with the service:
 
 #### Pin
 
-message: PIN
-pubkey: The public key of the client
-signature: One or more database addresses signed using the client's private key
-addresses: One or more database addresses to pin 
+```
+type: PIN
+id: The id of the requester
+signature: One or more database addresses signed by the requester
+addresses: One or more database addresses to add to the storage 
+```
 
-If successful, an OK response will be sent. If pinning fails, an error will be returned.
+If successful, an OK response will be sent. If it fails, an error will be returned.
 
 #### Unpin
 
-message: UNPIN
-pubkey: The public key of the client
-signature: One or more database addresses signed using the client's private key
-addresses: One or more database addresses to unpin
+```
+type: UNPIN
+id: The id of the requester
+signature: One or more database addresses signed by the requeter
+addresses: One or more database addresses to remove from the storage
+```
 
-If successful, an OK response will be sent. If unpinning fails, an error will be returned.
+If successful, an OK response will be sent. If it fails, an error will be returned.
 
-## Allowing and Denying Pins
+## Allowing and Denying User Access
 
-Voyager uses simple ALLOW/DENY policies to authorize the sending of messages to the pinning protocol by remote peers.
+Voyager uses simple ALLOW/DENY policies to authorize the messages received through the protocol.
 
-Voyager can either be run in ALLOW ALL mode where anyone can send a message except those who appear in the denied list or DENY ALL mode which will only allow messages from an explicit list of peers. The default access mode is DENY ALL.
+Voyager can either be run in ALLOW ALL mode where anyone can send a message except those who appear in the denied list or DENY ALL mode which will only allow messages from an explicit list of users. The default access mode is DENY ALL.
