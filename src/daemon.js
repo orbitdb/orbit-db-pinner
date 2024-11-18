@@ -71,7 +71,7 @@ export default async ({ options }) => {
   const orbiter = await Orbiter({ defaultAccess, verbose: options.verbose, orbitdb })
 
   // TODO: we might want to separate the key init to a separate 'init' CLI command
-  const initRPCKey = async ({ directory }) => {
+  const initRPCIdentity = async ({ directory }) => {
     const id = rpcId
     const rpcDirectory = rpcPath(directory)
     const path = join(rpcDirectory, 'keystore')
@@ -81,15 +81,15 @@ export default async ({ options }) => {
 
     await keystore.close()
 
-    return identity.publicKey
+    return identity
   }
 
-  const authorizedRPCKey = await initRPCKey({ directory: options.directory })
+  const authorizedRPCIdentity = await initRPCIdentity({ directory: options.directory })
 
   const config = { orbiter: {}, rpc: {} }
   config.orbiter.peerId = orbiter.orbitdb.ipfs.libp2p.peerId
   config.orbiter.api = orbiter.orbitdb.ipfs.libp2p.getMultiaddrs().shift() // get 127.0.0.1 address
-  config.rpc.publicKeys = [authorizedRPCKey]
+  config.rpc.identities = [authorizedRPCIdentity]
   await saveConfig({ path: appDirectory, config })
 
   const handleRPCMessages = async ({ stream }) => {

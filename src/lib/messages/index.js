@@ -31,7 +31,7 @@ export const createRequestMessage = async (type, addresses, identity, signer) =>
   const signature = signer
     ? await signer.sign(JSON.stringify(addresses))
     : await identity.sign(identity, JSON.stringify(addresses))
-  return serialize({ type, id, signature, pubkey: identity.publicKey, addresses })
+  return serialize({ type, id, signature, addresses })
 }
 
 export const createResponseMessage = async (type, message) => {

@@ -37,7 +37,7 @@ export default async ({ directory }) => {
   const keystore = await KeyStore({ path })
   const identities = await Identities({ keystore })
   const identity = await identities.createIdentity({ id })
-  const privateKey = privateKeyFromRaw((await keystore.getKey(rpcId)).raw)
+  const privateKey = privateKeyFromRaw((await keystore.getKey(id)).raw)
   const libp2p = await createLibp2p(await libp2pConfig({ privateKey }))
 
   return {
