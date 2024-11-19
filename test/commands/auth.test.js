@@ -1,16 +1,18 @@
 import { exec, execSync } from 'node:child_process'
 import { strictEqual } from 'assert'
 
-describe.only('auth', function () {
+describe('auth', function () {
   let daemon
 
   before(async () => {
     daemon = exec('./src/bin/cli.js daemon')
 
+    // TODO: Probably a better way to establish if daemon is running.
+    // Maybe ping it?
     await new Promise((resolve) => {
-      daemon.once('spawn', () => {
+      setTimeout(() => {
         resolve()
-      })
+      }, 500)
     })
   })
 
