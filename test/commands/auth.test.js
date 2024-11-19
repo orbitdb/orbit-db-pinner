@@ -1,17 +1,21 @@
 import { exec, execSync } from 'node:child_process'
-import process from 'node:process'
 import { strictEqual } from 'assert'
 
-describe('auth', function () {
-  let pid
+describe.only('auth', function () {
+  let daemon
 
   before(async () => {
-    pid = exec('./src/bin/cli.js daemon')
-    process.nextTick()
+    daemon = exec('./src/bin/cli.js daemon')
+
+    await new Promise((resolve) => {
+      daemon.once('spawn', () => {
+        resolve()
+      })
+    })
   })
 
   after(() => {
-    pid.kill()
+    daemon.kill()
   })
 
   it('adds an address', function () {
