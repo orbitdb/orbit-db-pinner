@@ -41,32 +41,56 @@ describe('auth', function () {
     strictEqual(list.toString(), '')
   })
 
-  describe('not authorized', function () {
-    before(async function () {
-      await new Promise((resolve) => {
-        process.nextTick(() => {
-          resolve()
-        })
-      })
-
+  describe('unauthorized auth', function () {
+    const setUpUnauthorizedKeyStore = async () => {
       await renameSync(rpcPath(), 'voyager/rpc.bak')
-    })
+      const keystore = await KeyStore({ path: rpcPath() })
+      const identities = await Identities({ keystore })
+      await identities.createIdentity({ id: rpcId })
+      await keystore.close()
+    }
 
-    after(async function () {
+    const tearDownUnauthorizedKeyStore = async () => {
       await rimraf(rpcPath())
       await renameSync('voyager/rpc.bak', rpcPath())
-    })
+    }
 
-    it('Adds an address without authorization', async function () {
-      const keystore = await KeyStore(rpcPath())
-      const identities = await Identities({ keystore })
-      identities.createIdentity({ id: rpcId })
+    it('adds an address without authorization', async function () {
+      await setUpUnauthorizedKeyStore()
 
       try {
         execSync('./src/bin/cli.js auth add 0x123')
       } catch (e) {
         strictEqual(e.stderr.toString(), '{ type: 200, message: \'user is not authorized\' }\n')
       }
+
+      await tearDownUnauthorizedKeyStore()
+    })
+
+    it('removes an address without authorization', async function () {
+      execSync('./src/bin/cli.js auth add 0x123')
+
+      await setUpUnauthorizedKeyStore()
+
+      try {
+        execSync('./src/bin/cli.js auth remove 0x123')
+      } catch (e) {
+        strictEqual(e.stderr.toString(), '{ type: 200, message: \'user is not authorized\' }\n')
+      }
+
+      await tearDownUnauthorizedKeyStore()
+    })
+
+    it('lists addresses without authorization', async function () {
+      await setUpUnauthorizedKeyStore()
+
+      try {
+        execSync('./src/bin/cli.js auth list 0x123')
+      } catch (e) {
+        strictEqual(e.stderr.toString(), '{ type: 200, message: \'user is not authorized\' }\n')
+      }
+
+      await tearDownUnauthorizedKeyStore()
     })
   })
 })
