@@ -123,7 +123,7 @@ const db = await orbitdb.open('my-db')
 const dbs = [db.address]
 
 // Pin the addresses to the pinner.
-await lander.pin(dbs)
+await lander.add(dbs)
 ```
 
 To unpin a pinned db:
@@ -136,7 +136,7 @@ const db = await orbitdb.open('my-db')
 const dbs = [db.address]
 
 // Unpin the addresses from the pinner.
-await lander.unpin(dbs)
+await lander.remove(dbs)
 ```
 
 ## The OrbitDB Voyager Protocol
@@ -155,10 +155,10 @@ The protocol identifier is:
 
 Send one of the following messages to the protocol in order to communicate with the service:
 
-#### Pin
+#### Adding a DB for replication
 
 ```
-type: PIN
+type: PIN_ADD
 id: The id of the requester
 signature: One or more database addresses signed by the requester
 addresses: One or more database addresses to add to the storage 
@@ -166,12 +166,12 @@ addresses: One or more database addresses to add to the storage
 
 If successful, an OK response will be sent. If it fails, an error will be returned.
 
-#### Unpin
+#### Removing a DB for replication
 
 ```
-type: UNPIN
+type: PIN_REMOVE
 id: The id of the requester
-signature: One or more database addresses signed by the requeter
+signature: One or more database addresses signed by the requester
 addresses: One or more database addresses to remove from the storage
 ```
 

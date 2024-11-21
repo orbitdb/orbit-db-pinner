@@ -2,8 +2,8 @@ import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 
 export const Requests = Object.freeze({
-  PIN: 1,
-  UNPIN: 2
+  PIN_ADD: 1,
+  PIN_REMOVE: 2
 })
 
 export const Responses = Object.freeze({

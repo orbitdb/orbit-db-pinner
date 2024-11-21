@@ -13,6 +13,7 @@ import { config as libp2pConfig } from './utils/libp2p-config.js'
 import { rpc as rpcId, appPath, rpcPath, app, orbiter as orbiterId, orbiterPath } from './utils/id.js'
 import { saveConfig } from './utils/config-manager.js'
 import { logger, enable } from '@libp2p/logger'
+
 export default async ({ options }) => {
   options = options || {}
 
@@ -102,4 +103,6 @@ export default async ({ options }) => {
     await orbiter.stop()
     process.exit(0)
   })
+
+  console.log('started')
 }

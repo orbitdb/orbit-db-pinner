@@ -3,60 +3,61 @@ import { Requests, Responses, createRequestMessage, parseMessage } from './messa
 import { voyagerProtocol } from './protocol.js'
 
 export default async ({ orbitdb, orbiterAddressOrId }) => {
-  const pin = async (addresses) => {
-    let pinned = false
-    const pinDBs = source => {
+  const add = async (addresses) => {
+    let added = false
+
+    const addDBs = source => {
       return (async function * () {
         addresses = Array.isArray(addresses) ? addresses : [addresses]
-        const message = await createRequestMessage(Requests.PIN, addresses, orbitdb.identity)
+        const message = await createRequestMessage(Requests.PIN_ADD, addresses, orbitdb.identity)
         yield message
       })()
     }
 
     const stream = await orbitdb.ipfs.libp2p.dialProtocol(orbiterAddressOrId, voyagerProtocol, { runOnLimitedConnection: true })
 
-    await pipe(pinDBs, stream, async (source) => {
+    await pipe(addDBs, stream, async (source) => {
       for await (const chunk of source) {
         const message = parseMessage(chunk.subarray())
 
         if (message.type === Responses.OK) {
-          pinned = true
+          added = true
         }
       }
     })
 
-    return pinned
+    return added
   }
 
-  const unpin = async (addresses) => {
-    let unpinned = false
+  const remove = async (addresses) => {
+    let removed = false
 
-    const unpinDBs = source => {
+    const removeDBs = source => {
       return (async function * () {
         addresses = Array.isArray(addresses) ? addresses : [addresses]
-        const message = await createRequestMessage(Requests.UNPIN, addresses, orbitdb.identity)
+        const message = await createRequestMessage(Requests.PIN_REMOVE, addresses, orbitdb.identity)
         yield message
       })()
     }
 
     const stream = await orbitdb.ipfs.libp2p.dialProtocol(orbiterAddressOrId, voyagerProtocol, { runOnLimitedConnection: true })
 
-    await pipe(unpinDBs, stream, async source => {
+    await pipe(removeDBs, stream, async source => {
       for await (const chunk of source) {
         const message = parseMessage(chunk.subarray())
 
         if (message.type === Responses.OK) {
-          unpinned = true
+          removed = true
         }
       }
     })
 
-    return unpinned
+    return removed
   }
 
   return {
     orbitdb,
-    pin,
-    unpin
+    add,
+    remove
   }
 }

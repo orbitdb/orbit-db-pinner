@@ -1,10 +1,10 @@
 import { logger } from '@libp2p/logger'
 
-const log = logger('voyager:orbiter:unpin')
+const log = logger('voyager:orbiter:pin:remove')
 
 export default async ({ orbitdb, pins, dbs, id, addresses }) => {
   for (const address of addresses) {
-    log('unpin   ', address)
+    log('remove   ', address)
 
     const identities = await pins.get(address)
 
@@ -25,6 +25,6 @@ export default async ({ orbitdb, pins, dbs, id, addresses }) => {
       delete dbs[address]
     }
 
-    log('unpinned', address)
+    log('pin removed', address)
   }
 }

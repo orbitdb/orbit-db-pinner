@@ -1,5 +1,5 @@
-import handlePinRequest from './handlers/pin.js'
-import handleUnpinRequest from './handlers/unpin.js'
+import handleAddRequest from './handlers/add.js'
+import handleRemoveRequest from './handlers/remove.js'
 import { createResponseMessage, parseMessage, Requests, Responses } from './messages/index.js'
 
 export const handleRequest = (orbiter) => source => {
@@ -20,7 +20,7 @@ export const handleRequest = (orbiter) => source => {
 
         // check that the identity is authorized to store their dbs on this orbiter.
         if (!await orbiter.auth.hasAccess(identity.id)) {
-          throw Object.assign(new Error('user is not authorized to pin'), { type: Responses.E_NOT_AUTHORIZED })
+          throw Object.assign(new Error('user is not authorized to add'), { type: Responses.E_NOT_AUTHORIZED })
         }
 
         // verify that the params have come from the user who owns the identity's pubkey.
@@ -31,12 +31,12 @@ export const handleRequest = (orbiter) => source => {
         const { orbitdb, pins, dbs } = orbiter
 
         switch (type) {
-          case Requests.PIN:
-            await handlePinRequest({ orbitdb, pins, dbs, id, addresses })
+          case Requests.PIN_ADD:
+            await handleAddRequest({ orbitdb, pins, dbs, id, addresses })
             response = createResponseMessage(Responses.OK)
             break
-          case Requests.UNPIN:
-            await handleUnpinRequest({ orbitdb, pins, dbs, id, addresses })
+          case Requests.PIN_REMOVE:
+            await handleRemoveRequest({ orbitdb, pins, dbs, id, addresses })
             response = createResponseMessage(Responses.OK)
             break
           default:

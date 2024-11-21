@@ -6,7 +6,7 @@ export const createPins = async (howMany, lander) => {
     addresses.push(db.address)
   }
 
-  const pinned = await lander.pin(addresses)
+  const pinned = await lander.add(addresses)
 
   return { pinned, addresses }
 }
