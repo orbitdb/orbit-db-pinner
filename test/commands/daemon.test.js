@@ -1,22 +1,17 @@
 import { appPath, orbiterPath } from '../../src/utils/id.js'
-import { exec } from 'node:child_process'
+import { spawn } from 'node:child_process'
 import { strictEqual } from 'assert'
 import { existsSync } from 'fs'
 import { rimraf } from 'rimraf'
 import { join } from 'path'
+import waitForDaemonStarted from '../utils/wait-for-daemon-start.js'
 
 describe('daemon', function () {
   describe('defaults', function () {
     it('starts daemon in default directory', async function () {
-      const daemon = exec('./src/bin/cli.js daemon')
+      const daemon = spawn('./src/bin/cli.js', ['daemon'])
 
-      // TODO: Probably a better way to establish if daemon is running.
-      // Maybe ping it?
-      await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve()
-        }, 500)
-      })
+      await waitForDaemonStarted(daemon)
 
       strictEqual(existsSync(appPath()), true)
       strictEqual(existsSync(orbiterPath()), true)
@@ -29,15 +24,9 @@ describe('daemon', function () {
   describe('custom settings', function () {
     it('starts daemon in custom directory', async function () {
       const directory = 'alternative-directory'
-      const daemon = exec(`./src/bin/cli.js daemon -d ${directory}`)
+      const daemon = spawn('./src/bin/cli.js', ['daemon', '-d', directory])
 
-      // TODO: Probably a better way to establish if daemon is running.
-      // Maybe ping it?
-      await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve()
-        }, 500)
-      })
+      await waitForDaemonStarted(daemon)
 
       strictEqual(existsSync(directory), true)
       strictEqual(existsSync(join(directory, appPath())), true)

@@ -1,27 +1,23 @@
 import { rpc as rpcId, rpcPath } from '../../src/utils/id.js'
 import { Identities, KeyStore } from '@orbitdb/core'
-import { exec, execSync } from 'node:child_process'
+import { spawn, execSync } from 'node:child_process'
 import { strictEqual } from 'assert'
 import { renameSync } from 'fs'
 import { rimraf } from 'rimraf'
+import waitForDaemonStarted from '../utils/wait-for-daemon-start.js'
 
 describe('auth', function () {
   let daemon
 
   before(async function () {
-    daemon = exec('./src/bin/cli.js daemon')
-
-    // TODO: Probably a better way to establish if daemon is running.
-    // Maybe ping it?
-    await new Promise((resolve) => {
-      setTimeout(() => {
-        resolve()
-      }, 500)
-    })
+    daemon = spawn('./src/bin/cli.js', ['daemon'])
+    await waitForDaemonStarted(daemon)
   })
 
   after(async function () {
-    daemon.kill()
+    if (daemon) {
+      daemon.kill()
+    }
     await rimraf('voyager')
   })
 
