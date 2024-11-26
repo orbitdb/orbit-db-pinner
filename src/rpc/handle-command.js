@@ -2,6 +2,7 @@ import { Commands } from './commands.js'
 import handleAuthAddRequest from './handlers/auth/add.js'
 import handleAuthDelRequest from './handlers/auth/del.js'
 import handleAuthListRequest from './handlers/auth/list.js'
+import handleIdRequest from './handlers/id.js'
 import handleAddressRequest from './handlers/address.js'
 import { createResponseMessage, parseMessage, Responses } from '../lib/messages/index.js'
 
@@ -39,6 +40,11 @@ export const handleCommand = (orbiter) => source => {
           case Commands.AUTH_LIST: {
             const list = await handleAuthListRequest({ auth })
             response = createResponseMessage(Responses.OK, list)
+            break
+          }
+          case Commands.GET_ID: {
+            const id = handleIdRequest({ orbitdb })
+            response = createResponseMessage(Responses.OK, id)
             break
           }
           case Commands.GET_ADDRESS: {

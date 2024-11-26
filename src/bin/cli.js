@@ -28,6 +28,21 @@ yargs(hideBin(process.argv))
       await daemon({ options: argv })
     })
   .command(
+    'id',
+    'Show the voyager\'s id',
+    () => {},
+    async argv => {
+      const { getId } = await RPC(argv)
+      const res = await getId()
+      if (res.type === Responses.OK) {
+        console.log(res.message)
+        process.exit(0)
+      } else {
+        console.error(res)
+        process.exit(1)
+      }
+    })
+  .command(
     'address',
     'Show the voyager\'s network addresses',
     () => {},
