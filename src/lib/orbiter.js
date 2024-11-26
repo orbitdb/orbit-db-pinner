@@ -18,34 +18,33 @@ export default async ({ orbitdb, defaultAccess, verbose } = {}) => {
 
   log('default access:', defaultAccess === Access.ALLOW ? 'allow all' : 'deny all')
 
-  const pins = await orbitdb.open('pins', { Database: KeyValueIndexed() })
+  const databases = await orbitdb.open('databases', { Database: KeyValueIndexed() })
 
   const auth = await Authorization({ orbitdb, defaultAccess })
 
-  const dbs = []
-
   const handleMessages = async ({ stream }) => {
-    await pipe(stream, handleRequest({ log, orbitdb, pins, dbs, auth }), stream)
+    await pipe(stream, handleRequest({ log, orbitdb, databases, auth }), stream)
   }
 
   await orbitdb.ipfs.libp2p.handle(voyagerProtocol, handleMessages, { runOnLimitedConnection: true })
 
-  log('open pinned databases')
+  log('open replicated databases')
 
-  for await (const db of pins.iterator()) {
+  let count = 0
+  for await (const db of databases.iterator()) {
     log('open', db.key)
-    dbs[db.key] = await orbitdb.open(db.key)
+    await orbitdb.open(db.key)
+    count++
   }
 
-  log(Object.keys(dbs).length, 'databases opened')
+  log(count, 'databases opened')
 
   const stop = async () => {
     await orbitdb.ipfs.libp2p.unhandle(voyagerProtocol)
   }
 
   return {
-    pins,
-    dbs,
+    databases,
     orbitdb,
     auth,
     stop

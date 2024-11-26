@@ -1,7 +1,7 @@
 {
   "name": "@orbitdb/voyager",
-  "version": "1.0.0",
-  "description": "A pinning peer for OrbitDB databases.",
+  "version": "0.0.1",
+  "description": "A storage service OrbitDB databases",
   "main": "./src/index.js",
   "type": "module",
   "author": "OrbitDB",

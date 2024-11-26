@@ -1,4 +1,4 @@
-export const createPins = async (howMany, lander) => {
+export const createAndAddDatabases = async (howMany, lander) => {
   const addresses = []
 
   for (let i = 1; i <= howMany; i++) {
@@ -6,7 +6,7 @@ export const createPins = async (howMany, lander) => {
     addresses.push(db.address)
   }
 
-  const pinned = await lander.add(addresses)
+  const added = await lander.add(addresses)
 
-  return { pinned, addresses }
+  return { added, addresses }
 }

@@ -18,7 +18,7 @@ export const handleRequest = (orbiter) => source => {
           await orbiter.orbitdb.identities.verifyIdentity(identity)
         }
 
-        // check that the identity is authorized to store their dbs on this orbiter.
+        // check that the identity is authorized to store their databases on this orbiter.
         if (!await orbiter.auth.hasAccess(identity.id)) {
           throw Object.assign(new Error('user is not authorized to add'), { type: Responses.E_NOT_AUTHORIZED })
         }
@@ -28,15 +28,15 @@ export const handleRequest = (orbiter) => source => {
           throw Object.assign(new Error('invalid signature'), { type: Responses.E_INVALID_SIGNATURE })
         }
 
-        const { orbitdb, pins, dbs } = orbiter
+        const { orbitdb, databases } = orbiter
 
         switch (type) {
           case Requests.PIN_ADD:
-            await handleAddRequest({ orbitdb, pins, dbs, id, addresses })
+            await handleAddRequest({ orbitdb, databases, id, addresses })
             response = createResponseMessage(Responses.OK)
             break
           case Requests.PIN_REMOVE:
-            await handleRemoveRequest({ orbitdb, pins, dbs, id, addresses })
+            await handleRemoveRequest({ orbitdb, databases, id, addresses })
             response = createResponseMessage(Responses.OK)
             break
           default:

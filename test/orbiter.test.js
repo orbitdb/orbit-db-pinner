@@ -2,7 +2,7 @@ import { strictEqual } from 'assert'
 import { rimraf } from 'rimraf'
 import { launchLander } from './utils/launch-lander.js'
 import { launchOrbiter } from './utils/launch-orbiter.js'
-import { createPins } from './utils/create-pins.js'
+import { createAndAddDatabases } from './utils/create-and-add-databases.js'
 
 describe('Orbiter', function () {
   this.timeout(10000)
@@ -25,13 +25,13 @@ describe('Orbiter', function () {
     await rimraf('./orbiter')
   })
 
-  it('loads a pinned database', async function () {
-    const { addresses } = await createPins(1, lander)
+  it('loads an added database', async function () {
+    const { addresses } = await createAndAddDatabases(1, lander)
 
     await orbiter.shutdown()
 
     orbiter = await launchOrbiter()
 
-    strictEqual(Object.values(orbiter.dbs).pop().address, addresses.pop())
+    strictEqual((await orbiter.databases.all()).pop().key, addresses.pop())
   })
 })

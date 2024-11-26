@@ -2,9 +2,9 @@ import { strictEqual } from 'assert'
 import { rimraf } from 'rimraf'
 import { launchLander } from './utils/launch-lander.js'
 import { launchOrbiter } from './utils/launch-orbiter.js'
-import { createPins } from './utils/create-pins.js'
+import { createAndAddDatabases } from './utils/create-and-add-databases.js'
 
-describe('Pin', function () {
+describe('Add', function () {
   this.timeout(10000)
 
   let orbiter
@@ -32,26 +32,26 @@ describe('Pin', function () {
     })
 
     it('adds a database', async function () {
-      const { pinned, addresses } = await createPins(1, lander)
+      const { added, addresses } = await createAndAddDatabases(1, lander)
 
-      strictEqual(pinned, true)
-      strictEqual(Object.values(orbiter.dbs).pop().address, addresses.pop())
+      strictEqual(added, true)
+      strictEqual((await orbiter.databases.all()).pop().key, addresses.pop())
     })
 
     it('adds multiple databases', async function () {
-      const { pinned, addresses } = await createPins(2, lander)
+      const { added, addresses } = await createAndAddDatabases(2, lander)
 
-      strictEqual(pinned, true)
-      strictEqual(Object.values(orbiter.dbs)[0].address, addresses[0])
-      strictEqual(Object.values(orbiter.dbs)[1].address, addresses[1])
+      strictEqual(added, true)
+      strictEqual((await orbiter.databases.all())[0].key, addresses[0])
+      strictEqual((await orbiter.databases.all())[1].key, addresses[1])
     })
 
-    it('tries to pin a database when not authorized', async function () {
+    it('tries to add a database when not authorized', async function () {
       await orbiter.auth.del(lander.orbitdb.identity.id)
       const db = await lander.orbitdb.open('db')
-      const pinned = await lander.add(db.address)
+      const added = await lander.add(db.address)
 
-      strictEqual(pinned, false)
+      strictEqual(added, false)
     })
   })
 
@@ -73,12 +73,12 @@ describe('Pin', function () {
       await rimraf('./lander2')
     })
 
-    it('pins a database', async function () {
-      const { addresses: addresses1 } = await createPins(1, lander1)
-      const { addresses: addresses2 } = await createPins(1, lander2)
+    it('adds a databases to voyager', async function () {
+      const { addresses: addresses1 } = await createAndAddDatabases(1, lander1)
+      const { addresses: addresses2 } = await createAndAddDatabases(1, lander2)
 
-      strictEqual(Object.values(orbiter.dbs)[0].address, addresses1.pop())
-      strictEqual(Object.values(orbiter.dbs)[1].address, addresses2.pop())
+      strictEqual((await orbiter.databases.all())[0].key, addresses1.pop())
+      strictEqual((await orbiter.databases.all())[1].key, addresses2.pop())
     })
   })
 })

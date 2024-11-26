@@ -93,7 +93,7 @@ export default async ({ options }) => {
   await saveConfig({ path: appDirectory, config })
 
   const handleRPCMessages = async ({ stream }) => {
-    await pipe(stream, handleCommand({ config, orbitdb: orbiter.orbitdb, pins: orbiter.pins, dbs: orbiter.dbs, auth: orbiter.auth }), stream)
+    await pipe(stream, handleCommand({ config, orbitdb: orbiter.orbitdb, databases: orbiter.databases, dbs: orbiter.dbs, auth: orbiter.auth }), stream)
   }
 
   await orbiter.orbitdb.ipfs.libp2p.handle(voyagerRPCProtocol, handleRPCMessages)

@@ -56,7 +56,7 @@ To add an authorized user to Orbiter:
 voyager auth add <id>
 ```
 
-where <id> identifies a user who can pin databases to this Orbiter. The `<id>` is the string from user's OrbitDB instance `orbitdb.identity.id`.
+where <id> identifies a user who can add databases to this Orbiter. The `<id>` is the string from user's OrbitDB instance `orbitdb.identity.id`.
 
 To remove an authorized user from Orbiter:
 
@@ -64,7 +64,7 @@ To remove an authorized user from Orbiter:
 voyager auth del <id>
 ```
 
-where <id> identifies a user who can pin databases to this Orbiter. The `<id>` is the string from user's OrbitDB instance `orbitdb.identity.id`.
+where <id> identifies a user who can add databases to this Orbiter. The `<id>` is the string from user's OrbitDB instance `orbitdb.identity.id`.
 
 List authorized users:
 
@@ -113,29 +113,29 @@ const orbiterAddressOrId = // deployed orbiter peer id or listening address.
 const lander = await Lander({ orbitdb, orbiterAddressOrId })
 ``` 
 
-To pin a db:
+To add a db to voyager:
 
 ```js
-// create a db for pinning
+// create a db to be added to voyager
 const db = await orbitdb.open('my-db')
 
-// store the address of the db to an array of addresses.
+// store the address of the db to an array of addresses
 const dbs = [db.address]
 
-// Pin the addresses to the pinner.
+// add the addresses to voyager
 await lander.add(dbs)
 ```
 
-To unpin a pinned db:
+To remove a db from voyager:
 
 ```js
-// open an instance of the db you want to unpin.
+// open an instance of the db you want to remove from voyager
 const db = await orbitdb.open('my-db')
 
-// store the address of the db to an array of addresses.
+// store the address of the db to an array of addresses
 const dbs = [db.address]
 
-// Unpin the addresses from the pinner.
+// remove the addresses from voyager
 await lander.remove(dbs)
 ```
 

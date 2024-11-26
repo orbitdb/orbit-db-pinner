@@ -2,7 +2,7 @@ import { strictEqual } from 'assert'
 import { rimraf } from 'rimraf'
 import { launchLander } from './utils/launch-lander.js'
 import { launchOrbiter } from './utils/launch-orbiter.js'
-import { createPins } from './utils/create-pins.js'
+import { createAndAddDatabases } from './utils/create-and-add-databases.js'
 
 describe('Remove', function () {
   this.timeout(10000)
@@ -32,33 +32,31 @@ describe('Remove', function () {
     })
 
     it('removes a database', async function () {
-      const { addresses } = await createPins(1, lander)
+      const { addresses } = await createAndAddDatabases(1, lander)
 
-      const unpinned = await lander.remove(addresses)
+      const removed = await lander.remove(addresses)
 
-      strictEqual(unpinned, true)
-      strictEqual((await orbiter.pins.all()).length, 0)
-      strictEqual(Object.values(orbiter.dbs).length, 0)
+      strictEqual(removed, true)
+      strictEqual((await orbiter.databases.all()).length, 0)
     })
 
-    it('unpins multiple databases', async function () {
-      const { addresses } = await createPins(2, lander)
+    it('removes multiple databases', async function () {
+      const { addresses } = await createAndAddDatabases(2, lander)
 
-      const unpinned = await lander.remove(addresses)
+      const removed = await lander.remove(addresses)
 
-      strictEqual(unpinned, true)
-      strictEqual((await orbiter.pins.all()).length, 0)
-      strictEqual(Object.values(orbiter.dbs).length, 0)
+      strictEqual(removed, true)
+      strictEqual((await orbiter.databases.all()).length, 0)
     })
 
-    it('removes a database when multiple databases have been pinned', async function () {
-      const { addresses } = await createPins(2, lander)
+    it('removes a database when multiple databases have been added', async function () {
+      const { addresses } = await createAndAddDatabases(2, lander)
 
-      const unpinned = await lander.remove(addresses.slice(0, 1))
+      const removed = await lander.remove(addresses.slice(0, 1))
 
-      strictEqual(unpinned, true)
-      strictEqual((await orbiter.pins.all()).length, 1)
-      strictEqual(Object.values(orbiter.dbs).pop().address, addresses[1])
+      strictEqual(removed, true)
+      strictEqual((await orbiter.databases.all()).length, 1)
+      strictEqual((await orbiter.databases.all()).pop().key, addresses[1])
     })
   })
 })

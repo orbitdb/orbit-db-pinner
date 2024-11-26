@@ -1,12 +1,12 @@
 import { logger } from '@libp2p/logger'
 
-const log = logger('voyager:orbiter:pin:remove')
+const log = logger('voyager:orbiter:remove')
 
-export default async ({ orbitdb, pins, dbs, id, addresses }) => {
+export default async ({ orbitdb, databases, id, addresses }) => {
   for (const address of addresses) {
     log('remove   ', address)
 
-    const identities = await pins.get(address)
+    const identities = await databases.get(address)
 
     if (identities && identities.length > 1) {
       const index = identities.indexOf(id)
@@ -15,16 +15,16 @@ export default async ({ orbitdb, pins, dbs, id, addresses }) => {
         identities.splice(index, 1)
       }
 
-      await pins.set(address, identities)
+      await databases.set(address, identities)
     } else {
-      await pins.del(address)
+      await databases.del(address)
     }
 
-    if (!await pins.get(address)) {
-      await dbs[address].close()
-      delete dbs[address]
+    if (!await databases.get(address)) {
+      const db = await orbitdb.open(address)
+      await db.close()
     }
 
-    log('pin removed', address)
+    log('database removed', address)
   }
 }
