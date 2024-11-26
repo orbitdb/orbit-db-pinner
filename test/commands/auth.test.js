@@ -6,7 +6,7 @@ import { renameSync } from 'fs'
 import { rimraf } from 'rimraf'
 import waitForDaemonStarted from '../utils/wait-for-daemon-start.js'
 
-describe('auth', function () {
+describe('Commands - auth', function () {
   let daemon
 
   before(async function () {
@@ -81,7 +81,7 @@ describe('auth', function () {
       await setUpUnauthorizedKeyStore()
 
       try {
-        execSync('./src/bin/cli.js auth list 0x123')
+        execSync('./src/bin/cli.js auth list')
       } catch (e) {
         strictEqual(e.stderr.toString(), '{ type: 200, message: \'user is not authorized\' }\n')
       }

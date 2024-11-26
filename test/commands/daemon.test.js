@@ -6,7 +6,7 @@ import { rimraf } from 'rimraf'
 import { join } from 'path'
 import waitForDaemonStarted from '../utils/wait-for-daemon-start.js'
 
-describe('daemon', function () {
+describe('Commands - daemon', function () {
   describe('defaults', function () {
     it('starts daemon in default directory', async function () {
       const daemon = spawn('./src/bin/cli.js', ['daemon'])
