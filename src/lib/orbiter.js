@@ -47,6 +47,7 @@ export default async ({ orbitdb, defaultAccess, verbose } = {}) => {
     databases,
     orbitdb,
     auth,
-    stop
+    stop,
+    log
   }
 }

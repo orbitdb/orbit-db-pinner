@@ -7,6 +7,10 @@ import { loadConfig } from './utils/config-manager.js'
 import { config as libp2pConfig } from './utils/libp2p-config.js'
 import { privateKeyFromRaw } from '@libp2p/crypto/keys'
 
+const getAddress = (identity, libp2p, address) => async () => {
+  return sendCommand(identity, libp2p, address, Commands.GET_ADDRESS)
+}
+
 const authAdd = (identity, libp2p, address) => async ({ id }) => {
   return sendCommand(identity, libp2p, address, Commands.AUTH_ADD, [id])
 }
@@ -42,6 +46,7 @@ export default async ({ directory }) => {
   return {
     authAdd: authAdd(identity, libp2p, config.orbiter.api),
     authDel: authDel(identity, libp2p, config.orbiter.api),
-    authList: authList(identity, libp2p, config.orbiter.api)
+    authList: authList(identity, libp2p, config.orbiter.api),
+    getAddress: getAddress(identity, libp2p, config.orbiter.api)
   }
 }

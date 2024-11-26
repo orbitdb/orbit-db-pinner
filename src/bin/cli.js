@@ -27,11 +27,28 @@ yargs(hideBin(process.argv))
     async (argv) => {
       await daemon({ options: argv })
     })
-  .command('auth', 'Add/remove authorized addresses', yargs => {
+  .command(
+    'address',
+    'Show the voyager\'s network addresses',
+    () => {},
+    async argv => {
+      const { getAddress } = await RPC(argv)
+      const res = await getAddress()
+      if (res.type === Responses.OK) {
+        for (const addr of res.message) {
+          console.log(addr)
+        }
+        process.exit(0)
+      } else {
+        console.error(res)
+        process.exit(1)
+      }
+    })
+  .command('auth', 'Add or remove authorized user', yargs => {
     yargs
       .command(
         'add <id>',
-        'Add an authorized address',
+        'Add an authorized user',
         yargs => {
           yargs.positional('id', {
             describe: 'The id of the user who is allowed to add one or more databases (or denied depending on default access settings).',
@@ -51,7 +68,7 @@ yargs(hideBin(process.argv))
         })
       .command(
         'del <id>',
-        'Remove an authorized address',
+        'Remove an authorized user',
         yargs => {
           yargs.positional('id', {
             describe: 'The id of the user who will no longer be allowed to add one or more databases (or denied depending on default access settings).',
@@ -71,7 +88,7 @@ yargs(hideBin(process.argv))
         })
       .command(
         'list',
-        'List authorized addresses',
+        'List authorized users',
         () => {},
         async argv => {
           const { authList } = await RPC(argv)

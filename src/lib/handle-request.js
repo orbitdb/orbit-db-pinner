@@ -6,7 +6,9 @@ export const handleRequest = (orbiter) => source => {
   return (async function * () {
     for await (const chunk of source) {
       const { type, signature, id, addresses } = parseMessage(chunk.subarray())
-      const { orbitdb, auth, databases } = orbiter
+      const { orbitdb, auth, databases, log } = orbiter
+
+      log('handle request', type, signature, id, addresses)
 
       let response
 
@@ -43,6 +45,7 @@ export const handleRequest = (orbiter) => source => {
         }
       } catch (err) {
         response = createResponseMessage(err.type, err.message)
+        log.error(err.type, err.message)
       } finally {
         yield response
       }
