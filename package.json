@@ -12,12 +12,14 @@
   "devDependencies": {
     "c8": "^10.1.2",
     "it-drain": "^3.0.7",
-    "mocha": "^10.7.0",
+    "mocha": "^10.8.2",
     "os-browserify": "^0.3.0",
-    "playwright-test": "^14.1.4",
+    "path-browserify": "^1.0.1",
+    "playwright-test": "^14.1.7",
     "rimraf": "^6.0.1",
-    "standard": "^17.1.0",
-    "webpack": "^5.93.0",
+    "standard": "^17.1.2",
+    "stream-browserify": "^3.0.0",
+    "webpack": "^5.96.1",
     "webpack-cli": "^5.1.4"
   },
   "scripts": {
@@ -43,10 +45,16 @@
   },
   "dependencies": {
     "@chainsafe/libp2p-gossipsub": "^14.1.0",
+    "@libp2p/logger": "^5.1.4",
     "@orbitdb/core": "^2.4.3",
-    "@orbitdb/set-db": "^1.1.0",
+    "@orbitdb/set-db": "^1.1.1",
     "blockstore-level": "^2.0.1",
     "datastore-level": "^11.0.1",
-    "helia": "^5.1.0"
+    "helia": "^5.1.1",
+    "it-all": "^3.0.6",
+    "it-pipe": "^3.0.1",
+    "libp2p": "^2.3.1",
+    "uint8arrays": "^5.1.0",
+    "yargs": "^17.7.2"
   }
 }
