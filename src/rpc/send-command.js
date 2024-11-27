@@ -1,25 +1,20 @@
 import { pipe } from 'it-pipe'
+import all from 'it-all'
 import { multiaddr } from '@multiformats/multiaddr'
 import { voyagerRPCProtocol } from './protocol.js'
 import { RequestMessage, parseMessage } from '../lib/messages/index.js'
 
 export const sendCommand = async (identity, libp2p, address, type, args = {}) => {
-  let res
+  const request = () => [RequestMessage(type, args, identity)]
 
-  const stream = await libp2p.dialProtocol(multiaddr(address), voyagerRPCProtocol)
-
-  const request = source => {
-    return (async function * () {
-      const message = await RequestMessage(type, args, identity)
-      yield message
-    })()
+  const parseResponse = async (source) => {
+    const response = await all(source)
+    const getSubarray = (e) => e.subarray()
+    const result = response.map(getSubarray).map(parseMessage).pop()
+    return result
   }
 
-  await pipe(request, stream, async (source) => {
-    for await (const chunk of source) {
-      res = parseMessage(chunk.subarray())
-    }
-  })
-
-  return res
+  const stream = await libp2p.dialProtocol(multiaddr(address), voyagerRPCProtocol)
+  const response = await pipe(request, stream, parseResponse)
+  return response
 }

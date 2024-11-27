@@ -1,57 +1,36 @@
 import { pipe } from 'it-pipe'
+import all from 'it-all'
 import { Requests, Responses, RequestMessage, parseMessage } from './messages/index.js'
 import { voyagerProtocol } from './protocol.js'
 
+// utils
+const toArray = (v) => Array.isArray(v) ? v : [v]
+const getSubarray = (e) => e.subarray()
+const getType = (e) => e.type
+const isOk = (e) => e === Responses.OK
+
 export default async ({ orbitdb, orbiterAddressOrId }) => {
+  const request = async (type, addresses) => {
+    return await RequestMessage(type, addresses, orbitdb.identity)
+  }
+
+  const parseResponse = async (source) => {
+    const res = await all(source)
+    const ok = res.map(getSubarray).map(parseMessage).map(getType).every(isOk)
+    return ok
+  }
+
   const add = async (addresses) => {
-    let added = false
-
-    const addDBs = source => {
-      return (async function * () {
-        addresses = Array.isArray(addresses) ? addresses : [addresses]
-        const message = await RequestMessage(Requests.PIN_ADD, addresses, orbitdb.identity)
-        yield message
-      })()
-    }
-
+    const addDBs = () => [request(Requests.PIN_ADD, toArray(addresses))]
     const stream = await orbitdb.ipfs.libp2p.dialProtocol(orbiterAddressOrId, voyagerProtocol, { runOnLimitedConnection: true })
-
-    await pipe(addDBs, stream, async (source) => {
-      for await (const chunk of source) {
-        const message = parseMessage(chunk.subarray())
-
-        if (message.type === Responses.OK) {
-          added = true
-        }
-      }
-    })
-
+    const added = await pipe(addDBs, stream, parseResponse)
     return added
   }
 
   const remove = async (addresses) => {
-    let removed = false
-
-    const removeDBs = source => {
-      return (async function * () {
-        addresses = Array.isArray(addresses) ? addresses : [addresses]
-        const message = await RequestMessage(Requests.PIN_REMOVE, addresses, orbitdb.identity)
-        yield message
-      })()
-    }
-
+    const removeDBs = () => [request(Requests.PIN_REMOVE, toArray(addresses))]
     const stream = await orbitdb.ipfs.libp2p.dialProtocol(orbiterAddressOrId, voyagerProtocol, { runOnLimitedConnection: true })
-
-    await pipe(removeDBs, stream, async source => {
-      for await (const chunk of source) {
-        const message = parseMessage(chunk.subarray())
-
-        if (message.type === Responses.OK) {
-          removed = true
-        }
-      }
-    })
-
+    const removed = await pipe(removeDBs, stream, parseResponse)
     return removed
   }
 
