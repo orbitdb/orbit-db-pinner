@@ -107,7 +107,7 @@ import { createLibp2p } from 'libp2p'
 import { createHelia } from 'helia'
 import { createOrbitDB } from '@orbitdb/core'
 
-// set up configuration for libp2p and helia.
+// set up configuration for libp2p and helia
 
 const libp2p = await createLibp2p({ ...options })
 const ipfs = await createHelia({ libp2p })
@@ -116,9 +116,9 @@ directory = directory || './lander'
 
 const orbitdb = await createOrbitDB({ ipfs, directory })
 
-await connectPeers(orbiter.orbitdb.ipfs, ipfs)
-
-const orbiterAddressOrId = // deployed orbiter peer id or listening address.
+// deployed orbiter peer id or listening address, it looks like this:
+// /ip4/127.0.0.1/tcp/54322/p2p/16Uiu2HAmATMovCwY46yyJib7bGZF2f2XLRar7d7R3NJCSJtuyQLt
+const orbiterAddressOrId = '...'
 
 const lander = await Lander({ orbitdb, orbiterAddressOrId })
 ``` 
@@ -129,11 +129,8 @@ To add a db to voyager:
 // create a db to be added to voyager
 const db = await orbitdb.open('my-db')
 
-// store the address of the db to an array of addresses
-const dbs = [db.address]
-
-// add the addresses to voyager
-await lander.add(dbs)
+// add the address to voyager (can also pass an array of addresses)
+await lander.add(db.address)
 ```
 
 To remove a db from voyager:
@@ -142,11 +139,8 @@ To remove a db from voyager:
 // open an instance of the db you want to remove from voyager
 const db = await orbitdb.open('my-db')
 
-// store the address of the db to an array of addresses
-const dbs = [db.address]
-
-// remove the addresses from voyager
-await lander.remove(dbs)
+// remove the address from voyager (can also pass an array of addresses)
+await lander.remove(db.address)
 ```
 
 ## The OrbitDB Voyager Protocol
