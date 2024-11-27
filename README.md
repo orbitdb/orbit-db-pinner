@@ -188,3 +188,7 @@ If successful, an OK response will be sent. If it fails, an error will be return
 Voyager uses simple ALLOW/DENY policies to authorize the messages received through the protocol.
 
 Voyager can either be run in ALLOW ALL mode where anyone can send a message except those who appear in the denied list or DENY ALL mode which will only allow messages from an explicit list of users. The default access mode is DENY ALL.
+
+## License
+
+[MIT](LICENSE) © 2024 OrbitDB Community
