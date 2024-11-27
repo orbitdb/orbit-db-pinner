@@ -14,6 +14,18 @@ import { rpc as rpcId, appPath, rpcPath, app, orbiter as orbiterId, orbiterPath 
 import { saveConfig } from './utils/config-manager.js'
 import { logger, enable } from '@libp2p/logger'
 
+const createRPCIdentity = async ({ id, directory }) => {
+  const keystore = await KeyStore({ path: join(rpcPath(directory), 'keystore') })
+  const identities = await Identities({ keystore })
+  const identity = await identities.createIdentity({ id })
+  await keystore.close()
+  return {
+    id: identity.id,
+    hash: identity.hash,
+    publicKey: identity.publicKey
+  }
+}
+
 export default async ({ options }) => {
   options = options || {}
 
@@ -31,70 +43,43 @@ export default async ({ options }) => {
 
   const id = orbiterId
 
-  log('id:', id)
+  log('app:', app)
+  log('orbiter:', id)
+  log('rpc:', rpcId)
 
   const appDirectory = appPath(options.directory)
   const orbiterDirectory = orbiterPath(options.directory)
 
-  log('app:', app)
   log('directory:', orbiterDirectory)
-
-  const path = join(orbiterDirectory, '/', 'keystore')
 
   const blockstore = new LevelBlockstore(join(orbiterDirectory, '/', 'ipfs', '/', 'blocks'))
   const datastore = new LevelDatastore(join(orbiterDirectory, '/', 'ipfs', '/', 'data'))
 
-  const keystore = await KeyStore({ path })
-  let identities = await Identities({ keystore })
-  await identities.createIdentity({ id })
-
-  const privateKey = await keystore.getKey(id)
-  await keystore.close()
-
-  const libp2p = await createLibp2p(await libp2pConfig({ privateKey, port: options.port, websocketPort: options.wsport }))
+  const libp2p = await createLibp2p(libp2pConfig({ port: options.port, websocketPort: options.wsport }))
 
   log('peerid:', libp2p.peerId.toString())
 
-  for (const addr of libp2p.getMultiaddrs().map(e => e.toString())) {
+  const addresses = libp2p.getMultiaddrs().map(e => e.toString())
+  for (const addr of addresses) {
     console.log(addr)
   }
-
-  for (const addr of libp2p.getMultiaddrs().map(e => e.toString())) {
+  for (const addr of addresses) {
     log('listening on', addr)
   }
 
   const ipfs = await createHelia({ libp2p, datastore, blockstore })
-
-  identities = await Identities({ keystore, ipfs })
-
-  const orbitdb = await createOrbitDB({ ipfs, directory: orbiterDirectory, identities, id })
-
+  const orbitdb = await createOrbitDB({ ipfs, directory: orbiterDirectory, id })
   const orbiter = await Orbiter({ defaultAccess, verbose: options.verbose, orbitdb })
 
-  // TODO: we might want to separate the key init to a separate 'init' CLI command
-  const initRPCIdentity = async ({ directory }) => {
-    const id = rpcId
-    const rpcDirectory = rpcPath(directory)
-    const path = join(rpcDirectory, 'keystore')
-    const keystore = await KeyStore({ path })
-    const identities = await Identities({ keystore })
-    const identity = await identities.createIdentity({ id })
+  const authorizedRPCIdentity = await createRPCIdentity({ id: rpcId, directory: options.directory })
 
-    await keystore.close()
-
-    return identity
-  }
-
-  const authorizedRPCIdentity = await initRPCIdentity({ directory: options.directory })
-
-  const config = { orbiter: {}, rpc: {} }
-  config.orbiter.peerId = orbiter.orbitdb.ipfs.libp2p.peerId
-  config.orbiter.api = orbiter.orbitdb.ipfs.libp2p.getMultiaddrs().shift() // get 127.0.0.1 address
-  config.rpc.identities = [authorizedRPCIdentity]
-  await saveConfig({ path: appDirectory, config })
+  const rpcConfig = {}
+  rpcConfig.address = orbiter.orbitdb.ipfs.libp2p.getMultiaddrs().shift() // get 127.0.0.1 address
+  rpcConfig.identities = [authorizedRPCIdentity]
+  await saveConfig({ path: appDirectory, config: rpcConfig })
 
   const handleRPCMessages = async ({ stream }) => {
-    await pipe(stream, handleCommand({ config, orbitdb: orbiter.orbitdb, databases: orbiter.databases, dbs: orbiter.dbs, auth: orbiter.auth, log: orbiter.log }), stream)
+    await pipe(stream, handleCommand(rpcConfig, orbiter), stream)
   }
 
   await orbiter.orbitdb.ipfs.libp2p.handle(voyagerRPCProtocol, handleRPCMessages)

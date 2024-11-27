@@ -6,11 +6,11 @@ import handleIdRequest from './handlers/id.js'
 import handleAddressRequest from './handlers/address.js'
 import { createResponseMessage, parseMessage, Responses } from '../lib/messages/index.js'
 
-export const handleCommand = (orbiter) => source => {
+export const handleCommand = (rpcConfig, orbiter) => source => {
   return (async function * () {
     for await (const chunk of source) {
       const { type, signature, id, addresses } = parseMessage(chunk.subarray())
-      const { orbitdb, auth, config, log } = orbiter
+      const { orbitdb, auth, log } = orbiter
 
       log('handle command', type, signature, id, addresses)
 
@@ -18,16 +18,17 @@ export const handleCommand = (orbiter) => source => {
 
       try {
         // check that the user is authorized to call this RPC
-        if (!config.rpc.identities.some((identity) => identity.hash === id)) {
+        const identity = rpcConfig.identities.find((identity) => identity.hash === id)
+
+        if (!identity) {
           throw Object.assign(new Error('user is not authorized'), { type: Responses.E_NOT_AUTHORIZED })
         }
-
-        const identity = config.rpc.identities.find((identity) => identity.hash === id)
 
         // verify that the params are signed by the authorized pubkey
         if (!await orbitdb.identity.verify(signature, identity.publicKey, JSON.stringify(addresses))) {
           throw Object.assign(new Error('invalid signature'), { type: Responses.E_INVALID_SIGNATURE })
         }
+
         switch (type) {
           case Commands.AUTH_ADD:
             await handleAuthAddRequest({ auth, addresses })
