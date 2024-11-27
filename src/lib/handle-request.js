@@ -32,16 +32,19 @@ export const handleRequest = (orbiter) => source => {
         }
 
         switch (type) {
-          case Requests.PIN_ADD:
+          case Requests.PIN_ADD: {
             await handleAddRequest({ orbitdb, databases, id, addresses })
             response = ResponseMessage(Responses.OK)
             break
-          case Requests.PIN_REMOVE:
+          }
+          case Requests.PIN_REMOVE: {
             await handleRemoveRequest({ orbitdb, databases, id, addresses })
             response = ResponseMessage(Responses.OK)
             break
-          default:
+          }
+          default: {
             throw Object.assign(new Error(`unknown message type ${type}`), { type: Responses.E_INTERNAL_ERROR })
+          }
         }
       } catch (err) {
         response = ResponseMessage(err.type, err.message)

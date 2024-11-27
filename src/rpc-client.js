@@ -29,18 +29,14 @@ export default async ({ directory }) => {
     return sendCommand(identity, libp2p, rpcConfig.address, command, params)
   }
 
-  const getId = () => rpcCall(Commands.GET_ID)
-  const getAddress = () => rpcCall(Commands.GET_ADDRESS)
-  const authAdd = ({ id }) => rpcCall(Commands.AUTH_ADD, [id])
-  const authDel = ({ id }) => rpcCall(Commands.AUTH_DEL, [id])
-  const authList = () => rpcCall(Commands.AUTH_LIST)
-
   // All API functions are async
-  return {
-    getId,
-    getAddress,
-    authAdd,
-    authDel,
-    authList
+  const rpcAPI = {
+    getId: () => rpcCall(Commands.GET_ID),
+    getAddress: () => rpcCall(Commands.GET_ADDRESS),
+    authAdd: ({ id }) => rpcCall(Commands.AUTH_ADD, [id]),
+    authDel: ({ id }) => rpcCall(Commands.AUTH_DEL, [id]),
+    authList: () => rpcCall(Commands.AUTH_LIST)
   }
+
+  return rpcAPI
 }

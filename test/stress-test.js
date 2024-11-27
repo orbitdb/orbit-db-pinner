@@ -48,7 +48,7 @@ describe('Stress test', function () {
       lander2 = await launchLander({ orbiterAddress: addr, directory: 'lander5' })
       await orbiter.auth.add(lander2.orbitdb.identity.id)
 
-      console.time('round ' + k + '/' + rounds)
+      console.time('Round ' + k + '/' + rounds)
       const db2 = await lander2.orbitdb.open(db1.address)
 
       const onConnected = (peerId, heads) => {
@@ -57,8 +57,8 @@ describe('Stress test', function () {
 
       db2.events.on('join', onConnected)
 
-      await waitFor(() => replicated, () => true)
-      console.timeEnd('round ' + k + '/' + rounds)
+      await waitFor(() => replicated, () => true, 0)
+      console.timeEnd('Round ' + k + '/' + rounds)
 
       const res = await db2.all()
 

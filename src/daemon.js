@@ -73,9 +73,10 @@ export default async ({ options }) => {
 
   const authorizedRPCIdentity = await createRPCIdentity({ id: rpcId, directory: options.directory })
 
-  const rpcConfig = {}
-  rpcConfig.address = orbiter.orbitdb.ipfs.libp2p.getMultiaddrs().shift() // get 127.0.0.1 address
-  rpcConfig.identities = [authorizedRPCIdentity]
+  const rpcConfig = {
+    address: orbiter.orbitdb.ipfs.libp2p.getMultiaddrs().shift(), // get 127.0.0.1 address
+    identities: [authorizedRPCIdentity]
+  }
   await saveConfig({ path: appDirectory, config: rpcConfig })
 
   const handleRPCMessages = async ({ stream }) => {
@@ -86,6 +87,8 @@ export default async ({ options }) => {
 
   process.on('SIGINT', async () => {
     await orbiter.stop()
+    await blockstore.close()
+    await datastore.close()
     process.exit(0)
   })
 

@@ -30,14 +30,16 @@ export const handleCommand = (rpcConfig, orbiter) => source => {
         }
 
         switch (type) {
-          case Commands.AUTH_ADD:
+          case Commands.AUTH_ADD: {
             await handleAuthAddRequest({ auth, addresses })
             response = ResponseMessage(Responses.OK)
             break
-          case Commands.AUTH_DEL:
+          }
+          case Commands.AUTH_DEL: {
             await handleAuthDelRequest({ auth, addresses })
             response = ResponseMessage(Responses.OK)
             break
+          }
           case Commands.AUTH_LIST: {
             const list = await handleAuthListRequest({ auth })
             response = ResponseMessage(Responses.OK, list)
@@ -54,8 +56,9 @@ export const handleCommand = (rpcConfig, orbiter) => source => {
             response = ResponseMessage(Responses.OK, addresses)
             break
           }
-          default:
+          default: {
             throw Object.assign(new Error(`unknown message type ${type}`), { type: Responses.E_INTERNAL_ERROR })
+          }
         }
       } catch (err) {
         response = ResponseMessage(err.type, err.message)
