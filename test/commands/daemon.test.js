@@ -21,10 +21,26 @@ describe('Commands - daemon', function () {
     })
   })
 
-  describe('custom settings', function () {
+  describe('custom directory - using --directory flag', function () {
     it('starts daemon in custom directory', async function () {
       const directory = 'alternative-directory'
       const daemon = spawn('./src/bin/cli.js', ['daemon', '-d', directory])
+
+      await waitForDaemonStarted(daemon)
+
+      strictEqual(existsSync(directory), true)
+      strictEqual(existsSync(join(directory, appPath())), true)
+      strictEqual(existsSync(join(directory, orbiterPath())), true)
+
+      daemon.kill()
+      await rimraf(directory)
+    })
+  })
+
+  describe('custom directory - using VOYAGER_PATH env variable', function () {
+    it('starts daemon in custom directory', async function () {
+      const directory = 'another-directory'
+      const daemon = spawn('./src/bin/cli.js', ['daemon'], { env: { ...process.env, VOYAGER_PATH: directory } })
 
       await waitForDaemonStarted(daemon)
 

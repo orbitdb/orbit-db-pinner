@@ -23,10 +23,14 @@ npm i -g @orbitdb/voyager
 voyager daemon
 ```
 
-To store Orbiter's configuration to a different location, use the -d or --directory flag:
+To store Orbiter's configuration and data to a different directory, use the `-d` or `--directory` flag or `VOYAGER_PATH` environment variable:
 
 ```sh
 voyager daemon -d /path/to/voyager
+```
+
+```sh
+VOYAGER_PATH=/path/to/voyager voyager daemon
 ```
 
 ### Docker
@@ -72,19 +76,25 @@ List authorized users:
 voyager auth list
 ```
 
-If Orbiter's configuration is deployed to a different location, call Voyager with the -d or --directory flag and specify Orbiter's custom directory:
+If Orbiter is deployed to a custom directory, call Voyager with the `-d` or `--directory` flag, or `VOYAGER_PATH`environment variable, and specify the directory:
 
 ```sh
 voyager auth add -d /custom/voyager/path <id>
-voyager auth list -d /custom/voyager/path
 voyager auth remove -d /custom/voyager/path <id>
+voyager auth list -d /custom/voyager/path
+```
+
+```sh
+VOYAGER_PATH=/custom/voyager/path voyager auth add <id>
+VOYAGER_PATH=/custom/voyager/path voyager auth remove <id>
+VOYAGER_PATH=/custom/voyager/path voyager auth list
 ```
 
 ## Adding databases using "Lander"
 
 To make databases accessible from Voyager, the database needs to be added to an Orbiter storage service instance. This can be achieved programmatically by using the "Lander" module.
 
-To use Lander, first install the @orbitdb/voyager package:
+To use Lander, first install the [@orbitdb/voyager](todo: link) package:
 
 ```sh
 npm i @orbitdb/voyager

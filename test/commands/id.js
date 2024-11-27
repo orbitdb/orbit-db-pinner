@@ -32,4 +32,9 @@ describe('Commands - id', function () {
     const res = execSync(`./src/bin/cli.js id -d ${directory}`)
     strictEqual(res.toString(), id.toString())
   })
+
+  it('gets the voyager id - using VOYAGER_PATH', function () {
+    const res = execSync(`VOYAGER_PATH=${directory} ./src/bin/cli.js id`)
+    strictEqual(res.toString(), id.toString())
+  })
 })
