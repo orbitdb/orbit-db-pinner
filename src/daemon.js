@@ -54,6 +54,7 @@ export default async ({ options }) => {
   const libp2p = await createLibp2p(await libp2pConfig({ privateKey, port: options.port, websocketPort: options.wsport }))
 
   log('peerid:', libp2p.peerId.toString())
+
   for (const addr of libp2p.getMultiaddrs().map(e => e.toString())) {
     console.log(addr)
   }
@@ -103,5 +104,5 @@ export default async ({ options }) => {
     process.exit(0)
   })
 
-  console.log('started')
+  console.log('Voyager started')
 }
