@@ -1,6 +1,6 @@
 # Voyager
 
-Voyager is a ***storage service*** for [OrbitDB](https://github.com/orbitdb/orbitdb) peer-to-peer databases.
+**Storage service** for [OrbitDB](https://github.com/orbitdb/orbitdb) peer-to-peer databases.
 
 Voyager replicates and stores OrbitDB databases and makes them available to others when the database's originating peer is offline.
 
@@ -48,7 +48,7 @@ Orbiter will deny all requests by default. To allow a user to interact with Orbi
 
 Access to Orbiter can be configured using the Voyager binary.
 
-**The user's `id` used in the examples below can be retrieved from the user's OrbitDB instance's `orbitdb.identity.id` field.**
+The user's `id` used in the examples below can be retrieved from the user's OrbitDB instance's **`orbitdb.identity.id`** field.
 
 To add an authorized user to Orbiter:
 
@@ -56,7 +56,7 @@ To add an authorized user to Orbiter:
 voyager auth add <id>
 ```
 
-where <id> identifies a user who can add databases to this Orbiter. The `<id>` is the string from user's OrbitDB instance `orbitdb.identity.id`.
+where `<id>` identifies a user who can add databases to this Orbiter. The `<id>` is the string from user's OrbitDB instance `orbitdb.identity.id`.
 
 To remove an authorized user from Orbiter:
 
@@ -64,7 +64,7 @@ To remove an authorized user from Orbiter:
 voyager auth del <id>
 ```
 
-where <id> identifies a user who can add databases to this Orbiter. The `<id>` is the string from user's OrbitDB instance `orbitdb.identity.id`.
+where `<id>` identifies a user who can add databases to this Orbiter. The `<id>` is the string from user's OrbitDB instance `orbitdb.identity.id`.
 
 List authorized users:
 
@@ -72,7 +72,7 @@ List authorized users:
 voyager auth list
 ```
 
-If Orbiter's configuration is deployed to a different location, call Voyager with the -d or --directory flag and specify Orbiter's custom directory (**this is because you must use the Orbiter keystore to execute one of the following actions.**):
+If Orbiter's configuration is deployed to a different location, call Voyager with the -d or --directory flag and specify Orbiter's custom directory:
 
 ```sh
 voyager auth add -d /custom/voyager/path <id>
