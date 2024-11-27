@@ -11,7 +11,7 @@ const waitForReplication = (db) => {
 
 export default async ({ orbitdb, databases, id, addresses }) => {
   for (const address of addresses) {
-    log('add   ', address)
+    log('add database', address)
 
     let identities = await databases.get(address)
     const hasDb = identities !== undefined

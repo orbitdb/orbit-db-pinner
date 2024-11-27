@@ -4,7 +4,7 @@ const log = logger('voyager:orbiter:remove')
 
 export default async ({ orbitdb, databases, id, addresses }) => {
   for (const address of addresses) {
-    log('remove   ', address)
+    log('remove database', address)
 
     const identities = await databases.get(address)
 
