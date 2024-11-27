@@ -1,7 +1,7 @@
 import { pipe } from 'it-pipe'
 import { multiaddr } from '@multiformats/multiaddr'
 import { voyagerRPCProtocol } from './protocol.js'
-import { createRequestMessage, parseMessage } from '../lib/messages/index.js'
+import { RequestMessage, parseMessage } from '../lib/messages/index.js'
 
 export const sendCommand = async (identity, libp2p, address, type, args = {}) => {
   let res
@@ -10,7 +10,7 @@ export const sendCommand = async (identity, libp2p, address, type, args = {}) =>
 
   const request = source => {
     return (async function * () {
-      const message = await createRequestMessage(type, args, identity)
+      const message = await RequestMessage(type, args, identity)
       yield message
     })()
   }

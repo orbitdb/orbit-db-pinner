@@ -22,11 +22,9 @@ export const deserialize = (message) => {
   return JSON.parse(uint8ArrayToString(message))
 }
 
-export const parseMessage = (bytes) => {
-  return deserialize(bytes)
-}
+export const parseMessage = deserialize
 
-export const createRequestMessage = async (type, addresses, identity, signer) => {
+export const RequestMessage = async (type, addresses, identity, signer) => {
   const id = identity.hash
   const signature = signer
     ? await signer.sign(JSON.stringify(addresses))
@@ -34,7 +32,7 @@ export const createRequestMessage = async (type, addresses, identity, signer) =>
   return serialize({ type, id, signature, addresses })
 }
 
-export const createResponseMessage = async (type, message) => {
+export const ResponseMessage = (type, message) => {
   const response = { type, message }
   return serialize(response)
 }

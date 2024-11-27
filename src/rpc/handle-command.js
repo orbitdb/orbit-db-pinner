@@ -4,7 +4,7 @@ import handleAuthDelRequest from './handlers/auth/del.js'
 import handleAuthListRequest from './handlers/auth/list.js'
 import handleIdRequest from './handlers/id.js'
 import handleAddressRequest from './handlers/address.js'
-import { createResponseMessage, parseMessage, Responses } from '../lib/messages/index.js'
+import { ResponseMessage, parseMessage, Responses } from '../lib/messages/index.js'
 
 export const handleCommand = (rpcConfig, orbiter) => source => {
   return (async function * () {
@@ -32,33 +32,33 @@ export const handleCommand = (rpcConfig, orbiter) => source => {
         switch (type) {
           case Commands.AUTH_ADD:
             await handleAuthAddRequest({ auth, addresses })
-            response = createResponseMessage(Responses.OK)
+            response = ResponseMessage(Responses.OK)
             break
           case Commands.AUTH_DEL:
             await handleAuthDelRequest({ auth, addresses })
-            response = createResponseMessage(Responses.OK)
+            response = ResponseMessage(Responses.OK)
             break
           case Commands.AUTH_LIST: {
             const list = await handleAuthListRequest({ auth })
-            response = createResponseMessage(Responses.OK, list)
+            response = ResponseMessage(Responses.OK, list)
             break
           }
           case Commands.GET_ID: {
             const id = handleIdRequest({ orbitdb })
-            response = createResponseMessage(Responses.OK, id)
+            response = ResponseMessage(Responses.OK, id)
             break
           }
           case Commands.GET_ADDRESS: {
             const libp2p = orbitdb.ipfs.libp2p
             const addresses = handleAddressRequest({ libp2p })
-            response = createResponseMessage(Responses.OK, addresses)
+            response = ResponseMessage(Responses.OK, addresses)
             break
           }
           default:
             throw Object.assign(new Error(`unknown message type ${type}`), { type: Responses.E_INTERNAL_ERROR })
         }
       } catch (err) {
-        response = createResponseMessage(err.type, err.message)
+        response = ResponseMessage(err.type, err.message)
         log.error(err.type, err.message)
       } finally {
         yield response

@@ -1,5 +1,5 @@
 import { deepStrictEqual } from 'assert'
-import { Requests, Responses, createRequestMessage, parseMessage } from '../src/lib/messages/index.js'
+import { Requests, Responses, RequestMessage, parseMessage } from '../src/lib/messages/index.js'
 import { handleRequest } from '../src/lib/handle-request.js'
 import { launchLander } from './utils/launch-lander.js'
 import { launchOrbiter } from './utils/launch-orbiter.js'
@@ -17,7 +17,7 @@ describe('Messages', function () {
   const addDBs = ({ type, signer } = {}) => source => {
     return (async function * () {
       const addresses = [db.address]
-      const message = await createRequestMessage(type || Requests.PIN_ADD, addresses, lander.orbitdb.identity, signer)
+      const message = await RequestMessage(type || Requests.PIN_ADD, addresses, lander.orbitdb.identity, signer)
       yield message
     })()
   }

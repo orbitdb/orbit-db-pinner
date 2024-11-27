@@ -1,5 +1,5 @@
 import { pipe } from 'it-pipe'
-import { Requests, Responses, createRequestMessage, parseMessage } from './messages/index.js'
+import { Requests, Responses, RequestMessage, parseMessage } from './messages/index.js'
 import { voyagerProtocol } from './protocol.js'
 
 export default async ({ orbitdb, orbiterAddressOrId }) => {
@@ -9,7 +9,7 @@ export default async ({ orbitdb, orbiterAddressOrId }) => {
     const addDBs = source => {
       return (async function * () {
         addresses = Array.isArray(addresses) ? addresses : [addresses]
-        const message = await createRequestMessage(Requests.PIN_ADD, addresses, orbitdb.identity)
+        const message = await RequestMessage(Requests.PIN_ADD, addresses, orbitdb.identity)
         yield message
       })()
     }
@@ -35,7 +35,7 @@ export default async ({ orbitdb, orbiterAddressOrId }) => {
     const removeDBs = source => {
       return (async function * () {
         addresses = Array.isArray(addresses) ? addresses : [addresses]
-        const message = await createRequestMessage(Requests.PIN_REMOVE, addresses, orbitdb.identity)
+        const message = await RequestMessage(Requests.PIN_REMOVE, addresses, orbitdb.identity)
         yield message
       })()
     }

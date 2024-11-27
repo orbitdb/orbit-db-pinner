@@ -1,6 +1,6 @@
 import handleAddRequest from './handlers/add.js'
 import handleRemoveRequest from './handlers/remove.js'
-import { createResponseMessage, parseMessage, Requests, Responses } from './messages/index.js'
+import { ResponseMessage, parseMessage, Requests, Responses } from './messages/index.js'
 
 export const handleRequest = (orbiter) => source => {
   return (async function * () {
@@ -34,17 +34,17 @@ export const handleRequest = (orbiter) => source => {
         switch (type) {
           case Requests.PIN_ADD:
             await handleAddRequest({ orbitdb, databases, id, addresses })
-            response = createResponseMessage(Responses.OK)
+            response = ResponseMessage(Responses.OK)
             break
           case Requests.PIN_REMOVE:
             await handleRemoveRequest({ orbitdb, databases, id, addresses })
-            response = createResponseMessage(Responses.OK)
+            response = ResponseMessage(Responses.OK)
             break
           default:
             throw Object.assign(new Error(`unknown message type ${type}`), { type: Responses.E_INTERNAL_ERROR })
         }
       } catch (err) {
-        response = createResponseMessage(err.type, err.message)
+        response = ResponseMessage(err.type, err.message)
         log.error(err.type, err.message)
       } finally {
         yield response
