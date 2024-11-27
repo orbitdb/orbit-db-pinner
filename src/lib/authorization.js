@@ -24,8 +24,6 @@ export default async ({ orbitdb, defaultAccess }) => {
   const hasAccess = async (id) => {
     let found = false
 
-    const access = await orbitdb.open('access', { type: 'set' })
-
     // @TODO is there a database which stores unique values + can get by value?
     // @TODO add has(value) function to SetDB
     for await (const { value } of access.iterator()) {
