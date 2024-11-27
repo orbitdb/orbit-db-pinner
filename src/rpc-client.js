@@ -7,26 +7,6 @@ import { loadConfig } from './utils/config-manager.js'
 import { config as libp2pConfig } from './utils/libp2p-config.js'
 import { privateKeyFromRaw } from '@libp2p/crypto/keys'
 
-const getId = (identity, libp2p, address) => async () => {
-  return sendCommand(identity, libp2p, address, Commands.GET_ID)
-}
-
-const getAddress = (identity, libp2p, address) => async () => {
-  return sendCommand(identity, libp2p, address, Commands.GET_ADDRESS)
-}
-
-const authAdd = (identity, libp2p, address) => async ({ id }) => {
-  return sendCommand(identity, libp2p, address, Commands.AUTH_ADD, [id])
-}
-
-const authDel = (identity, libp2p, address) => async ({ id }) => {
-  return sendCommand(identity, libp2p, address, Commands.AUTH_DEL, [id])
-}
-
-const authList = (identity, libp2p, address) => async () => {
-  return sendCommand(identity, libp2p, address, Commands.AUTH_LIST)
-}
-
 export default async ({ directory }) => {
   const appDirectory = appPath(directory)
   const rpcDirectory = rpcPath(directory)
@@ -47,11 +27,21 @@ export default async ({ directory }) => {
   const privateKey = privateKeyFromRaw((await keystore.getKey(rpcId)).raw)
   const libp2p = await createLibp2p(await libp2pConfig({ privateKey }))
 
+  const rpcCall = async (command, params) => {
+    return sendCommand(identity, libp2p, config.orbiter.api, command, params)
+  }
+
+  const getId = async () => rpcCall(Commands.GET_ID)
+  const getAddress = async () => rpcCall(Commands.GET_ADDRESS)
+  const authAdd = async ({ id }) => rpcCall(Commands.AUTH_ADD, [id])
+  const authDel = async ({ id }) => rpcCall(Commands.AUTH_DEL, [id])
+  const authList = async () => rpcCall(Commands.AUTH_LIST)
+
   return {
-    authAdd: authAdd(identity, libp2p, config.orbiter.api),
-    authDel: authDel(identity, libp2p, config.orbiter.api),
-    authList: authList(identity, libp2p, config.orbiter.api),
-    getAddress: getAddress(identity, libp2p, config.orbiter.api),
-    getId: getId(identity, libp2p, config.orbiter.api)
+    getId,
+    getAddress,
+    authAdd,
+    authDel,
+    authList
   }
 }
