@@ -16,6 +16,10 @@ jobs:
           node-version: 'lts/*'
           registry-url: https://registry.npmjs.org/
       - run: npm ci
+      - name: Run an Orbiter 1 instance in the background
+        run: npm run start:orbiter1:background
+      - name: Run an Orbiter 2 instance in the background
+        run: npm run start:orbiter2:background      
       - run: npm test
       - run: npm publish
         env:
