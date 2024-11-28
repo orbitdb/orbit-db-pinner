@@ -52,9 +52,11 @@ Adjust the port if required.
 
 Orbiter will deny all requests by default. To allow a user to interact with Orbiter, the (requesting) user's `id` must be added to Orbiter's "allow" list.
 
-Access to Orbiter can be configured using the Voyager binary.
+Access to Orbiter can be configured in two ways; from the terminal and programmatically, using RPC.
 
-The user's `id` used in the examples below can be retrieved from the user's OrbitDB instance's **`orbitdb.identity.id`** field.
+**NOTE** The user's `id` used in the examples below can be retrieved using **`orbitdb.identity.id`**, which is available from the user's OrbitDB instance.
+
+### Managing access from the terminal
 
 To add an authorized user to Orbiter:
 
@@ -90,6 +92,38 @@ voyager auth list -d /custom/voyager/path
 VOYAGER_PATH=/custom/voyager/path voyager auth add <id>
 VOYAGER_PATH=/custom/voyager/path voyager auth remove <id>
 VOYAGER_PATH=/custom/voyager/path voyager auth list
+```
+
+### Managing access using RPC
+
+Authorizing users can be carried out programmatically using Voyager's RPC function.
+
+Start by instantiating the rpc:
+
+```
+import { RPC } from '@orbitdb/voyager'
+
+const rpc = await RPC({ directory: '' })
+```
+
+To add an authorization:
+
+```
+const id = '037ba2545db2e2ec0ba17fc9b35fbbf6bc09db82c9ab324521e62693e8aa96ceb4'
+await rpc.authAdd({ id })
+```
+
+To list all authorizations:
+
+```
+const { message } = await rpc.authList()
+console.log(message)
+```
+
+And to remove an authorization:
+
+```
+await rpc.authDel()
 ```
 
 ## Adding databases using "Lander"
