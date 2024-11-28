@@ -1,28 +1,14 @@
-FROM alpine:20200626 as builder
-LABEL stage=orbit-db-pinner-builder
+# syntax=docker/dockerfile:1
 
-RUN apk add --no-cache nodejs npm python3 alpine-sdk
-
-WORKDIR /usr/src/app
-
-COPY ./package.json .
-
+FROM node:20.17 AS build-env
 ENV NODE_ENV=production
-RUN npm install -g pnpm
-RUN pnpm install
 
-FROM alpine:20200626
+WORKDIR /app
+COPY ["package.json", "package-lock.json*", "./"]
+RUN npm ci --only=production
+COPY . .
 
-
-RUN apk add --no-cache nodejs
-
-WORKDIR /usr/src/app
-
-COPY ./config ./config
-COPY ./lib ./lib
-COPY ./package.json .
-COPY ./pinner.js .
-
-COPY --from=builder /usr/src/app/node_modules ./node_modules
-
-ENTRYPOINT node pinner.js
+FROM node:20.17-slim
+COPY --from=build-env /app /app
+WORKDIR /app
+CMD [ "node", "./src/bin/cli.js", "daemon" ]

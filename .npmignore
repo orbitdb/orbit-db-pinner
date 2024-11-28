@@ -1,0 +1,7 @@
+# Don't distribute the dependencies
+node_modules/
+
+.git
+test
+CONTRIBUTING.md
+CODE_OF_CONDUCT.md
