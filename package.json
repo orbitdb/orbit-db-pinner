@@ -1,7 +1,7 @@
 {
   "name": "@orbitdb/voyager",
   "version": "0.0.1",
-  "description": "A storage service OrbitDB databases",
+  "description": "A storage service OrbitDB databases.",
   "main": "./src/index.js",
   "type": "module",
   "author": "OrbitDB",
@@ -9,6 +9,23 @@
   "bin": {
     "voyager": "./src/bin/cli.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/orbitdb/voyager"
+  },  
+  "bugs": {
+    "url": "https://github.com/orbitdb/voyager/issues"
+  },
+  "homepage": "https://github.com/orbitdb/voyager#readme",
+  "keywords": [
+    "orbitdb",
+    "pinning",
+    "storage",
+    "database",
+    "replication",
+    "helia",
+    "libp2p"
+  ],  
   "devDependencies": {
     "c8": "^10.1.2",
     "it-drain": "^3.0.7",
