@@ -42,8 +42,8 @@ You can run an Orbiter storage service using a pre-configured Docker image.
 Once you have cloned this repo, cd into the voyager directory root and run:
 
 ```
-docker build -t orbitdb-pinner ./
-docker run --rm -d -p 8000:8000 orbitdb-pinner
+docker build -t orbitdb-voyager ./
+docker run --rm -d -p 8000:8000 orbitdb-voyager
 ```
 
 Adjust the port if required.
