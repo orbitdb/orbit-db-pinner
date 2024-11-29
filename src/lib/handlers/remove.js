@@ -1,6 +1,6 @@
 import { logger } from '@libp2p/logger'
 
-const log = logger('voyager:orbiter:remove')
+const log = logger('voyager:remove')
 
 export default async ({ orbitdb, databases, id, addresses }) => {
   for (const address of addresses) {

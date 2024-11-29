@@ -2,11 +2,11 @@ import handleAddRequest from './handlers/add.js'
 import handleRemoveRequest from './handlers/remove.js'
 import { ResponseMessage, parseMessage, Requests, Responses } from './messages/index.js'
 
-export const handleRequest = (orbiter) => source => {
+export const handleRequest = (host) => source => {
   return (async function * () {
     for await (const chunk of source) {
       const { type, signature, id, addresses } = parseMessage(chunk.subarray())
-      const { orbitdb, auth, databases, log } = orbiter
+      const { orbitdb, auth, databases, log } = host
 
       log('handle request', type, signature, id, addresses)
 
@@ -21,7 +21,7 @@ export const handleRequest = (orbiter) => source => {
           await orbitdb.identities.verifyIdentity(identity)
         }
 
-        // check that the identity is authorized to store their databases on this orbiter
+        // check that the identity is authorized to store their databases on this voyager
         if (!await auth.hasAccess(identity.id)) {
           throw Object.assign(new Error('user is not authorized to add'), { type: Responses.E_NOT_AUTHORIZED })
         }

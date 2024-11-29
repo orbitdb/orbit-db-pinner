@@ -6,11 +6,11 @@ import handleIdRequest from './handlers/id.js'
 import handleAddressRequest from './handlers/address.js'
 import { ResponseMessage, parseMessage, Responses } from '../lib/messages/index.js'
 
-export const handleCommand = (rpcConfig, orbiter) => source => {
+export const handleCommand = (rpcConfig, host) => source => {
   return (async function * () {
     for await (const chunk of source) {
       const { type, signature, id, addresses } = parseMessage(chunk.subarray())
-      const { orbitdb, auth, log } = orbiter
+      const { orbitdb, auth, log } = host
 
       log('handle command', type, signature, id, addresses)
 

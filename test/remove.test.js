@@ -1,62 +1,62 @@
 import { strictEqual } from 'assert'
 import { rimraf } from 'rimraf'
-import { launchLander } from './utils/launch-lander.js'
-import { launchOrbiter } from './utils/launch-orbiter.js'
+import { Voyager } from './utils/launch-voyager-remote.js'
+import { launchVoyagerHost } from './utils/launch-voyager-host.js'
 import { createAndAddDatabases } from './utils/create-and-add-databases.js'
 
 describe('Remove', function () {
   this.timeout(10000)
 
-  let orbiter
+  let host
 
   beforeEach(async function () {
-    orbiter = await launchOrbiter()
+    host = await launchVoyagerHost()
   })
 
   afterEach(async function () {
-    await orbiter.shutdown()
-    await rimraf('./orbiter')
+    await host.shutdown()
+    await rimraf('./host')
   })
 
   describe('Single Transient Peer', function () {
-    let lander
+    let app
 
     beforeEach(async function () {
-      lander = await launchLander({ orbiterAddress: orbiter.orbitdb.ipfs.libp2p.getMultiaddrs().pop() })
-      await orbiter.auth.add(lander.orbitdb.identity.id)
+      app = await Voyager({ address: host.orbitdb.ipfs.libp2p.getMultiaddrs().pop() })
+      await host.auth.add(app.orbitdb.identity.id)
     })
 
     afterEach(async function () {
-      await lander.shutdown()
-      await rimraf('./lander')
+      await app.shutdown()
+      await rimraf('./app')
     })
 
     it('removes a database', async function () {
-      const { addresses } = await createAndAddDatabases(1, lander)
+      const { addresses } = await createAndAddDatabases(1, app)
 
-      const removed = await lander.remove(addresses)
+      const removed = await app.remove(addresses)
 
       strictEqual(removed, true)
-      strictEqual((await orbiter.databases.all()).length, 0)
+      strictEqual((await host.databases.all()).length, 0)
     })
 
     it('removes multiple databases', async function () {
-      const { addresses } = await createAndAddDatabases(2, lander)
+      const { addresses } = await createAndAddDatabases(2, app)
 
-      const removed = await lander.remove(addresses)
+      const removed = await app.remove(addresses)
 
       strictEqual(removed, true)
-      strictEqual((await orbiter.databases.all()).length, 0)
+      strictEqual((await host.databases.all()).length, 0)
     })
 
     it('removes a database when multiple databases have been added', async function () {
-      const { addresses } = await createAndAddDatabases(2, lander)
+      const { addresses } = await createAndAddDatabases(2, app)
 
-      const removed = await lander.remove(addresses.slice(0, 1))
+      const removed = await app.remove(addresses.slice(0, 1))
 
       strictEqual(removed, true)
-      strictEqual((await orbiter.databases.all()).length, 1)
-      strictEqual((await orbiter.databases.all()).pop().key, addresses[1])
+      strictEqual((await host.databases.all()).length, 1)
+      strictEqual((await host.databases.all()).pop().key, addresses[1])
     })
   })
 })

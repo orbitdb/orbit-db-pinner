@@ -9,7 +9,7 @@ const getSubarray = (e) => e.subarray()
 const getType = (e) => e.type
 const isOk = (e) => e === Responses.OK
 
-export default async ({ orbitdb, orbiterAddressOrId }) => {
+export default async ({ orbitdb, address }) => {
   const request = async (type, addresses) => {
     return await RequestMessage(type, addresses, orbitdb.identity)
   }
@@ -22,14 +22,14 @@ export default async ({ orbitdb, orbiterAddressOrId }) => {
 
   const add = async (addresses) => {
     const addDBs = () => [request(Requests.ADD, toArray(addresses))]
-    const stream = await orbitdb.ipfs.libp2p.dialProtocol(orbiterAddressOrId, voyagerProtocol, { runOnLimitedConnection: true })
+    const stream = await orbitdb.ipfs.libp2p.dialProtocol(address, voyagerProtocol, { runOnLimitedConnection: true })
     const added = await pipe(addDBs, stream, parseResponse)
     return added
   }
 
   const remove = async (addresses) => {
     const removeDBs = () => [request(Requests.REMOVE, toArray(addresses))]
-    const stream = await orbitdb.ipfs.libp2p.dialProtocol(orbiterAddressOrId, voyagerProtocol, { runOnLimitedConnection: true })
+    const stream = await orbitdb.ipfs.libp2p.dialProtocol(address, voyagerProtocol, { runOnLimitedConnection: true })
     const removed = await pipe(removeDBs, stream, parseResponse)
     return removed
   }

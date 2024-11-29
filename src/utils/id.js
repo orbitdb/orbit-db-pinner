@@ -1,7 +1,7 @@
 import { join } from 'path'
 
 export const app = 'voyager'
-export const orbiter = 'orbiter'
+export const host = 'host'
 export const rpc = 'rpc'
 
 export const appPath = (rootDir) => {
@@ -9,9 +9,9 @@ export const appPath = (rootDir) => {
   return join(rootDir, app)
 }
 
-export const orbiterPath = (rootDir) => {
+export const hostPath = (rootDir) => {
   rootDir = rootDir || '.'
-  return join(appPath(rootDir), orbiter)
+  return join(appPath(rootDir), host)
 }
 
 export const rpcPath = (rootDir) => {
