@@ -1,5 +1,7 @@
 # Voyager
 
+[![Matrix](https://img.shields.io/matrix/orbit-db%3Amatrix.org)](https://app.element.io/#/room/#orbit-db:matrix.org) [![npm (scoped)](https://img.shields.io/npm/v/%40orbitdb/voyager)](https://www.npmjs.com/package/@orbitdb/voyager) [![node-current (scoped)](https://img.shields.io/node/v/%40orbitdb/voyager)](https://www.npmjs.com/package/@orbitdb/voyager)
+
 **Storage service** for [OrbitDB](https://github.com/orbitdb/orbitdb) peer-to-peer databases.
 
 Voyager replicates and stores OrbitDB databases and makes them available to others when the database's originating peer is offline.
