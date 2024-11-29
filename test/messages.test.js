@@ -17,7 +17,7 @@ describe('Messages', function () {
   const addDBs = ({ type, signer } = {}) => source => {
     return (async function * () {
       const addresses = [db.address]
-      const message = await RequestMessage(type || Requests.PIN_ADD, addresses, lander.orbitdb.identity, signer)
+      const message = await RequestMessage(type || Requests.ADD, addresses, lander.orbitdb.identity, signer)
       yield message
     })()
   }

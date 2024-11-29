@@ -21,14 +21,14 @@ export default async ({ orbitdb, orbiterAddressOrId }) => {
   }
 
   const add = async (addresses) => {
-    const addDBs = () => [request(Requests.PIN_ADD, toArray(addresses))]
+    const addDBs = () => [request(Requests.ADD, toArray(addresses))]
     const stream = await orbitdb.ipfs.libp2p.dialProtocol(orbiterAddressOrId, voyagerProtocol, { runOnLimitedConnection: true })
     const added = await pipe(addDBs, stream, parseResponse)
     return added
   }
 
   const remove = async (addresses) => {
-    const removeDBs = () => [request(Requests.PIN_REMOVE, toArray(addresses))]
+    const removeDBs = () => [request(Requests.REMOVE, toArray(addresses))]
     const stream = await orbitdb.ipfs.libp2p.dialProtocol(orbiterAddressOrId, voyagerProtocol, { runOnLimitedConnection: true })
     const removed = await pipe(removeDBs, stream, parseResponse)
     return removed

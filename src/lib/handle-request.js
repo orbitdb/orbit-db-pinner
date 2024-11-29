@@ -32,12 +32,12 @@ export const handleRequest = (orbiter) => source => {
         }
 
         switch (type) {
-          case Requests.PIN_ADD: {
+          case Requests.ADD: {
             await handleAddRequest({ orbitdb, databases, id, addresses })
             response = ResponseMessage(Responses.OK)
             break
           }
-          case Requests.PIN_REMOVE: {
+          case Requests.REMOVE: {
             await handleRemoveRequest({ orbitdb, databases, id, addresses })
             response = ResponseMessage(Responses.OK)
             break
