@@ -9,6 +9,9 @@
   "bin": {
     "voyager": "./src/bin/cli.js"
   },
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/orbitdb/voyager"
