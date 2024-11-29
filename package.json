@@ -1,6 +1,6 @@
 {
   "name": "@orbitdb/voyager",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A storage service OrbitDB databases.",
   "main": "./src/index.js",
   "type": "module",
@@ -15,7 +15,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/orbitdb/voyager"
-  },  
+  },
   "bugs": {
     "url": "https://github.com/orbitdb/voyager/issues"
   },
@@ -28,7 +28,7 @@
     "replication",
     "helia",
     "libp2p"
-  ],  
+  ],
   "devDependencies": {
     "c8": "^10.1.2",
     "it-drain": "^3.0.7",
