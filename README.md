@@ -2,28 +2,50 @@
 
 [![Matrix](https://img.shields.io/matrix/orbit-db%3Amatrix.org)](https://app.element.io/#/room/#orbit-db:matrix.org) [![npm (scoped)](https://img.shields.io/npm/v/%40orbitdb/voyager)](https://www.npmjs.com/package/@orbitdb/voyager) [![node-current (scoped)](https://img.shields.io/node/v/%40orbitdb/voyager)](https://www.npmjs.com/package/@orbitdb/voyager)
 
-**Storage service** for [OrbitDB](https://github.com/orbitdb/orbitdb) peer-to-peer databases.
+A **storage service** for [OrbitDB](https://github.com/orbitdb/orbitdb) peer-to-peer databases.
 
 Voyager replicates and stores OrbitDB databases and makes them available to others when the database's originating peer is offline.
 
-It is designed to run on systems with guaranteed uptime and public availability and can be seen as a "data availability node" for OrbitDB. For example, a browser-based app running a OrbitDB database may rely on one or more Voyager peers to ensure the database is available when the browser peer goes offline.
-
-Voyager, like OrbitDB, is peer-to-peer and does not have a traditional server/client architecture and so terms "server" and "client" do not apply. Therefore, in keeping with OrbitDB's "celestial" naming convention, the storage service peer is called ***"Orbiter"*** and the interface which the developer or user uses to communicate with the storage service peer is called ***"Lander"***.
+It is designed to run on systems with guaranteed uptime and public availability and can be seen as a "data availability node" for OrbitDB. For example, a browser-based app running a OrbitDB database may rely on one or more Voyager peers to ensure the database is available when the browser peer is unreachable.
 
 ***Note!*** *This software is currently in alpha version status and thus may change, break backwards compatibility or contain major issues. It has not been security audited. Use it accordingly.*
 
 ## Installation
 
+To use Voyager as a module:
+
 ```sh
 npm i @orbitdb/voyager
 ```
 
-### Running "Orbiter"
-
-Voyager's Orbiter (the storage service) can be run as a daemon process. You can install the package globally and run it using the "voyager" binary:
+To use Voyager from the CLI:
 
 ```sh
 npm i -g @orbitdb/voyager
+```
+
+## Usage
+
+Voyager, like OrbitDB, is peer-to-peer and does not have a traditional server/client architecture and so terms "server" and "client" do not apply. Therefore, in keeping with OrbitDB's "celestial" naming convention, the storage service peer is called ***"Orbiter"*** and the interface which the developer or user uses to communicate with the storage service peer is called ***"Lander"***.
+
+### CLI
+
+The `voyager` CLI tool can be used to manage a Voyager instance. Run `voyager` on the command line to get started.
+
+Currently the following commands are available:
+
+```
+voyager daemon   Launch Voyager
+voyager id       Show the voyager's id
+voyager address  Show the voyager's network addresses
+voyager auth     Add or remove authorized user
+```
+
+### Orbiter Daemon
+
+Voyager's **Orbiter**, the storage service, can be run as a daemon process. You can install the package globally and run it using the `voyager` CLI binary:
+
+```sh
 voyager daemon
 ```
 
@@ -50,7 +72,7 @@ docker run --rm -d -p 8000:8000 orbitdb-voyager
 
 Adjust the port if required.
 
-## Managing "Orbiter" access
+## Managing Orbiter Access
 
 Orbiter will deny all requests by default. To allow a user to interact with Orbiter, the (requesting) user's `id` must be added to Orbiter's "allow" list.
 
@@ -128,11 +150,11 @@ And to remove an authorization:
 await rpc.authDel()
 ```
 
-## Adding databases using "Lander"
+## Adding databases using Lander
 
-To make databases accessible from Voyager, the database needs to be added to an Orbiter storage service instance. This can be achieved programmatically by using the "Lander" module.
+To make databases accessible from Voyager, the database needs to be added to an Orbiter storage service instance. This can be achieved programmatically by using the **Lander** module.
 
-To use Lander, first install the [@orbitdb/voyager](todo: link) package:
+To use Lander, first install the [@orbitdb/voyager](https://www.npmjs.com/package/@orbitdb/voyager) package:
 
 ```sh
 npm i @orbitdb/voyager
@@ -144,15 +166,13 @@ Next, instantiate Lander:
 import { createLibp2p } from 'libp2p'
 import { createHelia } from 'helia'
 import { createOrbitDB } from '@orbitdb/core'
+import { Lander } from '@orbitdb/voyager'
 
-// set up configuration for libp2p and helia
+// set up libp2p, helia and orbitdb
 
-const libp2p = await createLibp2p({ ...options })
+const libp2p = await createLibp2p()
 const ipfs = await createHelia({ libp2p })
-
-directory = directory || './lander'
-
-const orbitdb = await createOrbitDB({ ipfs, directory })
+const orbitdb = await createOrbitDB({ ipfs })
 
 // deployed orbiter peer id or listening address, it looks like this:
 // /ip4/127.0.0.1/tcp/54322/p2p/16Uiu2HAmATMovCwY46yyJib7bGZF2f2XLRar7d7R3NJCSJtuyQLt
@@ -161,7 +181,7 @@ const orbiterAddressOrId = '...'
 const lander = await Lander({ orbitdb, orbiterAddressOrId })
 ``` 
 
-To add a db to voyager:
+To add a database to voyager:
 
 ```js
 // create a db to be added to voyager
@@ -171,7 +191,7 @@ const db = await orbitdb.open('my-db')
 await lander.add(db.address)
 ```
 
-To remove a db from voyager:
+To remove a database from voyager:
 
 ```js
 // open an instance of the db you want to remove from voyager
