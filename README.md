@@ -220,7 +220,7 @@ Send one of the following messages to the protocol in order to communicate with 
 #### Adding a DB for replication
 
 ```
-type: PIN_ADD
+type: 1 ("ADD")
 id: The id of the requester
 signature: One or more database addresses signed by the requester
 addresses: One or more database addresses to add to the storage 
@@ -231,7 +231,7 @@ If successful, an OK response will be sent. If it fails, an error will be return
 #### Removing a DB for replication
 
 ```
-type: PIN_REMOVE
+type: 2 ("REMOVE")
 id: The id of the requester
 signature: One or more database addresses signed by the requester
 addresses: One or more database addresses to remove from the storage
