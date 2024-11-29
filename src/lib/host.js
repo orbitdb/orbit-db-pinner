@@ -6,13 +6,13 @@ import { handleRequest } from './handle-request.js'
 import Authorization, { Access } from './authorization.js'
 
 export default async ({ orbitdb, defaultAccess, verbose } = {}) => {
-  const log = logger('voyager:orbiter')
+  const log = logger('voyager:host')
 
   if (verbose > 0) {
-    enable('voyager:orbiter' + (verbose > 1 ? '*' : ':error'))
+    enable('voyager:host' + (verbose > 1 ? '*' : ':error'))
   }
 
-  log('start orbiter')
+  log('start voyager')
 
   defaultAccess = defaultAccess || Access.DENY
 

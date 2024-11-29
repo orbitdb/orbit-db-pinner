@@ -1,40 +1,40 @@
 import { strictEqual } from 'assert'
 import { Access } from '../src/lib/authorization.js'
 import { rimraf } from 'rimraf'
-import { launchOrbiter } from './utils/launch-orbiter.js'
+import { launchVoyagerHost } from './utils/launch-voyager-host.js'
 
 describe('Authorization', function () {
-  let orbiter
+  let host
 
   before(async function () {
-    orbiter = await launchOrbiter()
+    host = await launchVoyagerHost()
   })
 
   after(async function () {
-    await orbiter.shutdown()
-    await rimraf('./orbiter')
+    await host.shutdown()
+    await rimraf('./host')
   })
 
   it('defaults access to deny all', function () {
-    strictEqual(orbiter.auth.defaultAccess, Access.DENY)
+    strictEqual(host.auth.defaultAccess, Access.DENY)
   })
 
   it('sets default access as allow all', function () {
-    orbiter.auth.defaultAccess = Access.ALLOW
-    strictEqual(orbiter.auth.defaultAccess, Access.ALLOW)
+    host.auth.defaultAccess = Access.ALLOW
+    strictEqual(host.auth.defaultAccess, Access.ALLOW)
   })
 
   it('adds an authorized user', async function () {
     const id = '037ba2545db2e2ec0ba17fc9b35fbbf6bc09db82c9ab324521e62693e8aa96ceb4'
-    await orbiter.auth.add(id)
+    await host.auth.add(id)
 
-    strictEqual(await orbiter.auth.hasAccess(id), true)
+    strictEqual(await host.auth.hasAccess(id), true)
   })
 
   it('removes an authorized user', async function () {
     const id = '037ba2545db2e2ec0ba17fc9b35fbbf6bc09db82c9ab324521e62693e8aa96ceb4'
-    await orbiter.auth.add(id)
-    await orbiter.auth.del(id)
-    strictEqual(await orbiter.auth.hasAccess(id), false)
+    await host.auth.add(id)
+    await host.auth.del(id)
+    strictEqual(await host.auth.hasAccess(id), false)
   })
 })

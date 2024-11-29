@@ -1,12 +1,12 @@
-export const createAndAddDatabases = async (howMany, lander) => {
+export const createAndAddDatabases = async (howMany, voyager) => {
   const addresses = []
 
   for (let i = 1; i <= howMany; i++) {
-    const db = await lander.orbitdb.open(`db${i}`)
+    const db = await voyager.orbitdb.open(`db${i}`)
     addresses.push(db.address)
   }
 
-  const added = await lander.add(addresses)
+  const added = await voyager.add(addresses)
 
   return { added, addresses }
 }

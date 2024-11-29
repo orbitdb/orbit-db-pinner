@@ -4,7 +4,7 @@ import { rimraf } from 'rimraf'
 import { join } from 'path'
 
 describe('Config Manager', function () {
-  const path = join('.', 'voyager', 'orbiter')
+  const path = join('.', 'voyager', 'host')
 
   afterEach(async function () {
     await rimraf('./voyager')

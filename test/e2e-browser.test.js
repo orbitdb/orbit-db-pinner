@@ -1,55 +1,55 @@
 import { multiaddr } from '@multiformats/multiaddr'
 import { strictEqual, deepStrictEqual } from 'assert'
 import { rimraf } from 'rimraf'
-import { launchLander } from './utils/launch-lander.js'
-import { launchOrbiter } from './utils/launch-orbiter.js'
+import { Voyager } from './utils/launch-voyager-remote.js'
+import { launchVoyagerHost } from './utils/launch-voyager-host.js'
 import waitFor from './utils/wait-for.js'
 import connectPeers from './utils/connect-nodes-via-relay.js'
 
 const isBrowser = () => typeof window !== 'undefined'
 
 describe('End-to-End Browser Tests', function () {
-  describe('Orbiter in Nodejs', function () {
+  describe('Voyager in Nodejs', function () {
     this.timeout(10000)
 
-    const orbiterAddress1 = isBrowser()
+    const address1 = isBrowser()
       ? multiaddr('/ip4/127.0.0.1/tcp/55441/ws/p2p/16Uiu2HAmBzKcgCfpJ4j4wJSLkKLbCVvnNBWPnhexrnJWJf1fDu5y')
       : multiaddr('/ip4/127.0.0.1/tcp/54321/p2p/16Uiu2HAmBzKcgCfpJ4j4wJSLkKLbCVvnNBWPnhexrnJWJf1fDu5y')
 
-    const orbiterAddress2 = isBrowser()
+    const address2 = isBrowser()
       ? multiaddr('/ip4/127.0.0.1/tcp/55442/ws/p2p/16Uiu2HAmATMovCwY46yyJib7bGZF2f2XLRar7d7R3NJCSJtuyQLt')
       : multiaddr('/ip4/127.0.0.1/tcp/54322/p2p/16Uiu2HAmATMovCwY46yyJib7bGZF2f2XLRar7d7R3NJCSJtuyQLt')
 
-    let lander1
-    let lander2
-    let lander3
+    let voyager1
+    let voyager2
+    let voyager3
 
     beforeEach(async function () {
-      lander1 = await launchLander({ orbiterAddress: orbiterAddress1, directory: 'lander1' })
-      lander2 = await launchLander({ orbiterAddress: orbiterAddress1, directory: 'lander2' })
-      lander3 = await launchLander({ orbiterAddress: orbiterAddress2, directory: 'lander3' })
+      voyager1 = await Voyager({ address: address1, directory: 'voyager1' })
+      voyager2 = await Voyager({ address: address1, directory: 'voyager2' })
+      voyager3 = await Voyager({ address: address2, directory: 'voyager3' })
     })
 
     afterEach(async function () {
-      if (lander1) {
-        await lander1.shutdown()
+      if (voyager1) {
+        await voyager1.shutdown()
       }
-      if (lander2) {
-        await lander2.shutdown()
+      if (voyager2) {
+        await voyager2.shutdown()
       }
-      if (lander3) {
-        await lander3.shutdown()
+      if (voyager3) {
+        await voyager3.shutdown()
       }
-      await rimraf('./lander1')
-      await rimraf('./lander2')
-      await rimraf('./lander3')
+      await rimraf('./voyager1')
+      await rimraf('./voyager2')
+      await rimraf('./voyager3')
     })
 
-    it('add and replicate a database - lander1->orbiter1->lander2', async function () {
+    it('add and replicate a database - app1->voyager1->app2', async function () {
       const entryAmount = 100
       let replicated = false
 
-      const db1 = await lander1.orbitdb.open('my-db')
+      const db1 = await voyager1.orbitdb.open('my-db')
 
       for (let i = 0; i < entryAmount; i++) {
         await db1.add('hello world ' + i)
@@ -58,16 +58,16 @@ describe('End-to-End Browser Tests', function () {
       const expected = await db1.all()
 
       console.time('add')
-      await lander1.add(db1.address)
+      await voyager1.add(db1.address)
       console.timeEnd('add')
-      await lander1.shutdown()
+      await voyager1.shutdown()
 
       console.time('add2')
-      await lander2.add(db1.address)
+      await voyager2.add(db1.address)
       console.timeEnd('add2')
 
       console.time('replicate')
-      const db2 = await lander2.orbitdb.open(db1.address)
+      const db2 = await voyager2.orbitdb.open(db1.address)
 
       const onConnected = (peerId, heads) => {
         replicated = true
@@ -85,11 +85,11 @@ describe('End-to-End Browser Tests', function () {
       deepStrictEqual(expected, res)
     })
 
-    it('add and replicate a database - lander1->orbiter1->orbiter2->lander3', async function () {
+    it('add and replicate a database - app1->voyager1->voyager2->app3', async function () {
       const entryAmount = 100
       let replicated = false
 
-      const db1 = await lander1.orbitdb.open('my-db2')
+      const db1 = await voyager1.orbitdb.open('my-db2')
 
       for (let i = 0; i < entryAmount; i++) {
         await db1.add('hello world ' + i)
@@ -98,16 +98,16 @@ describe('End-to-End Browser Tests', function () {
       const expected = await db1.all()
 
       console.time('add')
-      await lander1.add(db1.address)
+      await voyager1.add(db1.address)
       console.timeEnd('add')
-      await lander1.shutdown()
+      await voyager1.shutdown()
 
       console.time('add2')
-      await lander3.add(db1.address)
+      await voyager3.add(db1.address)
       console.timeEnd('add2')
 
       console.time('replicate')
-      const db2 = await lander3.orbitdb.open(db1.address)
+      const db2 = await voyager3.orbitdb.open(db1.address)
       const onConnected = (peerId, heads) => {
         replicated = true
       }
@@ -125,45 +125,45 @@ describe('End-to-End Browser Tests', function () {
     })
   })
 
-  describe('Orbiter in the browser', function () {
+  describe('Voyager in browsers', function () {
     this.timeout(10000)
 
-    const orbiterAddress1 = isBrowser()
+    const address1 = isBrowser()
       ? multiaddr('/ip4/127.0.0.1/tcp/55441/ws/p2p/16Uiu2HAmBzKcgCfpJ4j4wJSLkKLbCVvnNBWPnhexrnJWJf1fDu5y')
       : multiaddr('/ip4/127.0.0.1/tcp/54321/p2p/16Uiu2HAmBzKcgCfpJ4j4wJSLkKLbCVvnNBWPnhexrnJWJf1fDu5y')
 
-    let orbiter
-    let lander1
-    let lander2
+    let host
+    let voyager1
+    let voyager2
 
     beforeEach(async function () {
-      orbiter = await launchOrbiter({ directory: 'orbiter3' })
+      host = await launchVoyagerHost({ directory: 'host3' })
 
-      await connectPeers(orbiter.orbitdb.ipfs, orbiterAddress1)
+      await connectPeers(host.orbitdb.ipfs, address1)
 
-      lander1 = await launchLander({ orbiterAddress: orbiterAddress1, directory: 'lander4' })
+      voyager1 = await Voyager({ address: address1, directory: 'voyager4' })
     })
 
     afterEach(async function () {
-      if (lander1) {
-        await lander1.shutdown()
+      if (voyager1) {
+        await voyager1.shutdown()
       }
-      if (lander2) {
-        await lander2.shutdown()
+      if (voyager2) {
+        await voyager2.shutdown()
       }
-      if (orbiter) {
-        await orbiter.shutdown()
+      if (host) {
+        await host.shutdown()
       }
-      await rimraf('./lander4')
-      await rimraf('./lander5')
-      await rimraf('./orbiter3')
+      await rimraf('./voyager4')
+      await rimraf('./voyager5')
+      await rimraf('./host3')
     })
 
-    it('add and replicate a database - lander1->orbiter1(nodejs)->orbiter2(browser)->lander3', async function () {
+    it('add and replicate a database - app1->voyager1(nodejs)->voyager2(browser)->app3', async function () {
       const entryAmount = 100
       let replicated = false
 
-      const db1 = await lander1.orbitdb.open('my-db3')
+      const db1 = await voyager1.orbitdb.open('my-db3')
 
       for (let i = 0; i < entryAmount; i++) {
         await db1.add('hello world ' + i)
@@ -172,21 +172,21 @@ describe('End-to-End Browser Tests', function () {
       const expected = await db1.all()
 
       console.time('add')
-      await lander1.add(db1.address)
+      await voyager1.add(db1.address)
       console.timeEnd('add')
 
-      await lander1.shutdown()
+      await voyager1.shutdown()
 
-      lander2 = await launchLander({ orbiterAddress: orbiter.orbitdb.ipfs.libp2p.getMultiaddrs().shift(), directory: 'lander5' })
+      voyager2 = await Voyager({ address: host.orbitdb.ipfs.libp2p.getMultiaddrs().shift(), directory: 'voyager5' })
 
-      await orbiter.auth.add(lander2.orbitdb.identity.id)
+      await host.auth.add(voyager2.orbitdb.identity.id)
 
       console.time('add2')
-      await lander2.add(db1.address)
+      await voyager2.add(db1.address)
       console.timeEnd('add2')
 
       console.time('replicate')
-      const db2 = await lander2.orbitdb.open(db1.address)
+      const db2 = await voyager2.orbitdb.open(db1.address)
 
       const onConnected = (peerId, heads) => {
         replicated = true

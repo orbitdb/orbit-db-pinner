@@ -1,4 +1,4 @@
-import { appPath, orbiterPath } from '../../src/utils/id.js'
+import { appPath, hostPath } from '../../src/utils/id.js'
 import { spawn } from 'node:child_process'
 import { strictEqual } from 'assert'
 import { existsSync } from 'fs'
@@ -14,7 +14,7 @@ describe('Commands - daemon', function () {
       await waitForDaemonStarted(daemon)
 
       strictEqual(existsSync(appPath()), true)
-      strictEqual(existsSync(orbiterPath()), true)
+      strictEqual(existsSync(hostPath()), true)
 
       daemon.kill()
       await rimraf('voyager')
@@ -30,7 +30,7 @@ describe('Commands - daemon', function () {
 
       strictEqual(existsSync(directory), true)
       strictEqual(existsSync(join(directory, appPath())), true)
-      strictEqual(existsSync(join(directory, orbiterPath())), true)
+      strictEqual(existsSync(join(directory, hostPath())), true)
 
       daemon.kill()
       await rimraf(directory)
@@ -46,7 +46,7 @@ describe('Commands - daemon', function () {
 
       strictEqual(existsSync(directory), true)
       strictEqual(existsSync(join(directory, appPath())), true)
-      strictEqual(existsSync(join(directory, orbiterPath())), true)
+      strictEqual(existsSync(join(directory, hostPath())), true)
 
       daemon.kill()
       await rimraf(directory)

@@ -18,10 +18,10 @@ jobs:
         run: npm run lint
       - name: Run libp2p relay in the background
         run: npm run start:relay:background
-      - name: Run an Orbiter 1 instance in the background
-        run: npm run start:orbiter1:background
-      - name: Run an Orbiter 2 instance in the background
-        run: npm run start:orbiter2:background
+      - name: Run an Voyager 1 instance in the background
+        run: npm run start:host1:background
+      - name: Run an Voyager 2 instance in the background
+        run: npm run start:host2:background
       - name: Run tests
         run: npm run test:ci
       - name: Run browser tests

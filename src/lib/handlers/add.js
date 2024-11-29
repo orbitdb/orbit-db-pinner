@@ -1,6 +1,6 @@
 import { logger } from '@libp2p/logger'
 
-const log = logger('voyager:orbiter:add')
+const log = logger('voyager:add')
 
 const waitForReplication = (db) => {
   return new Promise((resolve, reject) => {

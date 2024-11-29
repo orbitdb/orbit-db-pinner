@@ -2,11 +2,11 @@ import { createHelia } from 'helia'
 import { createLibp2p } from 'libp2p'
 import { bitswap } from '@helia/block-brokers'
 import { createOrbitDB } from '@orbitdb/core'
-import Lander from '../../src/lib/lander.js'
+import Voyager_ from '../../src/lib/voyager.js'
 // import connectPeers from './connect-nodes.js'
 import connect from './connect-nodes-via-relay.js'
 
-import Libp2pOptions from './test-config/lander-libp2p-config.js'
+import Libp2pOptions from './test-config/voyager-app-libp2p-config.js'
 
 const heliaOptions = {
   blockBrokers: [
@@ -16,25 +16,25 @@ const heliaOptions = {
   ]
 }
 
-export const launchLander = async ({ directory, orbiterAddress } = {}) => {
+export const Voyager = async ({ address, directory } = {}) => {
   const options = Libp2pOptions
   const libp2p = await createLibp2p({ ...options })
   const ipfs = await createHelia({ libp2p, ...heliaOptions })
 
-  directory = directory || './lander'
+  directory = directory || './app'
 
   const orbitdb = await createOrbitDB({ ipfs, directory })
 
-  // await connectPeers(ipfs, orbiterAddress)
-  await connect(ipfs, orbiterAddress)
+  // await connectPeers(ipfs, address)
+  await connect(ipfs, address)
 
-  const lander = await Lander({ orbitdb, orbiterAddressOrId: orbiterAddress })
+  const voyager = await Voyager_({ orbitdb, address })
 
   // Helper function for tests
-  lander.shutdown = async () => {
+  voyager.shutdown = async () => {
     await orbitdb.stop()
     await ipfs.stop()
   }
 
-  return lander
+  return voyager
 }
